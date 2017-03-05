@@ -1,0 +1,12 @@
+/** \mainpage Goal: The goal oriented adaptive library
+
+Welcome to the Goal library documentation.
+
+The aim of Goal is to provide a sandbox of analysis tools that:
+
+- facilitates the implementation of FEM application codes
+- with an emphasis on goal-oriented error estimation
+- and mesh adaptation
+- for execution on parallel machines
+
+*/
