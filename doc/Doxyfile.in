@@ -35,7 +35,7 @@ OPTIMIZE_FOR_FORTRAN   = NO
 OPTIMIZE_OUTPUT_VHDL   = NO
 EXTENSION_MAPPING      =
 MARKDOWN_SUPPORT       = YES
-AUTOLINK_SUPPORT       = YES
+AUTOLINK_SUPPORT       = NO
 BUILTIN_STL_SUPPORT    = NO
 CPP_CLI_SUPPORT        = NO
 SIP_SUPPORT            = NO
@@ -105,7 +105,10 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/doc/goal.dox \
 @PROJECT_SOURCE_DIR@/src/goal_data_types.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_control.hpp \
-@PROJECT_SOURCE_DIR@/src/goal_dimension.hpp
+@PROJECT_SOURCE_DIR@/src/goal_dimension.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_workset.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_discretization.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_field_types.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
