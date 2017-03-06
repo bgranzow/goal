@@ -49,6 +49,9 @@ typedef Tpetra::Import<LO, GO, KNode> Import;
 /** \brief Tpetra vector type. */
 typedef Tpetra::Vector<ST, LO, GO, KNode> Vector;
 
+/** \brief Tpetra multi-vector type. */
+typedef Tpetra::MultiVector<ST, LO, GO, KNode> MultiVector;
+
 /** \brief Tpetra Crs Matrix type. */
 typedef Tpetra::CrsMatrix<ST, LO, GO, KNode> Matrix;
 
