@@ -29,10 +29,9 @@ class Discretization;
   * \details This structure contains all of the necessary information to
   * fully define a \ref goal::Field. */
 struct FieldInfo {
-
   /** \brief The \ref goal::Discretization structure */
   RCP<Discretization> disc;
-  
+
   /** \brief The unique name of the field. */
   std::string name;
 
@@ -56,7 +55,6 @@ struct FieldInfo {
   * to the field. */
 class Field {
  public:
-
   /** \brief Construct a field.
     * \details The \ref goal::FieldInfo struct that defines the field. */
   Field(FieldInfo* info);
@@ -64,7 +62,7 @@ class Field {
   /** \brief Destroy the field.
     * \details This will destroy the underlying APF field. */
   ~Field();
-  
+
   /** \brief Set the current element block for this field.
     * \details This is useful for scenarios where there are different
     * element topologies in different element blocks, so that the
@@ -280,6 +278,6 @@ class Field {
 /** \brief Project data from one field to another. */
 void project_field(RCP<Field> to, RCP<Field> from);
 
-}  // namespace goal 
+}  // namespace goal
 
 #endif

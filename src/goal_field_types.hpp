@@ -6,9 +6,9 @@
 namespace goal {
 
 /** \brief Field types. */
-enum FieldType { 
+enum FieldType {
   /** \brief A scalar field type. */
-  SCALAR = 0, 
+  SCALAR = 0,
   /** \brief A vector field type. */
   VECTOR = 1,
   /** \brief A tensor field type. */

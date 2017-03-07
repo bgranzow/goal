@@ -31,7 +31,6 @@ using Teuchos::ParameterList;
   * which help define the domain definition of the problem. */
 class Discretization {
  public:
-
   /** \brief The discretization constructor.
     * \param p A parameterlist fully describing the discretization.
     *

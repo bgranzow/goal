@@ -48,8 +48,7 @@ static bool set_mesh(apf::Mesh2** mesh, RCP<const ParameterList> p) {
   else if (p->isType<apf::Mesh2*>("mesh")) {
     *mesh = p->get<apf::Mesh2*>("mesh");
     owns = false;
-  }
-  else
+  } else
     fail("unable to set apf mesh");
   return owns;
 }

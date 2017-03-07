@@ -85,11 +85,9 @@ std::string Field::get_name() const { return name; }
 
 std::string Field::get_grad_name() const { return "grad_" + name; }
 
-
 std::string Field::get_basis_name() const {
-  std::map<int, std::string> map =
-  { {LAGRANGE, "lagrange"},
-    {HIERARCHIC, "hierarchic"} };
+  std::map<int, std::string> map = {
+      {LAGRANGE, "lagrange"}, {HIERARCHIC, "hierarchic"}};
   std::ostringstream oss;
   oss << map[get_value_type()] << get_p_order();
   auto name = oss.str();

@@ -18,11 +18,10 @@ namespace goal {
   * \details The workset is a collection of information defined over a
   * subdomain of the entire finite element domain that is passed to the
   * Phalanx::evaluateFields method, to perform local FE analysis. For more
-  * information see the Phalanx 
+  * information see the Phalanx
   * <a href=https://trilinos.org/docs/dev/packages/phalanx/doc/html/index.html>
   * User's guide</a> */
 struct Workset {
-
   /** \brief The number of mesh entities in this workset. */
   int size;
 
@@ -37,7 +36,6 @@ struct Workset {
 
   /** \brief A collection of mesh entities associated with this workset. */
   std::vector<apf::MeshEntity*> entities;
-
 };
 
 }  // namespace goal
