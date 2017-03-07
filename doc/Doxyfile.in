@@ -112,6 +112,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_field.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_indexer.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_solution_info.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_state_fields.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_traits.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
