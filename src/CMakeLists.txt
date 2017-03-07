@@ -4,6 +4,7 @@ goal_dimension.cpp
 goal_discretization.cpp
 goal_field.cpp
 goal_indexer.cpp
+goal_solution_info.cpp
 )
 
 set(Goal_HEADERS
@@ -15,6 +16,7 @@ goal_discretization.hpp
 goal_field_types.hpp
 goal_field.hpp
 goal_indexer.hpp
+goal_solution_info.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
