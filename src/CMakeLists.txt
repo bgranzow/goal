@@ -17,6 +17,7 @@ goal_field_types.hpp
 goal_field.hpp
 goal_indexer.hpp
 goal_solution_info.hpp
+goal_traits.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
