@@ -6,10 +6,22 @@
 namespace goal {
 
 /** \brief Field types. */
-enum FieldType { SCALAR = 0, VECTOR = 1, TENSOR = 2 };
+enum FieldType { 
+  /** \brief A scalar field type. */
+  SCALAR = 0, 
+  /** \brief A vector field type. */
+  VECTOR = 1,
+  /** \brief A tensor field type. */
+  TENSOR = 2
+};
 
 /** \brief FEM basis types. */
-enum BasisType { LAGRANGE = 0, HIERARCHIC = 1 };
+enum BasisType {
+  /** \brief Lagrangian basis functions. */
+  LAGRANGE = 0,
+  /** \brief Hierarchical basis functions. */
+  HIERARCHIC = 1
+};
 
 }  // namespace goal
 
