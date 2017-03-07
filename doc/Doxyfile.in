@@ -109,7 +109,8 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_workset.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_discretization.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_field_types.hpp \
-@PROJECT_SOURCE_DIR@/src/goal_field.hpp
+@PROJECT_SOURCE_DIR@/src/goal_field.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_indexer.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
@@ -185,8 +186,8 @@ QHP_SECT_FILTER_ATTRS  =
 QHG_LOCATION           =
 GENERATE_ECLIPSEHELP   = NO
 ECLIPSE_DOC_ID         = org.doxygen.Project
-DISABLE_INDEX          = NO
-GENERATE_TREEVIEW      = NO
+DISABLE_INDEX          = YES
+GENERATE_TREEVIEW      = YES
 ENUM_VALUES_PER_LINE   = 4
 TREEVIEW_WIDTH         = 250
 EXT_LINKS_IN_WINDOW    = NO
