@@ -10,8 +10,7 @@ namespace goal {
 
 using Teuchos::rcp;
 
-SolutionInfo::SolutionInfo(RCP<Indexer> indexer, int n) {
-  num_qois = n;
+SolutionInfo::SolutionInfo(RCP<Indexer> indexer) {
   owned = rcp(new LinearObj);
   ghost = rcp(new LinearObj);
   auto om = indexer->get_owned_map();
@@ -22,14 +21,14 @@ SolutionInfo::SolutionInfo(RCP<Indexer> indexer, int n) {
   exporter = rcp(new Export(gm, om));
   owned->u = rcp(new Vector(om));
   owned->R = rcp(new Vector(om));
-  owned->dJdu = rcp(new Vector(om, num_qois));
-  owned->z = rcp(new Vector(om, num_qois));
+  owned->dJdu = rcp(new Vector(om));
+  owned->z = rcp(new Vector(om));
   owned->dRdu = rcp(new Matrix(og));
   ghost->u = rcp(new Vector(gm));
   ghost->R = rcp(new Vector(gm));
   ghost->dRdu = rcp(new Matrix(gg));
-  ghost->dJdu = rcp(new Vector(gm, num_qois));
-  ghost->z = rcp(new Vector(gm, num_qois));
+  ghost->dJdu = rcp(new Vector(gm));
+  ghost->z = rcp(new Vector(gm));
 }
 
 void SolutionInfo::gather_u() {

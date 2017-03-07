@@ -28,15 +28,11 @@ struct LinearObj {
   /** \brief The Jacobian matrix. */
   RCP<Matrix> dRdu;
 
-  /** \brief The functional derivative multi-vector.
-    * \details This can have potentially multiple columns corresponding
-    * to different functional quantities. */
-  RCP<MultiVector> dJdu;
+  /** \brief The functional derivative vector. */
+  RCP<Vector> dJdu;
 
-  /** \brief The dual solution multi-vector.
-    * \details This can have potentially multiple columns corresponding
-    * to different functional quantities. */
-  RCP<MultiVector> z;
+  /** \brief The dual solution vector. */
+  RCP<Vector> z;
 };
 
 /** \brief A container for the solution information required for primal
@@ -44,9 +40,8 @@ struct LinearObj {
 class SolutionInfo {
  public:
   /** \brief Construct the solution info container.
-    * \param indexer The relevant \ref goal::Indexer.
-    * \param num_qois The number of functional quantities of interest. */
-  SolutionInfo(RCP<Indexer> indexer, int num_qois=1);
+    * \param indexer The relevant \ref goal::Indexer. */
+  SolutionInfo(RCP<Indexer> indexer);
 
   /** \brief Transfer data from ghost->u to owned->u.
     * \details This is called with the Tpetra::INSERT directive. */
@@ -93,9 +88,6 @@ class SolutionInfo {
 
   /** \brief The ghost linear algebra data. */
   RCP<LinearObj> ghost;
-
-  /** \brief The number of functional quantities of interest. */
-  int num_qois;
 
  private:
   RCP<Import> importer;
