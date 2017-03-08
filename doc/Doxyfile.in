@@ -113,8 +113,9 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_indexer.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_solution_info.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_state_fields.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_traits.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_physics.hpp \
-@PROJECT_SOURCE_DIR@/src/goal_traits.hpp
+@PROJECT_SOURCE_DIR@/src/goal_assembly.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
