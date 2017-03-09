@@ -9,6 +9,7 @@ goal_state_fields.cpp
 goal_physics.cpp
 goal_assembly.cpp
 goal_ev_gather_scalar.cpp
+goal_ev_scalar_shape.cpp
 goal_ev_gather_vector.cpp
 )
 
