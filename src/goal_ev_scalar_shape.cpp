@@ -20,6 +20,7 @@ ScalarShape<EVALT, TRAITS>::ScalarShape(RCP<Field> f)
   num_nodes = field->get_num_elem_nodes();
   num_ips = field->get_num_elem_ips();
   num_dims = field->get_num_dims();
+  assert(field->get_value_type() == SCALAR);
 
   /* populate the dependency structure of this evaluator. */
   this->addEvaluatedField(wdv);
