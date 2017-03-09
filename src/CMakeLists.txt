@@ -8,6 +8,7 @@ goal_solution_info.cpp
 goal_state_fields.cpp
 goal_physics.cpp
 goal_assembly.cpp
+goal_ev_gather_scalar.cpp
 )
 
 set(Goal_HEADERS
@@ -24,6 +25,7 @@ goal_state_fields.hpp
 goal_physics.hpp
 goal_traits.hpp
 goal_assembly.hpp
+goal_ev_gather_scalar.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
