@@ -32,7 +32,7 @@ class GatherScalar;
   * evaluated fields  | data layout
   * ----------------  | -----------
   * u                 | (Elem, Node)
- */
+  */
 template <typename TRAITS>
 class GatherScalar<goal::Traits::Residual, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
@@ -48,7 +48,7 @@ class GatherScalar<goal::Traits::Residual, TRAITS>
   /** \endcond */
 
   /** \brief Construct the evaluator.
-    * \param f The scalar field to gather data from.
+    * \param f The scalar \ref goal::Field to gather data from.
     * \param i The current relevant indexer for DOF information. */
   GatherScalar(RCP<Field> f, RCP<Indexer> i);
 
@@ -94,8 +94,8 @@ class GatherScalar<goal::Traits::Jacobian, TRAITS>
   /** \endcond */
 
   /** \brief Construct the evaluator.
-    * \param f The scalar field to gather data from.
-    * \param i The current relevant indexer for DOF information. */
+    * \param f The scalar \ref goal::Field to gather data from.
+    * \param i The relevant \ref goal::Indexer for DOF information. */
   GatherScalar(RCP<Field> f, RCP<Indexer> i);
 
   /** \brief Finalize the field manager registration. */
