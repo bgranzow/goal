@@ -175,88 +175,88 @@ class Field {
     * \details
     * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, NODE)
-    * \ref goal::VECTOR     | (ELEM, NODE, DIM) */
+    * \ref goal::SCALAR     | (Elem, Node)
+    * \ref goal::VECTOR     | (Elem, Node, Dim) */
   RCP<PHX::DataLayout> get_dl();
 
   /** \brief Get the gradient data layout.
     * \details
     * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, NODE, DIM)
-    * \ref goal::VECTOR     | (ELEM, NODE, DIM, DIM) */
+    * \ref goal::SCALAR     | (Elem, Node, Dim)
+    * \ref goal::VECTOR     | (Elem, Node, Dim, Dim) */
   RCP<PHX::DataLayout> get_grad_dl();
 
   /** \brief Get the basis weight data layout.
     * \details
     * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, NODE, IP)
-    * \ref goal::VECTOR     | (ELEM, NODE, IP, DIM) */
+    * \ref goal::SCALAR     | (Elem, Node, IP)
+    * \ref goal::VECTOR     | (Elem, Node, IP, Dim) */
   RCP<PHX::DataLayout> get_weight_dl();
 
   /** \brief Get the basis gradient weight data layout.
     * \details
     * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, NODE, IP, DIM)
-    * \ref goal::VECTOR     | (ELEM, NODE, IP, DIM, DIM) */
+    * \ref goal::SCALAR     | (Elem, Node, IP, Dim)
+    * \ref goal::VECTOR     | (Elem, Node, IP, Dim, Dim) */
   RCP<PHX::DataLayout> get_grad_weight_dl();
 
   /** \brief Get the field interpolated to IPs data layout.
     * \details
     * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, IP)
-    * \ref goal::VECTOR     | (ELEM, IP, DIM) */
+    * \ref goal::SCALAR     | (Elem, IP)
+    * \ref goal::VECTOR     | (Elem, IP, Dim) */
   RCP<PHX::DataLayout> get_interpolated_dl();
 
   /** \brief Get the gradient of the field interpolated to IPs data layout.
     * \details
     * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, IP, DIM)
-    * \ref goal::VECTOR     | (ELEM, IP, DIM, DIM) */
+    * \ref goal::SCALAR     | (Elem, IP, Dim)
+    * \ref goal::VECTOR     | (Elem, IP, Dim, Dim) */
   RCP<PHX::DataLayout> get_grad_interpolated_dl();
 
   /** \brief Get the data layout of a partition of unity.
     * \details
-    * \ref goal::FieldType   | data layout
+    * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, NODE, IP)
-    * \ref goal::VECTOR     | (ELEM, NODE, IP, DIM) */
+    * \ref goal::SCALAR     | (Elem, Node, IP)
+    * \ref goal::VECTOR     | (Elem, Node, IP, Dim) */
   RCP<PHX::DataLayout> get_PU_dl();
 
   /** \brief Get the data layout of a partition of unity.
     * \details
-    * \ref goal::FieldType   | data layout
+    * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, NODE, IP)
-    * \ref goal::VECTOR     | (ELEM, NODE, IP, DIM) */
+    * \ref goal::SCALAR     | (Elem, Node, IP)
+    * \ref goal::VECTOR     | (Elem, Node, IP, Dim) */
   RCP<PHX::DataLayout> get_grad_PU_dl();
 
   /** \brief Get the data layout of the gradient of partition of unity.
     * \details
-    * \ref goal::FieldType   | data layout
+    * \ref goal::FieldType  | data layout
     * --------------------  | -----------
-    * \ref goal::SCALAR     | (ELEM, NODE, IP, DIM)
-    * \ref goal::VECTOR     | (ELEM, NODE, IP, DIM, DIM) */
+    * \ref goal::SCALAR     | (Elem, Node, IP, Dim)
+    * \ref goal::VECTOR     | (Elem, Node, IP, Dim, Dim) */
   RCP<PHX::DataLayout> get_residual_PU_dl();
 
   /** \brief Get the data layout of a scalar at IPs.
-    * \details data layout: (ELEM, IP) */
+    * \details data layout: (Elem, IP) */
   RCP<PHX::DataLayout> get_scalar_ip_dl();
 
   /** \brief Get the data layout of a vector at IPs.
-    * \details data layout: (ELEM, IP, DIM) */
+    * \details data layout: (Elem, IP, Dim) */
   RCP<PHX::DataLayout> get_vector_ip_dl();
 
   /** \brief Get the data layout of a tensor at IPs.
-    * \details data layout: (ELEM, IP, DIM, DIM) */
+    * \details data layout: (Elem, IP, Dim, Dim) */
   RCP<PHX::DataLayout> get_tensor_ip_dl();
 
   /** \brief Get the data layout of a scalar associated with elements.
-    * \details data layout: (ELEM) */
+    * \details data layout: (Elem) */
   RCP<PHX::DataLayout> get_elem_scalar_dl();
 
  private:
