@@ -1,6 +1,8 @@
 #ifndef GOAL_SOLUTION_INFO_HPP
 #define GOAL_SOLUTION_INFO_HPP
 
+/** \file goal_solution_info.hpp */
+
 #include "goal_data_types.hpp"
 
 namespace goal {

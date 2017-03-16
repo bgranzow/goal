@@ -1,6 +1,8 @@
 #ifndef GOAL_EV_VECTOR_SHAPE_HPP
 #define GOAL_EV_VECTOR_SHAPE_HPP
 
+/** \file goal_ev_vector_shape.hpp */
+
 #include <Phalanx_Evaluator_WithBaseImpl.hpp>
 #include <Phalanx_Evaluator_Derived.hpp>
 

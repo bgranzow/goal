@@ -1,6 +1,8 @@
 #ifndef GOAL_PHYSICS_HPP
 #define GOAL_PHYSICS_HPP
 
+/** \file goal_physics.hpp */
+
 #include <Phalanx_FieldManager.hpp>
 
 #include "goal_traits.hpp"

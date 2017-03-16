@@ -1,6 +1,8 @@
 #ifndef GOAL_FIELD_HPP
 #define GOAL_FIELD_HPP
 
+/** \file goal_field.hpp */
+
 #include <Teuchos_RCP.hpp>
 
 #include "goal_field_types.hpp"

@@ -1,6 +1,8 @@
 #ifndef GOAL_EV_INTERPOLATE_SCALAR_HPP
 #define GOAL_EV_INTERPOLATE_SCALAR_HPP
 
+/** \file goal_ev_interpolate_scalar.hpp */
+
 #include <Phalanx_Evaluator_Derived.hpp>
 #include <Phalanx_Evaluator_WithBaseImpl.hpp>
 
