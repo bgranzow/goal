@@ -13,10 +13,12 @@ It aims to provide a sandbox of analysis tools that:
 
 To get started:
 
-- browse the [development][0] documentation
-- see [this primer][1] on forward automatic differentation
-- see [this primer][2] on adjoint-based error estimation
+- view the [build instructions][0]
+- view the [development][1] documentation
+- view [this primer][2] on forward automatic differentation
+- view [this primer][3] on adjoint-based error estimation
 
-[0]:https://scorec.rpi.edu/~granzb/goal/index.html
-[1]:https://scorec.rpi.edu/~granzb/notes/fad/fad.pdf
-[2]:https://scorec.rpi.edu/~granzb/notes/adjoint/adjoint.pdf
+[0]:https://github.com/bgranzow/goal/BUILD.md
+[1]:https://scorec.rpi.edu/~granzb/goal/index.html
+[2]:https://scorec.rpi.edu/~granzb/notes/fad/fad.pdf
+[3]:https://scorec.rpi.edu/~granzb/notes/adjoint/adjoint.pdf
