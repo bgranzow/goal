@@ -18,7 +18,7 @@ To get started:
 - view [this primer][2] on forward automatic differentation
 - view [this primer][3] on adjoint-based error estimation
 
-[0]:https://github.com/bgranzow/goal/BUILD.md
+[0]:https://github.com/bgranzow/goal/blob/master/BUILD.md
 [1]:https://scorec.rpi.edu/~granzb/goal/index.html
 [2]:https://scorec.rpi.edu/~granzb/notes/fad/fad.pdf
 [3]:https://scorec.rpi.edu/~granzb/notes/adjoint/adjoint.pdf
