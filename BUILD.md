@@ -3,7 +3,7 @@
 To build Goal and its dependencies, you will need:
 - [git][0]
 - [CMake][1]
-- A C++11 compiler with MPI wrappers (e.g. [MPIC3][2])
+- A C++11 compiler with MPI wrappers (e.g. [MPICH3][2])
 
 The Goal library has required dependencies on:
 - [PUMI][3]
@@ -92,6 +92,7 @@ cd build
 * copy and modify do-config-scorec.sh in this location *
 ./do-config-scorec.sh
 make-j 4
+make install
 ```
 
 Note: the Zoltan dependency is provided by the
@@ -112,6 +113,8 @@ cd build
 cmake .. \
 -DCMAKE_CXX_COMPILER=<path-to-mpicxx> \
 -DCMAKE_INSTALL_PREFIX=<path-to-install>
+make -j 4
+make install
 
 ```
 
