@@ -17,7 +17,7 @@ class Field;
 /** \endcond */
 
 /** \brief Compute the shape functions associated with a scalar field.
-  * \details This evaluator fill in a multidimensional arrays for the
+  * \details This evaluator fill in multidimensional arrays for the
   * shape functions and the shape function gradients for elements local
   * to the workset. This shape is fully determined by the \ref goal::Field
   * input, where \ref goal::Field::get_apf_basis and
@@ -31,16 +31,16 @@ class Field;
   * evaluated fields  | data layout
   * ----------------  | -----------
   * wdv               | (Elem, IP)
-  * weight            | (Elem, Node, IP)
-  * grad_weight       | (Elem, Node, IP, Dim)
+  * shape             | (Elem, Node, IP)
+  * grad_shape        | (Elem, Node, IP, Dim)
   *
   * field descriptions:
   * - wdv, The differential volume (Jacobian) of the element evaluated at
   * an integration point, weighted by the numerical quadrature weight at
   * that integration point.
-  * - weight, The nodal shape functions associated with the input field
+  * - shape, The nodal shape functions associated with the input field
   * evaluated at integration points.
-  * - grad_weight, The gradients of the nodal shape functions associated
+  * - grad_shape, The gradients of the nodal shape functions associated
   * with the input field evaluated at integration points. */
 template <typename EVALT, typename TRAITS>
 class ScalarShape
