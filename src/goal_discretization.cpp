@@ -58,8 +58,9 @@ static void reorder_mesh(apf::Mesh2* mesh, RCP<const ParameterList> p) {
   mesh->verify();
 }
 
-static apf::StkModels* read_sets(apf::Mesh* m, RCP<const ParameterList> p) {
-  auto sets = new apf::StkModels;
+static void read_sets(
+    apf::StkModels** sets, apf::Mesh* m, RCP<const ParameterList> p) {
+  *sets = new apf::StkModels;
   auto fn = p->get<std::string>("assoc file");
   auto filename = fn.c_str();
   print("reading association file: %s", filename);
@@ -100,10 +101,23 @@ static apf::StkModels* read_sets(apf::Mesh* m, RCP<const ParameterList> p) {
       if (!set->ents.back())
         fail("no model entity with dim: %d and tag: %d", mdim, mtag);
     }
-    sets->models[sd].push_back(set);
+    (*sets)->models[sd].push_back(set);
   }
-  sets->computeInverse();
-  return sets;
+  (*sets)->computeInverse();
+}
+
+static bool set_associations(
+    apf::StkModels** sets, apf::Mesh2* m, RCP<const ParameterList> p) {
+  bool owns = true;
+  if (p->isType<std::string>("assoc file"))
+    read_sets(sets, m, p);
+  else if (p->isType<apf::StkModels*>("associations")) {
+    *sets = p->get<apf::StkModels*>("associations");
+    owns = false;
+  }
+  else
+    fail("unable to set apf associations");
+  return owns;
 }
 
 Discretization::Discretization(RCP<const ParameterList> p) {
@@ -111,7 +125,7 @@ Discretization::Discretization(RCP<const ParameterList> p) {
   validate_params(p);
   owns_mesh = set_mesh(&mesh, params);
   reorder_mesh(mesh, params);
-  sets = read_sets(mesh, params);
+  owns_sets = set_associations(&sets, mesh, params);
   num_dims = mesh->getDimension();
   ws_size = params->get<int>("workset size");
   print(" num element blocks: %d", get_num_elem_blocks());
@@ -125,6 +139,8 @@ Discretization::~Discretization() {
     mesh->destroyNative();
     apf::destroyMesh(mesh);
   }
+  if (sets && owns_sets)
+    delete sets;
 }
 
 void Discretization::update() {
