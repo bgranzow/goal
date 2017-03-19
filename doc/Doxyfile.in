@@ -120,7 +120,8 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_ev_scalar_shape.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_interpolate_scalar.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_gather_vector.hpp \
-@PROJECT_SOURCE_DIR@/src/goal_ev_vector_shape.hpp
+@PROJECT_SOURCE_DIR@/src/goal_ev_vector_shape.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_ev_interpolate_vector.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
