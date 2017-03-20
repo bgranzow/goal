@@ -28,6 +28,7 @@ template <typename TRAITS>
 void GatherScalar<goal::Traits::Residual, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   this->utils.setFieldData(u, fm);
+  (void)d;
 }
 
 template <typename TRAITS>
@@ -64,6 +65,7 @@ template <typename TRAITS>
 void GatherScalar<goal::Traits::Jacobian, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   this->utils.setFieldData(u, fm);
+  (void)d;
 }
 
 template <typename TRAITS>

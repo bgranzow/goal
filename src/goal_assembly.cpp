@@ -37,6 +37,7 @@ void assemble_neumann(
   f->template preEvaluate<EvalT>(*(i.get()));
   f->template evaluateFields<EvalT>(ws);
   f->template postEvaluate<EvalT>(*(i.get()));
+  (void)d;
 }
 
 template <typename EvalT>
@@ -46,6 +47,7 @@ void assemble_dirichlet(
   f->template preEvaluate<EvalT>(*(i.get()));
   f->template evaluateFields<EvalT>(ws);
   f->template postEvaluate<EvalT>(*(i.get()));
+  (void)d;
 }
 
 void compute_primal_residual(RCP<Physics> p, RCP<SolutionInfo> i,

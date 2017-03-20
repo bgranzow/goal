@@ -35,6 +35,7 @@ void ScalarShape<EVALT, TRAITS>::postRegistrationSetup(
   this->utils.setFieldData(wdv, fm);
   this->utils.setFieldData(shape, fm);
   this->utils.setFieldData(grad_shape, fm);
+  (void)d;
 }
 
 template <typename EVALT, typename TRAITS>

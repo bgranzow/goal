@@ -29,6 +29,7 @@ template <typename TRAITS>
 void GatherVector<goal::Traits::Residual, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   this->utils.setFieldData(u, fm);
+  (void)d;
 }
 
 template <typename TRAITS>
@@ -68,6 +69,7 @@ template <typename TRAITS>
 void GatherVector<goal::Traits::Jacobian, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   this->utils.setFieldData(u, fm);
+  (void)d;
 }
 
 template <typename TRAITS>

@@ -37,6 +37,7 @@ void InterpolateVector<EVALT, TRAITS>::postRegistrationSetup(
   this->utils.setFieldData(nodal, fm);
   this->utils.setFieldData(u, fm);
   this->utils.setFieldData(grad_u, fm);
+  (void)d;
 }
 
 template <typename EVALT, typename TRAITS>
