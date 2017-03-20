@@ -20,5 +20,6 @@ include(cmake/dependencies.cmake)
 
 add_subdirectory(src)
 add_subdirectory(doc)
+add_subdirectory(test)
 
 bob_end_package()

@@ -1,0 +1,12 @@
+if (NOT BUILD_TESTING)
+  return()
+endif()
+
+function(add_step number)
+  set(exename step${number})
+  set(srcname step${number}.cpp)
+  add_executable(${exename} ${srcname})
+  target_link_libraries(${exename} Goal)
+endfunction(add_step)
+
+add_step(1)

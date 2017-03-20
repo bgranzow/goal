@@ -1,0 +1,15 @@
+/** \page Step1 Step 1
+
+\tableofcontents
+
+\section step1-intro Introduction
+
+These are some words
+
+\section step1-main The main routine
+
+\snippet step1.cpp Step1 initialize
+
+These are some more words
+
+*/
