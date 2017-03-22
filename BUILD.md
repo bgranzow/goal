@@ -133,6 +133,6 @@ make install
 [12]:https://github.com/trilinos/Trilinos/tree/master/packages/minitensor
 [13]:http://www.boost.org
 [14]:http://glaros.dtc.umn.edu/gkhome/metis/parmetis/overview
-[15]:https://github.com/bgranzow/goal/aux/do-config-trilinos.sh
-[16]:https://github.com/bgranzow/goal/aux/do-config-scorec.sh
+[15]:https://github.com/bgranzow/goal/blob/master/aux/do-config-trilinos.sh
+[16]:https://github.com/bgranzow/goal/blob/master/aux/do-config-scorec.sh
 [17]:https://github.com/SCOREC/core/wiki/General-Build-instructions
