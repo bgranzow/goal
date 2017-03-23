@@ -25,6 +25,7 @@ To build these Trilinos packages, two external
 dependencies must first be built:
 - [boost][13]
 - [parmetis][14]
+- [yaml-cpp][15]
 
 #### Building boost
 
@@ -50,6 +51,7 @@ echo "using mpi : <path-to-mpicxx> ; " >> ~/user-config.jam
 git clone https://github.com/ibaned/parmetis.git
 cd parmetis
 mkdir build
+cd build
 cmake .. \
 -DCMAKE_INSTALL_PREFIX=<parmetis-install-dir> \
 -DCMAKE_C_COMPILER=<mpi-c-wrapper> \
@@ -58,9 +60,22 @@ make -j 4
 make install
 ```
 
+#### Building yaml-cpp
+
+```bash
+git clone https://github.com/jbeder/yaml-cpp.git
+cd yaml-cpp
+mkdir build
+cd build
+cmake .. \
+-DCMAKE_INSTALL_PREFIX=<yaml-cpp-install-dir>
+make -j 4
+make install
+```
+
 #### Building Trilinos
 
-An example Trilinos [configuration script][15] is
+An example Trilinos [configuration script][16] is
 provided with this source code. The first few lines
 of this configuration script need to be modified
 accordingly. To build Trilinos follow the steps:
@@ -78,9 +93,9 @@ make install
 
 ### Building PUMI
 
-An example PUMI [configuration script][16] is
+An example PUMI [configuration script][17] is
 provided with this source code. Additional information
-about PUMI can be found [here][17]. to build PUMI
+about PUMI can be found [here][18]. to build PUMI
 follow the steps:
 
 ```bash
@@ -115,7 +130,6 @@ cmake .. \
 -DCMAKE_INSTALL_PREFIX=<path-to-install>
 make -j 4
 make install
-
 ```
 
 [0]:https://git-scm.com
@@ -133,6 +147,7 @@ make install
 [12]:https://github.com/trilinos/Trilinos/tree/master/packages/minitensor
 [13]:http://www.boost.org
 [14]:http://glaros.dtc.umn.edu/gkhome/metis/parmetis/overview
-[15]:https://github.com/bgranzow/goal/blob/master/aux/do-config-trilinos.sh
-[16]:https://github.com/bgranzow/goal/blob/master/aux/do-config-scorec.sh
-[17]:https://github.com/SCOREC/core/wiki/General-Build-instructions
+[15]:https://github.com/jbeder/yaml-cpp
+[16]:https://github.com/bgranzow/goal/blob/master/aux/do-config-trilinos.sh
+[17]:https://github.com/bgranzow/goal/blob/master/aux/do-config-scorec.sh
+[18]:https://github.com/SCOREC/core/wiki/General-Build-instructions
