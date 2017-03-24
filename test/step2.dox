@@ -31,7 +31,43 @@ elements, as in \ref Step1.
 
 \section step2-assoc Creating model associations
 
+Next, we introduce an important concept of model associations.
+For more information, see the \ref Disc page. These model
+associations are stored in a `apf::StkModels` object.
+Once this object is created, we create single model
+`apf::StkModel` association for all of the elements in
+the created square mesh. We call this association an
+<em>element set</em>. We give this association the name
+"square" and associate this name with the geometric
+region uniquely specified by the dimension 2 and the
+tag 0. Additionally, we create a single model association
+for all of the nodes classified on the closure of all
+geometric edges in the created mesh. We call this
+association a <em>node set</em>. We give this association
+the name "edges" and associate this name with the
+geometric edges uniquely specified by the dimension 1
+and the tags: 0,1,2, and 3.
+
 \snippet step2.cpp Step2 create_assoc
+
+\section step2-disc Creating the discretization
+
+Using the newly created APF mesh and the model associations,
+we create a \ref goal::Discretization object. This is done
+by defining a `Teuchos::ParameterList` that specifies which
+APF and model associations data to use. For more information
+about the parameters for the Discretization object, view
+the \ref goal::Discretization page.
+
+\snippet step2.cpp Step2 create_disc
+
+\section step2-output Outputting data
+
+Finally, we output the mesh to file. This is acheived
+by creating a \ref goal::Output object and calling the
+method \ref goal::Output::write.
+
+\snippet step2.cpp Step2 output
 
 \section step2-main The main routine
 

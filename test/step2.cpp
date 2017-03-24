@@ -37,11 +37,11 @@ static apf::StkModels* create_associations(apf::Mesh2* m) {
   square->stkName = "square";
   square->ents.push_back(m->findModelEntity(2, 0));
   sets->models[dim].push_back(square);
-  auto sides = new apf::StkModel;
-  sides->stkName = "sides";
+  auto edges = new apf::StkModel;
+  edges->stkName = "edges";
   for (int i = 0; i < 4; ++i)
-    sides->ents.push_back(m->findModelEntity(1, i));
-  sets->models[0].push_back(sides);
+    edges->ents.push_back(m->findModelEntity(1, i));
+  sets->models[0].push_back(edges);
   sets->computeInverse();
   return sets;
 }
