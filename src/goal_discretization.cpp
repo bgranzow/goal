@@ -19,13 +19,13 @@ static RCP<ParameterList> get_valid_params() {
   p->set<std::string>("mesh file", "");
   p->set<std::string>("assoc file", "");
   p->set<bool>("reorder mesh", false);
-  p->set<apf::Mesh2*>("mesh", 0);
   p->set<int>("workset size", 0);
+  p->set<apf::Mesh2*>("mesh", 0);
+  p->set<apf::StkModels*>("associations", 0);
   return p;
 }
 
 static void validate_params(RCP<const ParameterList> p) {
-  assert(p->isType<std::string>("assoc file"));
   assert(p->isType<bool>("reorder mesh"));
   assert(p->isType<int>("workset size"));
   p->validateParameters(*get_valid_params(), 0);
@@ -106,12 +106,26 @@ static apf::StkModels* read_sets(apf::Mesh* m, RCP<const ParameterList> p) {
   return sets;
 }
 
+static bool set_associations(
+    apf::StkModels** sets, apf::Mesh2* m, RCP<const ParameterList> p) {
+  bool owns = true;
+  if (p->isType<std::string>("geom file") &&
+      p->isType<std::string>("mesh file"))
+    *sets = read_sets(m, p);
+  else if (p->isType<apf::StkModels*>("associations")) {
+    *sets = p->get<apf::StkModels*>("associations");
+    owns = false;
+  } else
+    fail("unable to set apf associations");
+  return owns;
+}
+
 Discretization::Discretization(RCP<const ParameterList> p) {
   params = p;
   validate_params(p);
   owns_mesh = set_mesh(&mesh, params);
   reorder_mesh(mesh, params);
-  sets = read_sets(mesh, params);
+  owns_sets = set_associations(&sets, mesh, params);
   num_dims = mesh->getDimension();
   ws_size = params->get<int>("workset size");
   print(" num element blocks: %d", get_num_elem_blocks());
@@ -125,6 +139,8 @@ Discretization::~Discretization() {
     mesh->destroyNative();
     apf::destroyMesh(mesh);
   }
+  if (sets && owns_sets)
+    delete sets;
 }
 
 void Discretization::update() {
