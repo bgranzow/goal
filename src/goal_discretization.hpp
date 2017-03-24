@@ -40,24 +40,17 @@ class Discretization {
     * mesh file       | std::string
     * assoc file      | std::string
     * reorder mesh    | bool
-    * workset size    | int
     * mesh            | apf::Mesh2*
-    * associations    | apf::StkModels*
+    * workset size    | int
     *
     * \details If the parameter 'mesh' exists, then the Discretization
     * object will be constructed from an existing APF mesh, otherwise,
     * a mesh will be loaded from file using the 'geom file' and
-    * 'mesh file' parameters. If the parameter 'associations' exists,
-    * then the Discretization object will be constructed using an
-    * existing associations data structure, otherwise, an
-    * associations data structure will be loaded from file using the
-    * 'assoc file' parameter. */
+    * 'mesh file' parameters. */
   Discretization(RCP<const ParameterList> p);
 
   /** \brief Discretization destructor.
-    * \details This will destroy the APF mesh if it was loaded from file.
-    * This will destroy the associations data structure if it was loaded
-    * from file. */
+    * \details This will destroy the APF mesh if it was loaded from file. */
   ~Discretization();
 
   /** \brief Update the discretization data structures.
@@ -124,7 +117,6 @@ class Discretization {
   void compute_side_sets();
   RCP<const ParameterList> params;
   bool owns_mesh;
-  bool owns_sets;
   int num_dims;
   int ws_size;
   apf::Mesh2* mesh;
