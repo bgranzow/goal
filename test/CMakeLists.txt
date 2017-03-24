@@ -11,3 +11,4 @@ function(add_step number)
 endfunction(add_step)
 
 add_step(1)
+add_step(2)

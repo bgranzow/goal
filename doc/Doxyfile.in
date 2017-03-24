@@ -103,6 +103,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = \
 @PROJECT_SOURCE_DIR@/doc/goal.dox \
+@PROJECT_SOURCE_DIR@/doc/disc.dox \
+\
 @PROJECT_SOURCE_DIR@/src/goal_data_types.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_control.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_dimension.hpp \
@@ -116,6 +118,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_traits.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_physics.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_assembly.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_output.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_gather_scalar.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_scalar_shape.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_interpolate_scalar.hpp \
@@ -124,7 +127,8 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_ev_interpolate_vector.hpp \
 \
 @PROJECT_SOURCE_DIR@/test/steps.dox \
-@PROJECT_SOURCE_DIR@/test/step1.dox
+@PROJECT_SOURCE_DIR@/test/step1.dox \
+@PROJECT_SOURCE_DIR@/test/step2.dox
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
@@ -133,7 +137,8 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
 EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           = \
- @PROJECT_SOURCE_DIR@/test/step1.cpp
+@PROJECT_SOURCE_DIR@/test/step1.cpp \
+@PROJECT_SOURCE_DIR@/test/step2.cpp
 EXAMPLE_PATTERNS       =
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             =

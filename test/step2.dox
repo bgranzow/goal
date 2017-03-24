@@ -1,0 +1,48 @@
+/** \page Step2 Step 2
+
+\tableofcontents
+
+\section step2-intro Introduction
+
+The Step 2 program introduces the concept of the
+\ref goal::Discretization and using the \ref goal::Output
+interface to write visualization output to VTK
+files that can be visualized with Paraview.
+
+\section step2-using Using statements
+
+First, several `using` statements are introduced
+for convencience. The Teuchos objects `rcp`
+and `RCP` are used to allocate and use smart-pointer
+objects, and the Teuchos `ParameterList` object is used
+to associate a string parameter name with an abstract
+data container. These `using` statements are included
+often throughout the \ref goal codebase.
+
+\snippet step2.cpp Step2 using
+
+\section step2-init Initialization and mesh loading
+
+Next, the parallel services are initialized and
+a simple square domain is meshed with simplical
+elements, as in \ref Step1.
+
+\snippet step2.cpp Step2 initialize
+
+\section step2-assoc Creating model associations
+
+\snippet step2.cpp Step2 create_assoc
+
+\section step2-main The main routine
+
+\snippet step2.cpp Step2 main
+
+The `step2.cpp` main routine brings all of the
+previously documented code together and executes
+it as follows:
+
+\section step2-all The uncommented code
+
+\snippet step2.cpp Step2 all
+
+*/

@@ -11,4 +11,8 @@ The aim of Goal is to provide a sandbox of analysis tools that:
 - and mesh adaptation
 - for execution on parallel machines
 
+To get started:
+- see the \ref Steps page
+- see the \subpage Disc page
+
 */
