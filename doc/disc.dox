@@ -1,0 +1,103 @@
+/** \page Disc Discretization information
+
+\tableofcontents
+
+\section disc_overview Discretization overview
+
+The Discretization class exists as a wrapper around an APF mesh data
+structrure. Its purpose is to provide the APF mesh with information that
+defines a domain definition of the problem to be solved, as well as to
+construct degree of freedom connectivity maps and graphs that are
+in turn used to construct Tpetra matrices and vectors.
+
+Currently, the Discretization class assumes that the APF mesh is
+a wrapper around the
+<a href=https://github.com/SCOREC/core/tree/master/mds>PUMI</a>
+mesh data structure. However, because the APF is a generic wrapper
+around mesh data structures, the Discretization class could be
+further abstracted in the future to support additional
+mesh data structures.
+
+\section algebra_objects Linear algebra objects
+
+The Discretization class constructs the following Tpetra linear algebra
+objects:
+
+- An owned Tpetra Map
+- A ghosted Tpetra Map
+- An owned Tpetra Graph
+- A ghosted Tpetra Graph
+
+More information about
+
+- Tpetra Maps can be found
+<a href=https://trilinos.org/docs/dev/packages/tpetra/doc/html/classTpetra_1_1Map.html>here</a>
+- Tpetra Graphs can be found
+<a href=https://trilinos.org/docs/dev/packages/tpetra/doc/html/classTpetra_1_1CrsGraph.html>here</a>
+
+In most finite element analysis codes, certain degrees of freedom are
+shared between parallel processes when they are located on or near part
+boundaries. We call degrees of freedom that are entirely local to a process
+<i>owned</i> and degrees of freedom that are shared between one or more
+processes <i>ghosted</i>. The maps and graphs that the Discretization
+constructs are related to the degrees of freedom of the abstract
+numerical analysis that is to be solved.
+
+The owned map describes the parallel distribution of owned degrees
+of freedom over processes. The ghosted map describes the parallel
+distribution of ghosted degrees of freedom over processes. These two maps
+are used to construct owned and ghosted Tpetra Vectors and Multivectors.
+Additionally they are used to construct Tpetra Import and Tpetra
+Export objects that are used to transfer information from
+owned->ghosted and from ghosted->owned.
+
+The owned graph describes a distributed graph of the sparsity pattern of
+the Jacobian matrix. The ghosted graph describes this sparsity pattern
+for ghosted degrees of freedom. The owned graph describes this sparsity
+pattern for owned degrees of freedom. These two graphs are used to
+construct owned and ghosted Tpetra Matrices. Additionally they are
+used to construct Tpetra Import and Tpetra Export objects that are used
+to transfer information from owned->ghosted and from ghosted->owned.
+
+These Tpetra objects are defined by the \ref goal_data_types.hpp file.
+
+For more information about Tpetra, see the tutorials
+<a href=https://trilinos.org/docs/dev/packages/tpetra/doc/html/Tpetra_Lesson01.html>here</a>
+
+\section domain_problem_definition Domain problem definition
+
+The input files used for \ref goal describe a complete domain definition
+of the problem to be solved. That is, specific properties of the problem
+are associated with geometric entities of the problem.
+
+\subsection element_sets Element sets
+
+Element sets are collections of mesh entities that are associated
+with one or more geometric regions. For instance, if one needed to
+define a multi-material problem with two materials, an element set
+for each material would be defined.
+
+\subsection facet_sets Side sets
+
+Side sets are collections of mesh entities of classified on
+a set of geometric edges for 2D meshes and geometric faces
+for 3D meshes. These sets are used to define Neumann boundary
+conditions. In principle, in \ref goal, mixed boundary conditions
+are considerd Neumann boundary conditions.
+
+\subsection node_sets Node sets
+
+Node sets are collections of mesh nodes classified on the closure
+of a set of geometric entities. These sets are used for the
+specification of Dirichlet boundary conditions.
+
+\subsection associations_file Model associations file
+
+    [set type] [set name] [number of geomtric entities in set]
+    [dimension of geometric entity] [ID of geometric entity]
+    [dimension of geometric entity] [ID of geometric entity]
+      .
+      .
+      .
+
+*/
