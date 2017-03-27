@@ -3,8 +3,8 @@
 
 /** \file goal_ev_vector_shape.hpp */
 
-#include <Phalanx_Evaluator_WithBaseImpl.hpp>
 #include <Phalanx_Evaluator_Derived.hpp>
+#include <Phalanx_Evaluator_WithBaseImpl.hpp>
 
 #include "goal_dimension.hpp"
 
@@ -43,12 +43,9 @@ class Field;
   * - grad_shape, The gradients of the nodal shape functions associated
   * with the input field evalauted at integration points. */
 template <typename EVALT, typename TRAITS>
-class VectorShape
-    : public PHX::EvaluatorWithBaseImpl<TRAITS>,
-      public PHX::EvaluatorDerived<EVALT, TRAITS> {
-
+class VectorShape : public PHX::EvaluatorWithBaseImpl<TRAITS>,
+                    public PHX::EvaluatorDerived<EVALT, TRAITS> {
  public:
-
   /** \cond */
   typedef typename TRAITS::SetupData SetupData;
   typedef typename TRAITS::PreEvalData PreEvalData;
@@ -68,7 +65,6 @@ class VectorShape
   void evaluateFields(EvalData workset);
 
  private:
-
   int num_nodes;
   int num_ips;
   int num_dims;
@@ -78,7 +74,6 @@ class VectorShape
   PHX::MDField<double, Elem, IP> wdv;
   PHX::MDField<double, Elem, Node, IP, Dim> shape;
   PHX::MDField<double, Elem, Node, IP, Dim, Dim> grad_shape;
-
 };
 
 }  // namespace goal

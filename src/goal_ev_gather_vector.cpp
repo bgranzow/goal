@@ -11,10 +11,7 @@ namespace goal {
 template <typename TRAITS>
 GatherVector<goal::Traits::Residual, TRAITS>::GatherVector(
     RCP<Field> f, RCP<Indexer> i)
-    : field(f),
-      indexer(i),
-      u(field->get_name(), field->get_dl()) {
-
+    : field(f), indexer(i), u(field->get_name(), field->get_dl()) {
   /* populate index dimensions for this evaluator. */
   assert(field->get_value_type() == VECTOR);
   num_nodes = field->get_num_elem_nodes();
@@ -51,10 +48,7 @@ void GatherVector<goal::Traits::Residual, TRAITS>::evaluateFields(
 template <typename TRAITS>
 GatherVector<goal::Traits::Jacobian, TRAITS>::GatherVector(
     RCP<Field> f, RCP<Indexer> i)
-    : field(f),
-      indexer(i),
-      u(field->get_name(), field->get_dl()) {
-
+    : field(f), indexer(i), u(field->get_name(), field->get_dl()) {
   /* populate index dimensions for this evaluator. */
   assert(field->get_value_type() == VECTOR);
   num_nodes = field->get_num_elem_nodes();

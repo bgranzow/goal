@@ -45,13 +45,10 @@ class Field;
   * to integration points, which are determined by the method
   * \ref goal::Field::get_q_degree. */
 template <typename EVALT, typename TRAITS>
-class InterpolateVector
-    : public PHX::EvaluatorWithBaseImpl<TRAITS>,
-      public PHX::EvaluatorDerived<EVALT, TRAITS> {
-
+class InterpolateVector : public PHX::EvaluatorWithBaseImpl<TRAITS>,
+                          public PHX::EvaluatorDerived<EVALT, TRAITS> {
  public:
-
-   /** \cond */
+  /** \cond */
   typedef typename TRAITS::SetupData SetupData;
   typedef typename TRAITS::PreEvalData PreEvalData;
   typedef typename TRAITS::PostEvalData PostEvalData;
@@ -70,7 +67,6 @@ class InterpolateVector
   void evaluateFields(EvalData workset);
 
  private:
-
   int num_nodes;
   int num_ips;
   int num_dims;

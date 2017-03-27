@@ -22,7 +22,7 @@ class SolutionInfo;
   * different evaluation types and the scalar types associated with those
   * evaluation types to peform generic evaluations of templated code.
   * Currently, goal implements two evaluation types:
-  * 
+  *
   * evaluation type | scalar type
   * --------------- | -----------
   * Residual        | double
@@ -42,7 +42,6 @@ class SolutionInfo;
   * <a href=https://trilinos.org/docs/dev/packages/phalanx/doc/html/index.html>
   * User's guide</a> */
 struct Traits : public PHX::TraitsBase {
-
   /** \brief Real data type = double. */
   typedef double RealType;
 
@@ -75,7 +74,6 @@ struct Traits : public PHX::TraitsBase {
 
   /** \brief Data passed into PHX::FieldManager::postEvaluate. */
   typedef SolutionInfo& PostEvalData;
-
 };
 
 }  // namespace goal
@@ -90,7 +88,8 @@ struct eval_scalar_types<goal::Traits::Residual> {
 
 template <>
 struct eval_scalar_types<goal::Traits::Jacobian> {
-  typedef Sacado::mpl::vector<goal::Traits::FadType, goal::Traits::RealType> type;
+  typedef Sacado::mpl::vector<goal::Traits::FadType, goal::Traits::RealType>
+      type;
 };
 /** \endcond */
 

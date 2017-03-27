@@ -23,14 +23,12 @@ using Teuchos::RCP;
 class Discretization;
 /** \endcond */
 
-
 /** \brief The state fields interface.
   * \details This structure attempts to make it easier to manage storing
   * and querying of state information defined at integration points in
   * applications that are developed using goal. */
 class StateFields {
  public:
-
   /** \brief Construct a state fields structure.
     * \param d The relevant \ref goal::Discretization.
     * \param q_degree The quadrature degree to use for these states. */

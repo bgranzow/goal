@@ -139,8 +139,7 @@ Discretization::~Discretization() {
     mesh->destroyNative();
     apf::destroyMesh(mesh);
   }
-  if (sets && owns_sets)
-    delete sets;
+  if (sets && owns_sets) delete sets;
 }
 
 void Discretization::update() {

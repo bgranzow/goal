@@ -13,7 +13,6 @@ InterpolateScalar<EVALT, TRAITS>::InterpolateScalar(RCP<Field> f)
       nodal(f->get_name(), f->get_dl()),
       u(f->get_name(), f->get_interpolated_dl()),
       grad_u(f->get_grad_name(), f->get_grad_interpolated_dl()) {
-
   /* populate the index dimensions for this evaluator. */
   num_nodes = field->get_num_elem_nodes();
   num_ips = field->get_num_elem_ips();

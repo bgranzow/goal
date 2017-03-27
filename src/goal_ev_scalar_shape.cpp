@@ -15,7 +15,6 @@ ScalarShape<EVALT, TRAITS>::ScalarShape(RCP<Field> f)
       wdv(f->get_wdv_name(), f->get_scalar_ip_dl()),
       shape(f->get_basis_name(), f->get_weight_dl()),
       grad_shape(f->get_grad_basis_name(), f->get_grad_weight_dl()) {
-
   /* populate the index dimensions for this evaluator. */
   num_nodes = field->get_num_elem_nodes();
   num_ips = field->get_num_elem_ips();

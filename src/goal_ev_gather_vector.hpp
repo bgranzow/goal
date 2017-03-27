@@ -38,7 +38,6 @@ class GatherVector<goal::Traits::Residual, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Residual, TRAITS> {
  public:
-
   /** \cond */
   typedef typename TRAITS::SetupData SetupData;
   typedef typename TRAITS::PreEvalData PreEvalData;
@@ -85,7 +84,6 @@ class GatherVector<goal::Traits::Jacobian, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Jacobian, TRAITS> {
  public:
-
   /** \cond */
   typedef typename TRAITS::SetupData SetupData;
   typedef typename TRAITS::PreEvalData PreEvalData;
@@ -93,7 +91,6 @@ class GatherVector<goal::Traits::Jacobian, TRAITS>
   typedef typename TRAITS::EvalData EvalData;
   typedef typename goal::Traits::Jacobian::ScalarT ScalarT;
   /** \endcond */
-
 
   /** \brief Construct the evaluator.
     * \param f The vector \ref goal::Field to gather data from.

@@ -38,7 +38,6 @@ class GatherScalar<goal::Traits::Residual, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Residual, TRAITS> {
  public:
-
   /** \cond */
   typedef typename TRAITS::SetupData SetupData;
   typedef typename TRAITS::PreEvalData PreEvalData;
@@ -84,7 +83,6 @@ class GatherScalar<goal::Traits::Jacobian, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Jacobian, TRAITS> {
  public:
-
   /** \cond */
   typedef typename TRAITS::SetupData SetupData;
   typedef typename TRAITS::PreEvalData PreEvalData;

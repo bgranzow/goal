@@ -52,7 +52,6 @@ class Discretization;
   * \ref goal::Physics::get_dirichlet */
 class Physics {
  public:
-
   /** \brief Construct the physics given a \ref goal::Discretization. */
   Physics(RCP<Discretization> d);
 
@@ -80,7 +79,7 @@ class Physics {
 
   /** \brief Returns the error fields on mesh vertices (PU). */
   std::vector<RCP<Field> > get_e() { return e; }
-  
+
   /** \brief Returns the solution fields on the fine space. */
   std::vector<RCP<Field> > get_u_fine() { return u_fine; }
 

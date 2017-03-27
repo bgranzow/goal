@@ -20,7 +20,6 @@ class Discretization;
   * algebra data structures that are required for both primal and
   * dual solves. */
 struct LinearObj {
-
   /** \brief The DOF solution vector. */
   RCP<Vector> u;
 

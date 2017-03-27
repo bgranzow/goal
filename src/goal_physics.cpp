@@ -76,11 +76,8 @@ void Physics::destroy_model() {
   dirichlet_fm = Teuchos::null;
 }
 
-static void build_enriched_primal_field(
-    int q,
-    RCP<Field> u,
-    RCP<Discretization> disc,
-    std::vector<RCP<Field> >& u_fine) {
+static void build_enriched_primal_field(int q, RCP<Field> u,
+    RCP<Discretization> disc, std::vector<RCP<Field> >& u_fine) {
   auto idx = u->get_associated_dof_idx();
   auto n = u->get_name() + "_fine";
   auto t = u->get_value_type();
@@ -94,10 +91,7 @@ static void build_enriched_primal_field(
   project_field(u_fine.back(), u);
 }
 
-static void build_dual_field(
-    int q,
-    RCP<Field> u,
-    RCP<Discretization> disc,
+static void build_dual_field(int q, RCP<Field> u, RCP<Discretization> disc,
     std::vector<RCP<Field> >& z) {
   auto idx = u->get_associated_dof_idx();
   auto n = u->get_name() + "_dual";
@@ -111,11 +105,8 @@ static void build_dual_field(
   z.back()->set_seed(0.0);
 }
 
-static void build_enriched_dual_field(
-    int q,
-    RCP<Field> u,
-    RCP<Discretization> disc,
-    std::vector<RCP<Field> >& z_fine) {
+static void build_enriched_dual_field(int q, RCP<Field> u,
+    RCP<Discretization> disc, std::vector<RCP<Field> >& z_fine) {
   auto idx = u->get_associated_dof_idx();
   auto n = u->get_name() + "_dual_fine";
   auto t = u->get_value_type();
@@ -129,9 +120,7 @@ static void build_enriched_dual_field(
 }
 
 static void build_error_field(
-    RCP<Field> u,
-    RCP<Discretization> disc,
-    std::vector<RCP<Field> >& e) {
+    RCP<Field> u, RCP<Discretization> disc, std::vector<RCP<Field> >& e) {
   auto idx = u->get_associated_dof_idx();
   auto n = u->get_name() + "_error";
   auto t = u->get_value_type();
@@ -144,10 +133,16 @@ static void build_error_field(
 
 static int get_q_degree(int p) {
   int q = 0;
-  switch(p) {
-    case 1: q = 1; break;
-    case 2: q = 2; break;
-    case 3: q = 4; break;
+  switch (p) {
+    case 1:
+      q = 1;
+      break;
+    case 2:
+      q = 2;
+      break;
+    case 3:
+      q = 4;
+      break;
   }
   return q;
 }

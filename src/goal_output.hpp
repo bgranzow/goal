@@ -57,6 +57,6 @@ class Output {
   int index;
 };
 
-} // namesapce goal
+}  // namesapce goal
 
 #endif

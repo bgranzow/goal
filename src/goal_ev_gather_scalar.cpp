@@ -11,10 +11,7 @@ namespace goal {
 template <typename TRAITS>
 GatherScalar<goal::Traits::Residual, TRAITS>::GatherScalar(
     RCP<Field> f, RCP<Indexer> i)
-    : field(f),
-      indexer(i),
-      u(field->get_name(), field->get_dl()) {
-
+    : field(f), indexer(i), u(field->get_name(), field->get_dl()) {
   /* populate the index dimensions for this evaluator. */
   num_nodes = field->get_num_elem_nodes();
   assert(field->get_value_type() == SCALAR);
@@ -48,10 +45,7 @@ void GatherScalar<goal::Traits::Residual, TRAITS>::evaluateFields(
 template <typename TRAITS>
 GatherScalar<goal::Traits::Jacobian, TRAITS>::GatherScalar(
     RCP<Field> f, RCP<Indexer> i)
-    : field(f),
-      indexer(i),
-      u(field->get_name(), field->get_dl()) {
-
+    : field(f), indexer(i), u(field->get_name(), field->get_dl()) {
   /* populate the dimension information */
   num_nodes = field->get_num_elem_nodes();
   assert(field->get_value_type() == SCALAR);
