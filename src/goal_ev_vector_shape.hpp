@@ -79,10 +79,6 @@ class VectorShape
   PHX::MDField<double, Elem, Node, IP, Dim> shape;
   PHX::MDField<double, Elem, Node, IP, Dim, Dim> grad_shape;
 
-
-
-
-
 };
 
 }  // namespace goal
