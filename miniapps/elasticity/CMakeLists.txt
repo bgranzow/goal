@@ -1,4 +1,4 @@
-if(NOT GOAL_ENABLE_ELASTICITY)
+if(NOT Goal_ENABLE_ELASTICITY)
   return()
 endif()
 

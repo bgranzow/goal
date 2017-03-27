@@ -46,7 +46,7 @@ struct Traits : public PHX::TraitsBase {
   typedef double RealType;
 
   /** \brief Forward automatic differentiation type. */
-  typedef Sacado::Fad::SLFad<RealType, GOAL_FAD_SIZE> FadType;
+  typedef Sacado::Fad::SLFad<RealType, Goal_FAD_SIZE> FadType;
 
   /** \brief Residual evaluation type. */
   struct Residual {

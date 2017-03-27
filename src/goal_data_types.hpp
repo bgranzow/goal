@@ -26,7 +26,7 @@ typedef long long GO;
 typedef double ST;
 
 /** \brief Forward automatic differentiation type. */
-typedef Sacado::Fad::SLFad<ST, GOAL_FAD_SIZE> FadType;
+typedef Sacado::Fad::SLFad<ST, Goal_FAD_SIZE> FadType;
 
 /** \brief Parallel communication type. */
 typedef Teuchos::Comm<int> Comm;

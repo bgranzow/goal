@@ -41,7 +41,7 @@ goal_ev_interpolate_vector.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
-target_compile_definitions(Goal PUBLIC "-DGOAL_FAD_SIZE=${GOAL_FAD_SIZE}")
+target_compile_definitions(Goal PUBLIC "-DGoal_FAD_SIZE=${Goal_FAD_SIZE}")
 target_include_directories(Goal PUBLIC
   ${Trilinos_INCLUDE_DIRS}
   ${Trilinos_TPL_INCLUDE_DIRS}
