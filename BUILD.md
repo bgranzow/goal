@@ -127,10 +127,43 @@ mkdir build
 cd build
 cmake .. \
 -DCMAKE_CXX_COMPILER=<path-to-mpicxx> \
--DCMAKE_INSTALL_PREFIX=<path-to-install>
+-DCMAKE_INSTALL_PREFIX=<path-to-install> \
+-DTrilinos_PREFIX=<path-to-trilinos-install> \
+-DScorec_PREFIX=<path-to-pumi-install>
 make -j 4
 make install
 ```
+
+#### Configure options
+
+For more advanced configuration, a description of
+available options is provided below:
+
+* REQUIRED: set `-DCMAKE_CXX_COMPILER` to the relevant mpi c++ compiler.
+* REQUIRED: set `-DTrilinos_PREFIX` to point to the Trilinos installation.
+* REQUIRED: set `-DScorec_PREFIX` to point to the PUMI installation.
+* REQUIRED: set `-DCMAKE_INSTALL_PREFIX` to indicate the goal install location.
+* OPTIONAL: set CXX compiler flags.
+  * Note: `-DCMAKE_CXX_FLAGS` does not affect the build.
+  * `-DGoal_CXX_OPTIMIZE` defaults to `ON` to set the CXX flag `"-O2"`.
+  * `-DGoal_CXX_SYMBOLS` defaults to `ON` to set the CXX flag `"-g"`.
+  * `-DGoal_CXX_WARNINGS` defaults to `ON` to set the CXX flags
+  `-Wall -Wextra -Werror`
+  * set `-DGoal_EXTRA_CXX_FLAGS` to specify CXX flags in addition
+  to the above flags.
+  * (For advanced usage) set `-DGoal_CXX_FLAGS` to override all CXX flags.
+* OPTIONAL: set `-DGoal_ENABLE_POISSON=ON` to enable the poisson's equation
+adaptive mini-application (default=`OFF`).
+* OPTIONAL: set `-DGoal_ENABLE_ELASTICITY=ON` to enable the elasticity
+mini-application (default=`OFF`).
+* OPTIONAL: set `-DGoal_ENABLE_ALL_APPS=ON` to enable all mini-application
+codes (default=`OFF`).
+* OPTIONAL: set `-DGoal_DATA` to point to the [goal-data][19] repository.
+This finds input data files (e.g. meshes and geometry files) for the
+goal steps and mini-application examples (default=`""`)
+* OPTIONAL: set `-DGoal_FAD_SIZE` to an integer value that denotes the
+maximum derivative array size for static forward automatic differentiation
+variables.
 
 [0]:https://git-scm.com
 [1]:https://cmake.org
@@ -151,3 +184,4 @@ make install
 [16]:https://github.com/bgranzow/goal/blob/master/aux/do-config-trilinos.sh
 [17]:https://github.com/bgranzow/goal/blob/master/aux/do-config-scorec.sh
 [18]:https://github.com/SCOREC/core/wiki/General-Build-instructions
+[19]:https://github.com/bgranzow/goal-data
