@@ -24,7 +24,7 @@ using Teuchos::RCP;
   * \details This evaluator fills in multidimensional arrays for the residual
   * of Poisson's equation, corresponding to
   * \f[
-  * \mathcal{R} (w, u) := ( \nabla w,  \nabla w) - (w, f).
+  * \mathcal{R} (w, u) := ( \nabla w,  \nabla u) - (w, f).
   * \f]
   *
   * dependent fields  | data layout
@@ -45,7 +45,7 @@ using Teuchos::RCP;
   * - w, The nodal weighting function.
   * - grad_w, The gradient of the nodal weighting function.
   * - grad_u, The gradient of the solution function, as determined by
-  * ref \goal::InterpolateScalar. */
+  * \ref goal::InterpolateScalar. */
 template <typename EVALT, typename TRAITS>
 class Residual : public PHX::EvaluatorWithBaseImpl<TRAITS>,
                  public PHX::EvaluatorDerived<EVALT, TRAITS> {
@@ -63,14 +63,14 @@ class Residual : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   /** \endcond */
 
   /** \brief Construct the evaluator for the forward or dual model.
-    * \param f The scalar solution \ref goal::Field.
+    * \param u The scalar solution \ref goal::Field.
     * \param source The forcing function \f$ f \f$ for the problem. */
   Residual(RCP<goal::Field> u, std::string const& source);
 
   /** \brief Construct the evaluator for the error model.
     * \param u The scalar solution \ref goal::Field on the fine-scale space
     * \f$ V^h \f$.
-    * \param w The scalar dual solution \ref goal::Field on the fine-scale
+    * \param z The scalar dual solution \ref goal::Field on the fine-scale
     * space \f$ V^h \f$.
     * \param source The forcing function \f$ f \f$ for the problem. */
   Residual(RCP<goal::Field> u, RCP<goal::Field> z, std::string const& source);
