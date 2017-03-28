@@ -126,9 +126,9 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_ev_vector_shape.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_interpolate_vector.hpp \
 \
-@PROJECT_SOURCE_DIR@/test/steps.dox \
-@PROJECT_SOURCE_DIR@/test/step1.dox \
-@PROJECT_SOURCE_DIR@/test/step2.dox
+@PROJECT_SOURCE_DIR@/test/steps/steps.dox \
+@PROJECT_SOURCE_DIR@/test/steps/step1.dox \
+@PROJECT_SOURCE_DIR@/test/steps/step2.dox
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
@@ -137,8 +137,8 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
 EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           = \
-@PROJECT_SOURCE_DIR@/test/step1.cpp \
-@PROJECT_SOURCE_DIR@/test/step2.cpp
+@PROJECT_SOURCE_DIR@/test/steps/step1.cpp \
+@PROJECT_SOURCE_DIR@/test/steps/step2.cpp
 EXAMPLE_PATTERNS       =
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             =
