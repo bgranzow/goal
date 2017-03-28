@@ -121,7 +121,7 @@ Once the required dependencies have been installed,
 Goal can be built by following the steps:
 
 ```bash
-git clone https://bgranzow/goal
+git clone https://github.com/bgranzow/goal
 cd goal
 mkdir build
 cd build
