@@ -1,0 +1,20 @@
+poisson example:
+  num adapt cycles: 5
+  discretization:
+    geom file: ${Goal_DATA}/lshape/lshape.dmg
+    mesh file: ${Goal_DATA}/lshape/lshape-serial.smb
+    assoc file: ${Goal_DATA}/lshape/assoc.txt
+    reorder mesh: true
+    workset size: 1000
+  physics:
+    forcing function: 1.0 + 0.0
+    functional type: point
+    point set: point
+    dirichlet bcs:
+      bc 1: [0,0,all,0.0]
+  linear algebra:
+    linear tolerance: 1.0e-10
+    linear krylov size: 300
+    linear max iters: 300
+  output:
+    out file: out_poisson
