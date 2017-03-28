@@ -1,0 +1,131 @@
+/** \page DBCs Dirichlet boundary conditions
+
+\tableofcontents
+
+\section dbcs_intro Introduction
+
+\subsection dbcs_forward The forward problem
+
+In general, \ref goal takes a residual-based viewpoint
+for finite elmeent assembly and the solution of linear
+algebra systems. Consider the system of \f$ n \f$
+(in general) nonlinear algebraic equations defined
+by equating a residual vector to zero \f$ R(u) = 0 \f$,
+where \f$ R: \mathbb{R}^n \to \mathbb{R}^n \f$, and
+\f$ u \in \mathbb{R}^n \f$ is the solution vector.
+To solve this system of nonlinear algebraic equations,
+Newton's method is used, iterating over the steps:
+
+\f{align*}{
+\left[ \frac{\partial R}{\partial u} \right] \biggr|_{u^{(n)}} 
+\; \delta u^{(n)} &= -R(u^{(n)}), \\
+u^{(n+1)} &= u^{(n)} + \delta u^{(n)}
+\f}
+
+until a sutiable convergence criteria has been reached
+(e.g. \f$ \| R \| \leq \epsilon_{\text{tol}} \f$). Here
+\f$ \delta u \f$ represents an incremental update to the
+solution vector, and \f$ \frac{\partial R}{\partial u} \in
+\mathbb{R}^{n \times n} \f$ represents the Jacobian matrix.
+Note that this approach does not preclude
+solving purely linear variational problems, as an initial
+guess of \f$ 0 \f$ will yield identically the stiffness
+matrix and right hand side obtained by a classical
+FEM application code. In \ref goal, however, users are
+not required to implement Jacobian specific element-level
+matrix calculations. Rather, element-level Jacobian matrices
+are computed via forward automatic differentiation.
+
+\subsection dbcs_dual The dual problem
+
+add some documentation here...
+
+\section dbcs_rows Full system: zeroing rows
+
+\subsection dbcs_rows_forward The forward problem
+
+Let us consider specifying the Dirichlet boundary
+condition \f$ u = g \f$ for some portion of the domain
+boundary. In perhaps the simplest approach for specifying
+Dirichlet boundary conditions, the matrix row \f$ i \f$
+corresponding to the appropriate degree of freedom is
+zeroed out, and a one is placed in the diagonal entry
+of this row. This presents the question, how must the
+residual vector be modified so that the solution vector
+satisfies exactly \f$ u_i = g_i \f$? For simplicity, let's
+consider a simple case with \f$ 3 \f$ degrees of freedom,
+where we would like to specify \f$ u_1 = g_1 \f$ for the
+first degree of freedom, and leave the other degrees of
+freedom unconstrained. (Note: in this context, calling
+\f$ u_1 \f$ a degree of freedom is a misnomer, as it
+is fully constrained). Zeroing out the first row and placing
+a one on the diagonal yields the system:
+
+\f[
+\begin{bmatrix}
+1       & 0       & 0       \\
+J_{21}  & J_{22}  & J_{23}  \\
+J_{31}  & J_{32}  & J_{33} 
+\end{bmatrix}
+
+\begin{bmatrix}
+\delta u_1^{(n)} \\
+\delta u_2^{(n)} \\
+\delta u_3^{(n)}
+\end{bmatrix}
+
+=
+
+-
+\begin{bmatrix}
+R_1 \\
+R_2 \\
+R_3
+\end{bmatrix}
+\f]
+
+Rather than specifying \f$ \delta u_1 = -R_1 \f$, we would
+like to ensure that
+
+\f[
+u_1^{(n+1)} = \delta u_1^{(n)} + u_1^{(n)} = g_1
+\f]
+
+Making the substitution \f$ \delta u_1^{(n)} = -R_1 \f$ into the
+previous equation, it becomes clear that the desired modification
+for the residual vector is:
+
+\f[
+R_1 = u_1^{(n)} - g_1
+\f]
+
+Such a selection will ensure that \f$ u_1 = g_1 \f$ for all
+nonlinear iterations during Newton's method. In general, if
+we would like to constrain \f$ u_i = g_i \f$ for some \f$ i \f$,
+we update the residual vector at each nonlinear iteration as:
+
+\f[
+R_i = u_i^{(n)} - g_i
+\f]
+
+\subsection dbcs_rows_dual The dual problem
+
+add some documentation here...
+
+\section dbcs_rows_cols Full system: zeroing rows and columns
+
+Note that the previous approach destroys the symmetry of
+the problem. To preserve symmetry, it would be useful to
+zero out rows and columns corresponding to degrees of freedom.
+This is ongoing work...
+
+\section dbcs_note Note
+Note that since \ref goal is a library, users are not simply
+constrained to use the approaches discussed above, nor should
+they be limited to only solving systems with Newton's method.
+\ref goal seeks to provide users a convenient way
+to build their own application-specific solvers, and perhaps
+with time, users will come up with new and creative ways
+to implement a variety of solvers.
+
+*/

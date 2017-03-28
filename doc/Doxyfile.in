@@ -104,6 +104,7 @@ WARN_LOGFILE           =
 INPUT                  = \
 @PROJECT_SOURCE_DIR@/doc/goal.dox \
 @PROJECT_SOURCE_DIR@/doc/disc.dox \
+@PROJECT_SOURCE_DIR@/doc/bcs.dox \
 \
 @PROJECT_SOURCE_DIR@/src/goal_data_types.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_control.hpp \
@@ -228,13 +229,13 @@ EXTRA_SEARCH_MAPPINGS  =
 #---------------------------------------------------------------------------
 # Configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
-GENERATE_LATEX         = YES
+GENERATE_LATEX         = NO
 LATEX_OUTPUT           = latex
 LATEX_CMD_NAME         = latex
 MAKEINDEX_CMD_NAME     = makeindex
 COMPACT_LATEX          = NO
 PAPER_TYPE             = a4
-EXTRA_PACKAGES         =
+EXTRA_PACKAGES         = amsmath amssymb
 LATEX_HEADER           =
 LATEX_FOOTER           =
 LATEX_EXTRA_STYLESHEET =
