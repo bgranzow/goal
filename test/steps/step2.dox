@@ -2,14 +2,14 @@
 
 \tableofcontents
 
-\section step2-intro Introduction
+\section step2_intro Introduction
 
 The Step 2 program introduces the concept of the
 \ref goal::Discretization and using the \ref goal::Output
 interface to write visualization output to VTK
 files that can be visualized with Paraview.
 
-\section step2-using Using statements
+\section step2_using Using statements
 
 First, several `using` statements are introduced
 for convencience. The Teuchos objects `rcp`
@@ -21,7 +21,7 @@ often throughout the \ref goal codebase.
 
 \snippet step2.cpp Step2 using
 
-\section step2-init Initialization and mesh loading
+\section step2_init Initialization and mesh loading
 
 Next, the parallel services are initialized and
 a simple square domain is meshed with simplical
@@ -29,7 +29,7 @@ elements, as in \ref Step1.
 
 \snippet step2.cpp Step2 initialize
 
-\section step2-assoc Creating model associations
+\section step2_assoc Creating model associations
 
 Next, we introduce an important concept of model associations.
 For more information, see the \ref Disc page. These model
@@ -50,7 +50,7 @@ and the tags: 0,1,2, and 3.
 
 \snippet step2.cpp Step2 create_assoc
 
-\section step2-disc Creating the discretization
+\section step2_disc Creating the discretization
 
 Using the newly created APF mesh and the model associations,
 we create a \ref goal::Discretization object. This is done
@@ -61,7 +61,7 @@ the \ref goal::Discretization page.
 
 \snippet step2.cpp Step2 create_disc
 
-\section step2-output Outputting data
+\section step2_output Outputting data
 
 Finally, we output the mesh to file. This is acheived
 by creating a \ref goal::Output object and calling the
@@ -69,7 +69,7 @@ method \ref goal::Output::write.
 
 \snippet step2.cpp Step2 output
 
-\section step2-main The main routine
+\section step2_main The main routine
 
 \snippet step2.cpp Step2 main
 
@@ -77,7 +77,7 @@ The `step2.cpp` main routine brings all of the
 previously documented code together and executes
 it as follows:
 
-\section step2-all The uncommented code
+\section step2_all The uncommented code
 
 \snippet step2.cpp Step2 all
 

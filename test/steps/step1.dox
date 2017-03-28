@@ -2,7 +2,7 @@
 
 \tableofcontents
 
-\section step1-intro Introduction
+\section step1_intro Introduction
 
 The Step 1 program provides a very minimal introduction
 to a few \ref goal and APF API functions. In this step,
@@ -10,7 +10,7 @@ the initialization and finalization of the parallel
 services is covered, and a simple square mesh is
 created and destroyed.
 
-\section step1-main The main routine
+\section step1_main The main routine
 
 In this section, the main routine of step1.cc is explained
 line by line. For more information on a specific \ref goal
