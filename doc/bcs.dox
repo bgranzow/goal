@@ -38,7 +38,17 @@ are computed via forward automatic differentiation.
 
 \subsection dbcs_dual The dual problem
 
-add some documentation here...
+Given a functional quantity \f$ J: \mathbb{R}^n \to \mathbb{R} \f$,
+the discrete dual problem corresponding to the forward problem,
+is given by a linear system of the form:
+
+\f[
+\left[ \frac{\partial R}{\partial u} \right]^T z =
+\frac{\partial J}{\partial u}
+\f]
+
+where corresponding Dirichlet boundary conditions for the
+forward problem are homogenized.
 
 \section dbcs_rows Full system: zeroing rows
 
@@ -63,9 +73,9 @@ a one on the diagonal yields the system:
 
 \f[
 \begin{bmatrix}
-1       & 0       & 0       \\
-J_{21}  & J_{22}  & J_{23}  \\
-J_{31}  & J_{32}  & J_{33} 
+1                 & 0                 & 0                 \\
+\mathcal{J}_{21}  & \mathcal{J}_{22}  & \mathcal{J}_{23}  \\
+\mathcal{J}_{31}  & \mathcal{J}_{32}  & \mathcal{J}_{33} 
 \end{bmatrix}
 
 \begin{bmatrix}
@@ -110,7 +120,46 @@ R_i = u_i^{(n)} - g_i
 
 \subsection dbcs_rows_dual The dual problem
 
-add some documentation here...
+Again, let us consider a simple \f$ 3 \f$ degree of freedom
+system, where we would like to constrain \f$ u_1 = g_1 \f$
+for the forward problem. The corresponding dual degree of
+freedom is homogenized at this boundary condition, meaning
+we must specify \f$ z_1 = 0 \f$. Since the dual problem is
+linear (in contrast to the generally nonlinear forward
+problem), we can achieve this simply by zeroing out the
+first row, placing a one on its diagonal, and placing
+a zero in the first row of the right hand side vector,
+as shown below:
+
+\f[
+\begin{bmatrix}
+1                   & 0                  & 0                  \\
+\mathcal{J}^T_{21}  & \mathcal{J}^T_{22} & \mathcal{J}^T_{23} \\
+\mathcal{J}^T_{31}  & \mathcal{J}^T_{32} & \mathcal{J}^T_{33}
+\end{bmatrix}
+
+\begin{bmatrix}
+z_1 \\
+z_2 \\
+z_3
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+0 \\
+\left[ {\partial J}/{\partial u} \right]_2 \\
+\left[ {\partial J}/{\partial u} \right]_3
+\end{bmatrix}
+\f]
+
+In general for Dirichlet constraints \f$ u_i = g_i \f$ for
+the forward problem, we constrain the functional derivative
+vector for the dual problem as:
+
+\f[
+\left[ \frac{\partial J}{\partial u} \right]_i = 0.
+\f]
 
 \section dbcs_rows_cols Full system: zeroing rows and columns
 
