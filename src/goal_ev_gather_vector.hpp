@@ -51,7 +51,7 @@ class GatherVector<goal::Traits::Residual, TRAITS>
     * \param i The relevant \ref goal::Indexer for DOF information. */
   GatherVector(RCP<Field> f, RCP<Indexer> i);
 
-  /** \brief Finalize the filed manager registration. */
+  /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);
 
   /** \brief Fill in the local multidimensional arrays. */

@@ -15,6 +15,7 @@ goal_ev_interpolate_scalar.cpp
 goal_ev_gather_vector.cpp
 goal_ev_vector_shape.cpp
 goal_ev_interpolate_vector.cpp
+goal_ev_scatter_scalar.cpp
 goal_ev_dirichlet_bcs.cpp
 )
 
@@ -39,6 +40,7 @@ goal_ev_interpolate_scalar.hpp
 goal_ev_gather_vector.hpp
 goal_ev_vector_shape.hpp
 goal_ev_interpolate_vector.hpp
+goal_ev_scatter_scalar.hpp
 goal_ev_dirichlet_bcs.hpp
 )
 
