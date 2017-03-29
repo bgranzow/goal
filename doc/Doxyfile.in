@@ -133,7 +133,11 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/test/steps/step1.dox \
 @PROJECT_SOURCE_DIR@/test/steps/step2.dox \
 \
-@PROJECT_SOURCE_DIR@/miniapps/poisson/poisson_ev_residual.hpp
+@PROJECT_SOURCE_DIR@/miniapps/miniapps.dox \
+\
+@CMAKE_BINARY_DIR@/miniapps/poisson/poisson.dox \
+@PROJECT_SOURCE_DIR@/miniapps/poisson/poisson_ev_residual.hpp \
+@PROJECT_SOURCE_DIR@/miniapps/poisson/poisson_physics.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO

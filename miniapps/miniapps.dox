@@ -1,0 +1,12 @@
+/** \page MiniApps Mini Applications
+
+Several mini-applications have been compiled and
+documented during the development of \ref goal
+to demonstrate several ways to use the \ref
+goal library to construct adaptive finite
+element codes. To learn more about a specific
+mini-app, click on its name below:
+
+- \subpage Poisson
+
+*/

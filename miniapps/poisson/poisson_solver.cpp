@@ -1,12 +1,14 @@
 #include <apf.h>
 #include <apfMesh.h>
-#include <ma.h>
-#include <Teuchos_YamlParser_decl.hpp>
 #include <goal_control.hpp>
 #include <goal_discretization.hpp>
+#include <goal_field.hpp>
 #include <goal_output.hpp>
 #include <goal_solution_info.hpp>
+#include <ma.h>
+#include <Teuchos_YamlParameterListHelpers.hpp>
 
+#include "poisson_physics.hpp"
 
 using Teuchos::rcp;
 using Teuchos::RCP;
@@ -45,6 +47,7 @@ class Solver {
   void adapt_mesh();
   RCP<const ParameterList> params;
   RCP<goal::Discretization> disc;
+  RCP<poisson::Physics> physics;
   RCP<goal::SolutionInfo> info;
   RCP<goal::Output> output;
   int num_adapt_cycles;
@@ -54,10 +57,44 @@ Solver::Solver(RCP<const ParameterList> p) {
   params = p;
   validate_params(params);
   auto dp = rcpFromRef(params->sublist("discretization"));
+  auto pp = rcpFromRef(params->sublist("physics"));
+  auto op = rcpFromRef(params->sublist("output"));
   disc = rcp(new goal::Discretization(dp));
+  physics = rcp(new poisson::Physics(pp, disc));
+  output = rcp(new goal::Output(op, disc));
+}
+
+static void zero_fields(std::vector<RCP<goal::Field> > u) {
+  for (size_t i = 0; i < u.size(); ++i) {
+    auto f = u[i]->get_apf_field();
+    apf::zeroField(f);
+  }
+}
+
+void Solver::solve_primal() {
+  goal::print("*** primal problem");
+  auto u_fields = physics->get_u();
+  zero_fields(u_fields);
+  physics->build_coarse_indexer();
+  physics->build_primal_model();
+  physics->destroy_model();
+  physics->destroy_indexer();
+}
+
+void Solver::solve_dual() {
+  goal::print("*** dual problem");
+}
+
+void Solver::estimate_error() {
+  goal::print("*** error estimation");
+}
+
+void Solver::adapt_mesh() {
+  goal::print("*** mesh adaptation");
 }
 
 void Solver::solve() {
+  solve_primal();
 }
 
 } // namespace poisson

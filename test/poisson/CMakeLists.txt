@@ -9,10 +9,9 @@ if("${Goal_DATA}" STREQUAL "")
   return()
 endif()
 
-set(POISSON_EXE ${CMAKE_BINARY_DIR}/miniapps/poisson/GoalPoissonSolver)
-
 message(STATUS "Setting up poisson mini-app tests")
-message(STATUS "-> executable: ${POISSON_EXE}")
+
+set(POISSON_EXE ${CMAKE_BINARY_DIR}/miniapps/poisson/GoalPoissonSolver)
 
 add_serial_test(${POISSON_EXE} poisson_lshape_serial)
 
