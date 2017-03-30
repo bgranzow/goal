@@ -1,7 +1,7 @@
-#ifndef GOAL_EV_SCATTER_SCALAR_HPP
-#define GOAL_EV_SCATTER_SCALAR_HPP
+#ifndef GOAL_EV_SCATTER_VECTOR_HPP
+#define GOAL_EV_SCATTER_VECTOR_HPP
 
-/** \file goal_ev_scatter_scalar.hpp */
+/** \file goal_ev_scatter_vector.hpp */
 
 #include <Phalanx_Evaluator_Derived.hpp>
 #include <Phalanx_Evaluator_WithBaseImpl.hpp>
@@ -20,26 +20,23 @@ class Indexer;
 class SolutionInfo;
 
 template <typename EvalT, typename Traits>
-class ScatterScalar;
+class ScatterVector;
 /** \endcond */
 
-
-/** \brief Fill in the global residual vector from a scalar PDE.
-  * \details This will scatter local contributions to the global residual
-  * vector based on the intermediate physics evaluations. Element
-  * contributions to the residual vector are considered for elements local
-  * to a workset.
+/** \brief Fill in the global residual vector from a vector PDE.
+  * \details This will scatter local element-level contributions to the
+  * global residual vector based on the intermediate physics evaluations.
   *
   * dependent fields  | data layout
-  * ----------------  | -----------
-  * resid             | (Elem, Node)
+  * ----------------- | -----------
+  * resid             | (Elem, Node, Dim)
   *
   * evaluated fields  | data layout
   * ----------------  | -----------
   * op                | (Dummy)
   */
 template <typename TRAITS>
-class ScatterScalar<goal::Traits::Residual, TRAITS>
+class ScatterVector<goal::Traits::Residual, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Residual, TRAITS> {
  public:
@@ -52,11 +49,11 @@ class ScatterScalar<goal::Traits::Residual, TRAITS>
   /** \endcond */
 
   /** \brief Construct the evaluator.
-    * \param f The DOF \ref goal::Field corresponding to the scalar PDE.
+    * \param f The DOR \ref goal::Field corresponding the the vector PDE.
     * \param i The relevant \ref goal::Indexer object.
     * \details The final unused boolean argument is to maintain interface
     * consistency with the Jacobian specialization of this class. */
-  ScatterScalar(RCP<Field> f, RCP<Indexer> i, bool);
+  ScatterVector(RCP<Field> f, RCP<Indexer> i, bool);
 
   /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);
@@ -70,31 +67,31 @@ class ScatterScalar<goal::Traits::Residual, TRAITS>
 
  private:
   int num_nodes;
+  int num_dims;
   RCP<Field> field;
   RCP<Indexer> indexer;
   RCP<SolutionInfo> info;
-  PHX::MDField<const ScalarT, Elem, Node> resid;
+  PHX::MDField<const ScalarT, Elem, Node, Dim> resid;
 };
 
 /** \brief Fill in multiple global linear algebra data structures.
-  * \details This will scatter local contributions to global linear algebra
-  * data structures based on the intermediate physics evaluations and the
-  * derivative information propogated through these evaluations with the
-  * forward automatic differentiation data types. Local contributions to
-  * both the Jacobian matrix and the residual vector are computed via this
-  * evaluator. If the constructor argument `adj` is specified, then the
-  * Jacobian matrix is filled in transpose form.
+  * \details This will scatter element-level constributions to the
+  * residual vector and the Jacobian matrix based on the intermediate
+  * physics evaluations and the derivative information propogated
+  * through these evaluations with the forward automatic differentiation
+  * data types. If the constructor argument `adj` is set to true, then
+  * the Jacobian matrix is filled in transpose form.
   *
   * dependent fields  | data layout
   * ----------------  | -----------
   * resid             | (Elem, Node)
   *
   * evaluated fields  | data layout
-  * ----------------  | -----------
+  * ----------------- | -----------
   * op                | (Dummy)
   */
 template <typename TRAITS>
-class ScatterScalar<goal::Traits::Jacobian, TRAITS>
+class ScatterVector<goal::Traits::Jacobian, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Jacobian, TRAITS> {
  public:
@@ -107,10 +104,10 @@ class ScatterScalar<goal::Traits::Jacobian, TRAITS>
   /** \endcond */
 
   /** \brief Construct the evaluator.
-    * \param f The DOF \ref goal::Field corresponding to the scalar PDE.
+    * \param f The DOF \ref goal::Field corresponding to the vector PDE.
     * \param i The relevant \ref goal::Indexer object.
     * \param adj True if the transpose of the Jacobian should be scattered. */
-  ScatterScalar(RCP<Field> f, RCP<Indexer> i, bool adj);
+  ScatterVector(RCP<Field> f, RCP<Indexer> i, bool adj);
 
   /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);
@@ -129,13 +126,13 @@ class ScatterScalar<goal::Traits::Jacobian, TRAITS>
       RCP<Vector> R, RCP<Matrix> dRduT, int field_idx, EvalData workset);
 
   int num_nodes;
-  int num_dofs;
+  int num_dims;
   int num_total_dofs;
   bool is_adjoint;
   RCP<Field> field;
   RCP<Indexer> indexer;
   RCP<SolutionInfo> info;
-  PHX::MDField<const ScalarT, Elem, Node> resid;
+  PHX::MDField<const ScalarT, Elem, Node, Dim> resid;
 };
 
 }  // namespace goal

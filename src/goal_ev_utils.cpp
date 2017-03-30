@@ -5,8 +5,9 @@
 #include "goal_ev_interpolate_scalar.hpp"
 #include "goal_ev_scatter_scalar.hpp"
 #include "goal_ev_gather_vector.hpp"
-#include "goal_ev_interpolate_vector.hpp"
 #include "goal_ev_vector_shape.hpp"
+#include "goal_ev_interpolate_vector.hpp"
+#include "goal_ev_scatter_vector.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
 
@@ -42,7 +43,7 @@ void require_primal_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm) {
   if (type == SCALAR)
     scatter = rcp(new ScatterScalar<EvalT, goal::Traits>(u, i, false));
   else if (type == VECTOR)
-    fail("need to implement scatter vector");
+    scatter = rcp(new ScatterVector<EvalT, goal::Traits>(u, i, false));
   else
     fail("cannot require primal scatter");
   fm->registerEvaluator<EvalT>(scatter);
@@ -57,7 +58,7 @@ void require_adjoint_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm) {
   if (type == SCALAR)
     scatter = rcp(new ScatterScalar<EvalT, goal::Traits>(u, i, true));
   else if (type == VECTOR)
-    fail("need to implement scatter vector");
+    scatter = rcp(new ScatterVector<EvalT, goal::Traits>(u, i, true));
   else
     fail("cannot require adjoint scatter");
   fm->registerEvaluator<EvalT>(scatter);
