@@ -17,6 +17,7 @@ goal_ev_vector_shape.cpp
 goal_ev_interpolate_vector.cpp
 goal_ev_scatter_scalar.cpp
 goal_ev_dirichlet_bcs.cpp
+goal_ev_utils.cpp
 )
 
 set(Goal_HEADERS
@@ -42,6 +43,7 @@ goal_ev_vector_shape.hpp
 goal_ev_interpolate_vector.hpp
 goal_ev_scatter_scalar.hpp
 goal_ev_dirichlet_bcs.hpp
+goal_ev_utils.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
