@@ -5,6 +5,12 @@
 
 #include <goal_physics.hpp>
 
+/** \cond */
+namespace goal {
+class StateFields;
+}
+/** \endcond */
+
 /** \brief All elasticity mini-app symbols are contained in this namespace. */
 namespace elast {
 
@@ -65,14 +71,14 @@ class Physics : public goal::Physics {
   void set_error();
 
   void build_primal_volumetric(FieldManager fm);
-  void build_primal_neumann(FieldManager) {}
+  void build_primal_neumann(FieldManager);
   void build_primal_dirichlet(FieldManager fm);
   void build_dual_volumetric(FieldManager fm);
-  void build_dual_neumann(FieldManager) {}
+  void build_dual_neumann(FieldManager);
   void build_dual_dirichlet(FieldManager fm);
   void build_error_volumetric(FieldManager fm);
-  void build_error_neumann(FieldManager) {}
-  void build_error_dirichlet(FieldManager) {}
+  void build_error_neumann(FieldManager);
+  void build_error_dirichlet(FieldManager);
 
   template <typename EvalT>
   void register_volumetric(FieldManager fm);
@@ -84,10 +90,14 @@ class Physics : public goal::Physics {
   void register_dirichlet(FieldManager fm);
 
   RCP<const ParameterList> params;
+  RCP<goal::StateFields> states;
 
   bool is_primal;
   bool is_dual;
   bool is_error;
+
+  int q_degree;
+  int p_order;
 };
 
 }  // namespace elast
