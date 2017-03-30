@@ -13,7 +13,6 @@ class Field;
 }
 /** \endcond */
 
-/** \brief All poisson mini-app symbols are contained in this namespace. */
 namespace poisson {
 
 /** \cond */

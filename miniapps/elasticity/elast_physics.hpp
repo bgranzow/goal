@@ -1,68 +1,57 @@
-#ifndef POISSON_PHYSICS_HPP
-#define POISSON_PHYSICS_HPP
+#ifndef ELAST_PHYSICS_HPP
+#define ELAST_PHYSICS_HPP
 
-/** \file poisson_physics.hpp */
+/** \file elast_physics.hpp */
 
 #include <goal_physics.hpp>
 
-/** \brief All poisson mini-app symbols are contained in this namespace. */
-namespace poisson {
+/** \brief All elasticity mini-app symbols are contained in this namespace. */
+namespace elast {
 
 /** \cond */
 using Teuchos::RCP;
 using Teuchos::ParameterList;
 /** \endcond */
 
-/** \brief The Poisson mini-app physics interface.
+/** \brief The elasticity mini-app physics interface.
   * \details This class is responsible for building the necessary data to
   * perform evaluations for the assembly of the primal problem: find
   * \f$ u^H \in V^H \f$ such that:
   * \f[
-  * (\nabla w^H, \nabla u^H) = (w^H, f) \quad \forall w^H \in V^H,
+  * R(w^H, u^H) = 0 \quad \forall w^H \in V^H,
   * \f]
   * the dual problem: find \f$ z^h \in V^h \f$ such that:
   * \f[
-  * (\nabla z^h, \nabla w^h) = (w^h, j) \quad \forall w^h \in V^h,
+  * R'[u^h](z^h, w^h) = J'[u^h](w^h) \quad \forall w^h \in V^h,
   * \f]
-  * and the vertex-level error estimates given by
+  * and the vertex-level error estimates given by:
   * \f[
-  * \mathcal{E}_i = | ( \nabla ( (z^h - z^H) \psi_i), u^H) -
-  * ((z^h - z^H) \psi_i, f) |
+  * \mathcal{E}_i = | R( (z^h - z^H) \psi_i, u^H) |,
   * \f]
   * where \f$ V^H \f$ and \f$ V^h \f$ denote coarse and fine-scale FEM
   * spaces, and \f$ \psi_i \f$ is a partition of unity realized by linear
   * Lagrange basis functions.
-  * For more information, see the \ref poisson mini-app documentation. */
+  * For more information, see the \ref Elasticity mini-app documentation. */
 class Physics : public goal::Physics {
  private:
-   /** \cond */
-   using FieldManager = goal::FieldManager;
-   using Residual = goal::Traits::Residual;
-   using Jacobian = goal::Traits::Jacobian;
-   /** \endcond */
+  /** \cond */
+  using FieldManager = goal::FieldManager;
+  using Residual = goal::Traits::Residual;
+  using Jacobian = goal::Traits::Jacobian;
+  /** \endcond */
 
  public:
   /** \brief The physics constructor.
     * \param p A parameter list with the following valid parameters:
     *
-    * parameter name    | parameter type
-    * ---------------   | --------------
-    * forcing function  | std::string
-    * functional type   | std::string
-    * point set         | std::string
-    * dirichlet bcs     | Teuchos::ParameterList
+    * parameter name  | parameter type
+    * --------------  | ---------------
+    * dirichlet bcs   | Teuchos::ParameterList
     *
     * parameter descriptions:
-    * - forcing function, A mathematical string expression for the right hand
-    * side of the primal problem.
-    * - functional type, The type of functional quantity of interest. Either
-    * "point-wise" or "solution average".
-    * - point set, If the functional type "point-wise" is chosen, then this
-    * parameter points to an appropriate node set for the point-wise geometric
-    * vertex.
     * dirichlet bcs, A parameter list with members of type
     * Teuchos::Array<std::string> of the form:
-    * [ dof field index, dof field component, node set name, bc value ]
+    * [ dof field index, dof field component, node set name, bc value]
     *
     * \param d The relevant \ref goal::Discretization object. */
   Physics(RCP<const ParameterList> p, RCP<goal::Discretization> d);
@@ -89,18 +78,18 @@ class Physics : public goal::Physics {
   void register_volumetric(FieldManager fm);
 
   template <typename EvalT>
+  void register_neumann(FieldManager fm);
+
+  template <typename EvalT>
   void register_dirichlet(FieldManager fm);
 
   RCP<const ParameterList> params;
-  std::string ff;
-  std::string functional_type;
-  std::string set;
 
   bool is_primal;
   bool is_dual;
   bool is_error;
 };
 
-}  // namespace poisson
+}  // namespace elast
 
 #endif

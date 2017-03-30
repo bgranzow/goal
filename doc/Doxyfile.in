@@ -138,7 +138,10 @@ INPUT                  = \
 \
 @CMAKE_BINARY_DIR@/miniapps/poisson/poisson.dox \
 @PROJECT_SOURCE_DIR@/miniapps/poisson/poisson_ev_residual.hpp \
-@PROJECT_SOURCE_DIR@/miniapps/poisson/poisson_physics.hpp
+@PROJECT_SOURCE_DIR@/miniapps/poisson/poisson_physics.hpp \
+\
+@CMAKE_BINARY_DIR@/miniapps/elasticity/elasticity.dox \
+@PROJECT_SOURCE_DIR@/miniapps/elasticity/elast_physics.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = NO
