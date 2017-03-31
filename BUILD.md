@@ -18,7 +18,7 @@ Troy makes use of the following Trilinos packages:
 - [Phalanx][8] - for local field evaluations
 - [Belos][9] - for iterative linear algebra solvers
 - [Ifpack2][10] - for ILU preconditioning
-- [Zoltan][11] -for dynamic load balancing
+- [Zoltan][11] - for dynamic load balancing
 - [MiniTensor][12] - for tensor algebra
 
 To build these Trilinos packages, two external
@@ -30,7 +30,7 @@ dependencies must first be built:
 #### Building boost
 
 ```bash
-wget https://sourceforge.net/projects/boost/files/boost/1.61.0/boost_1_61_0.tar.gz/download
+wget https://sourceforge.net/projects/boost/files/boost/1.61.0/boost_1_61_0.tar.gz
 tar -xzvf boost_1_61_0.tar.gz
 cd boost_1_61_0
 ./bootstrap.sh --with-libraries=signals,regex,filesystem,system,mpi,serialization,thread,program_options,exception --prefix=<path-to-boost-install>
@@ -95,7 +95,7 @@ make install
 
 An example PUMI [configuration script][17] is
 provided with this source code. Additional information
-about PUMI can be found [here][18]. to build PUMI
+about PUMI can be found [here][18]. To build PUMI
 follow the steps:
 
 ```bash
