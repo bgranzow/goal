@@ -68,6 +68,8 @@ cd yaml-cpp
 mkdir build
 cd build
 cmake .. \
+-DCMAKE_C_COMPILER=<mpi-c-wrapper> \
+-DCMAKE_CXX_COMPILER=<mpi-c++-wrapper> \
 -DCMAKE_INSTALL_PREFIX=<yaml-cpp-install-dir>
 make -j 4
 make install
