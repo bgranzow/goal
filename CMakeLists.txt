@@ -6,7 +6,6 @@ include(cmake/bob.cmake)
 
 bob_begin_package()
 
-set(Scorec_PREFIX "" CACHE PATH "Scorec installation directory")
 set(Trilinos_PREFIX "" CACHE PATH "Trilinos installation directory")
 set(Goal_DATA "" CACHE PATH "Path to goal-data test files")
 set(Goal_FAD_SIZE "40" CACHE STRING "Maximum Sacado derivative array size")

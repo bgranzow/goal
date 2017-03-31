@@ -1,9 +1,6 @@
 # find trilinos only in the user-specified location
 find_package(Trilinos 12.0.0 REQUIRED PATHS ${Trilinos_PREFIX} NO_DEFAULT_PATH)
 
-# attempt to find scorec in the user-specified location
-find_package(SCOREC 2.0.0 QUIET PATHS ${Scorec_PREFIX} NO_DEFAULT_PATH)
-
 # purge duplicates in trilinos lists
 list(REVERSE Trilinos_INCLUDE_DIRS)
 list(REVERSE Trilinos_TPL_INCLUDE_DIRS)
@@ -31,12 +28,11 @@ assert_trilinos_pkg(Phalanx)
 assert_trilinos_pkg(Belos)
 assert_trilinos_pkg(Ifpack2)
 assert_trilinos_pkg(MiniTensor)
-if(NOT SCOREC_FOUND)
-  assert_trilinos_pkg(SCOREC)
-endif()
+
+# find SCOREC in the user-specified location
+set(Goal_USE_SCOREC_DEFAULT ON)
+bob_public_dep(SCOREC)
 
 # print the locations of the found packages
 message(STATUS "found Trilinos: ${Trilinos_DIR} (${Trilinos_VERSION})")
-if(SCOREC_FOUND)
-  message(STATUS "found SCOREC: ${SCOREC_DIR} (${SCOREC_VERSION})")
-endif()
+message(STATUS "found SCOREC: ${SCOREC_DIR} (${SCOREC_VERSION})")
