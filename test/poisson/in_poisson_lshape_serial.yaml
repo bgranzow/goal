@@ -1,9 +1,9 @@
 poisson example:
   num adapt cycles: 5
   discretization:
-    geom file: ${Goal_DATA}/lshape/lshape.dmg
-    mesh file: ${Goal_DATA}/lshape/lshape-serial.smb
-    assoc file: ${Goal_DATA}/lshape/assoc.txt
+    geom file: ${Goal_DATA}/meshes/lshape/lshape.dmg
+    mesh file: ${Goal_DATA}/meshes/lshape/lshape-serial.smb
+    assoc file: ${Goal_DATA}/meshes/lshape/assoc.txt
     reorder mesh: true
     workset size: 1000
   physics:

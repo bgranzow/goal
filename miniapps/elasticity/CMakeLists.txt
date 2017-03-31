@@ -14,5 +14,8 @@ elast_physics.cpp
 
 add_library(GoalElasticity ${Goal_ELASTICITY_SOURCES})
 target_link_libraries(GoalElasticity PUBLIC Goal)
+add_executable(GoalElasticitySolver elast_solver.cpp)
+target_link_libraries(GoalElasticitySolver PRIVATE GoalElasticity)
+bob_export_target(GoalElasticitySolver)
 
 bob_end_subdir()

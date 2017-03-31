@@ -116,7 +116,10 @@ void Physics::build_error_dirichlet(FieldManager fm) {
 
 template <typename EvalT>
 void elast::Physics::register_volumetric(goal::FieldManager fm) {
-  (void)fm;
+  RCP<goal::Field> disp = u[0];
+  goal::register_dof<EvalT>(disp, indexer, fm);
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<EvalT>(NULL);
 }
 
 template <typename EvalT>

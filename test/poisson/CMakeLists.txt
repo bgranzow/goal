@@ -5,7 +5,7 @@ endif()
 if("${Goal_DATA}" STREQUAL "")
   message(STATUS "WARNING: BUILD_TESTING=ON & Goal_ENABLE_POISSON=ON")
   message(STATUS "-> but Goal_DATA was not set")
-  message(STATUS "-> skipping setting up poisson tests")
+  message(STATUS "-> skipping poisson tests")
   return()
 endif()
 

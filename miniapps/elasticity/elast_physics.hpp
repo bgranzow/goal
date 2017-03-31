@@ -44,6 +44,7 @@ class Physics : public goal::Physics {
   using FieldManager = goal::FieldManager;
   using Residual = goal::Traits::Residual;
   using Jacobian = goal::Traits::Jacobian;
+  using TRAITS = goal::Traits;
   /** \endcond */
 
  public:
