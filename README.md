@@ -1,4 +1,4 @@
-## Goal
+![logo][4]
 > Goal oriented adaptive library
 
 ### What is Goal?
@@ -22,3 +22,4 @@ To get started:
 [1]:https://scorec.rpi.edu/~granzb/goal/index.html
 [2]:https://scorec.rpi.edu/~granzb/notes/fad/fad.pdf
 [3]:https://scorec.rpi.edu/~granzb/notes/adjoint/adjoint.pdf
+[4]:https://github.com/bgranzow/goal/blob/master/doc/logo.png

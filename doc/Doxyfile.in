@@ -6,8 +6,8 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = "Goal"
 PROJECT_NUMBER         = 0.1.0
-PROJECT_BRIEF          =
-PROJECT_LOGO           =
+PROJECT_BRIEF          = "The Goal-Oriented Adaptive Library"
+PROJECT_LOGO           = @PROJECT_SOURCE_DIR@/doc/logo.png
 OUTPUT_DIRECTORY       =
 CREATE_SUBDIRS         = NO
 ALLOW_UNICODE_NAMES    = NO
