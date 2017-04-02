@@ -77,7 +77,10 @@ class Stress : public PHX::EvaluatorWithBaseImpl<TRAITS>,
     * parameters:
     * - "E", double, Elastic modulus.
     * - "nu", double, Poisson's ratio. */
-  Stress(RCP<goal::Field> u, RCP<goal::StateFields> s, RCP<ParameterList> mp);
+  Stress(
+      RCP<goal::Field> u,
+      RCP<goal::StateFields> s,
+      RCP<const ParameterList> mp);
 
   /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);

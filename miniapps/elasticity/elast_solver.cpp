@@ -1,3 +1,4 @@
+#include <goal_assembly.hpp>
 #include <goal_control.hpp>
 #include <goal_discretization.hpp>
 #include <goal_field.hpp>
@@ -44,6 +45,7 @@ class Solver {
   RCP<const ParameterList> params;
   RCP<goal::Discretization> disc;
   RCP<elast::Physics> physics;
+  RCP<goal::SolutionInfo> info;
   RCP<goal::Output> output;
 };
 
@@ -62,6 +64,9 @@ void Solver::solve_primal() {
   goal::print("*** primal problem");
   physics->build_coarse_indexer();
   physics->build_primal_model();
+  auto indexer = physics->get_indexer();
+  info = rcp(new goal::SolutionInfo(indexer));
+  compute_primal_jacobian(physics, info, disc, 0, 0);
   physics->destroy_model();
   physics->destroy_indexer();
 }

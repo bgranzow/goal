@@ -17,7 +17,7 @@ static RCP<ParameterList> get_valid_params() {
 
 template <typename EVALT, typename TRAITS>
 Stress<EVALT, TRAITS>::Stress(
-    RCP<goal::Field> f, RCP<goal::StateFields> s, RCP<ParameterList> mp)
+    RCP<goal::Field> f, RCP<goal::StateFields> s, RCP<const ParameterList> mp)
     : states(s),
       grad_u(f->get_grad_name(), f->get_grad_interpolated_dl()),
       cauchy("Cauchy", f->get_tensor_ip_dl()) {

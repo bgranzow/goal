@@ -1,5 +1,7 @@
 #include <goal_control.hpp>
+#include <goal_discretization.hpp>
 #include <goal_field.hpp>
+#include <goal_indexer.hpp>
 #include <goal_state_fields.hpp>
 #include <Teuchos_ParameterList.hpp>
 
@@ -114,10 +116,34 @@ void Physics::build_error_dirichlet(FieldManager fm) {
 
 #include <goal_ev_utils.hpp>
 
+#include "elast_ev_stress.hpp"
+#include "elast_ev_residual.hpp"
+
 template <typename EvalT>
 void elast::Physics::register_volumetric(goal::FieldManager fm) {
+
+  /* register the displacements. */
   RCP<goal::Field> disp = u[0];
   goal::register_dof<EvalT>(disp, indexer, fm);
+
+  /* get the material model parameters. */
+  auto eb_idx = indexer->get_elem_block_idx();
+  auto eb_name = disc->get_elem_block_name(eb_idx);
+  auto mat_params = rcpFromRef(params->sublist(eb_name));
+
+  /* compute the Cauchy stress tensor. */
+  auto cauchy =
+    rcp(new elast::Stress<EvalT, goal::Traits>(disp, states, mat_params));
+  fm->registerEvaluator<EvalT>(cauchy);
+
+  /* compute the momentum residual. */
+  auto residual = rcp(new elast::Residual<EvalT, goal::Traits>(disp));
+  fm->registerEvaluator<EvalT>(residual);
+
+  /* require the primal scatter. */
+  goal::require_primal_scatter<EvalT>(disp, indexer, fm);
+
+  /* finalize the field manager registration. */
   goal::set_extended_data_type_dims(indexer, fm);
   fm->postRegistrationSetupForType<EvalT>(NULL);
 }
