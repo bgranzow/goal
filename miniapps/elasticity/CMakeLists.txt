@@ -10,6 +10,7 @@ configure_file(
 
 set(Goal_ELASTICITY_SOURCES
 elast_ev_stress.cpp
+elast_ev_residual.cpp
 elast_physics.cpp
 )
 
