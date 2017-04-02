@@ -24,7 +24,7 @@ using Teuchos::ParameterList;
   * perform evaluations for the assembly of the primal problem: find
   * \f$ u^H \in V^H \f$ such that:
   * \f[
-  * R(w^H, u^H) = 0 \quad \forall w^H \in V^H,
+  * R(u^H, w^H) = 0 \quad \forall w^H \in V^H,
   * \f]
   * the dual problem: find \f$ z^h \in V^h \f$ such that:
   * \f[
@@ -32,7 +32,7 @@ using Teuchos::ParameterList;
   * \f]
   * and the vertex-level error estimates given by:
   * \f[
-  * \mathcal{E}_i = | R( (z^h - z^H) \psi_i, u^H) |,
+  * \mathcal{E}_i = | R( u^H, (z^h - z^H) \psi_i) |,
   * \f]
   * where \f$ V^H \f$ and \f$ V^h \f$ denote coarse and fine-scale FEM
   * spaces, and \f$ \psi_i \f$ is a partition of unity realized by linear

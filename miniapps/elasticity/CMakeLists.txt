@@ -9,6 +9,7 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/elasticity.dox)
 
 set(Goal_ELASTICITY_SOURCES
+elast_ev_stress.cpp
 elast_physics.cpp
 )
 
