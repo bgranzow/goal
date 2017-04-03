@@ -11,22 +11,31 @@ namespace elast {
 
 using Teuchos::rcp;
 
-static RCP<ParameterList> get_valid_params() {
+static RCP<ParameterList> get_valid_params(RCP<goal::Discretization> d) {
   auto p = rcp(new ParameterList);
   p->sublist("dirichlet bcs");
+  for (int i = 0; i < d->get_num_elem_blocks(); ++i) {
+    auto block = d->get_elem_block_name(i);
+    p->sublist(block);
+  }
   return p;
 }
 
-static void validate_params(RCP<const ParameterList> p) {
+static void validate_params(
+    RCP<const ParameterList> p, RCP<goal::Discretization> d) {
   assert(p->isSublist("dirichlet bcs"));
-  p->validateParameters(*get_valid_params(), 0);
+  for (int i = 0; i < d->get_num_elem_blocks(); ++i) {
+    auto block = d->get_elem_block_name(i);
+    assert(p->isSublist(block));
+  }
+  p->validateParameters(*get_valid_params(d), 0);
 }
 
 Physics::Physics(
     RCP<const ParameterList> p, RCP<goal::Discretization> d)
     : goal::Physics(d) {
   params = p;
-  validate_params(p);
+  validate_params(p, disc);
   is_primal = false;
   is_dual = false;
   is_error = false;

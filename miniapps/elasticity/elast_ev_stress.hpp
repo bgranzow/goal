@@ -27,11 +27,11 @@ using Teuchos::ParameterList;
   * \f[
   * \sigma = 2 \mu \epsilon + \lambda \text{tr}(\epsilon) I,
   * \f]
-  * where \f$ \mu \f$ is the first Lam\'{e} parameter given by:
+  * where \f$ \mu \f$ is the first Lame parameter given by:
   * \f[
   * \mu = \frac{E}{2(1 + \nu)},
   * \f]
-  * \f$ \lambda \f$ is the second Lam\'{e} parameter given by:
+  * \f$ \lambda \f$ is the second Lame parameter given by:
   * \f[
   * \lambda = \frac{E \nu}{(1 + \nu)(1 - 2 \nu)},
   * \f]

@@ -1,4 +1,4 @@
-if(NOT ${Goal_ENABLE_ELASTICITY)
+if(NOT ${Goal_ENABLE_ELASTICITY})
   return()
 endif()
 
@@ -10,7 +10,7 @@ if("${Goal_DATA}" STREQUAL "")
 endif()
 
 message(STATUS "Setting up elasticity mini-app tests")
-
 set(ELAST_EXE ${CMAKE_BINARY_DIR}/miniapps/elasticity/GoalElasticitySolver)
+add_serial_test(${ELAST_EXE} elasticity_square_serial)
 
 bob_end_subdir()
