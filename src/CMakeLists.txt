@@ -9,6 +9,7 @@ goal_state_fields.cpp
 goal_physics.cpp
 goal_assembly.cpp
 goal_output.cpp
+goal_linear_solvers.cpp
 goal_ev_gather_scalar.cpp
 goal_ev_scalar_shape.cpp
 goal_ev_interpolate_scalar.cpp
@@ -36,6 +37,7 @@ goal_physics.hpp
 goal_traits.hpp
 goal_assembly.hpp
 goal_output.hpp
+goal_linear_solvers.hpp
 goal_ev_gather_scalar.hpp
 goal_ev_scalar_shape.hpp
 goal_ev_interpolate_scalar.hpp
