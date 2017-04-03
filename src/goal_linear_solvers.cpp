@@ -1,3 +1,4 @@
+#include <BelosBlockCGSolMgr.hpp>
 #include <BelosBlockGmresSolMgr.hpp>
 #include <BelosLinearProblem.hpp>
 #include <BelosTpetraAdapter.hpp>
@@ -15,17 +16,19 @@ typedef Tpetra::Operator<ST, LO, GO, KNode> OP;
 typedef Tpetra::RowMatrix<ST, LO, GO, KNode> RM;
 typedef Belos::LinearProblem<ST, MV, OP> LinearProblem;
 typedef Belos::SolverManager<ST, MV, OP> Solver;
+typedef Belos::BlockCGSolMgr<ST, MV, OP> CGSolver;
 typedef Belos::BlockGmresSolMgr<ST, MV, OP> GmresSolver;
 typedef Tpetra::Operator<ST, LO, GO, KNode> Prec;
 typedef Ifpack2::Preconditioner<ST, LO, GO, KNode> IfpackPrec;
 
-
 static RCP<ParameterList> get_valid_params() {
   auto p = rcp(new ParameterList);
-  p->set<int>("linear max iters", 0);
-  p->set<int>("linear krylov size", 0);
-  p->set<double>("linear tolerance", 0.0);
-  p->set<int>("linear output frequency", 0);
+  p->set<int>("krylov size", 0);
+  p->set<int>("maximum iterations", 0);
+  p->set<double>("tolerance", 0.0);
+  p->set<int>("output frequency", 0);
+  p->sublist("multigrid");
+  p->set<std::string>("method", "");
   return p;
 }
 
@@ -38,61 +41,120 @@ static RCP<ParameterList> get_ifpack2_params() {
 
 static RCP<ParameterList> get_belos_params(RCP<const ParameterList> in) {
   auto p = rcp(new ParameterList);
-  auto max_iters = in->get<int>("linear max iters");
-  auto krylov = in->get<int>("linear krylov size");
-  auto tol = in->get<double>("linear tolerance");
-  p->set("Block Size", 1);
-  p->set("Num Blocks", krylov);
-  p->set("Maximum Iterations", max_iters);
-  p->set("Convergence Tolerance", tol);
-  p->set("Orthogonalization", "DGKS");
-  if (in->isType<int>("linear output frequency")) {
-    int f = in->get<int>("linear output frequency");
-    p->set("Verbosity", 33);
-    p->set("Output Style", 1);
-    p->set("Output Frequency", f);
+  int max_iters = in->get<int>("maximum iterations");
+  int krylov = in->get<int>("krylov size");
+  double tol = in->get<double>("tolerance");
+  p->set<int>("Block Size" , 1);
+  p->set<int>("Num Blocks", krylov);
+  p->set<int>("Maximum Iterations", max_iters);
+  p->set<double>("Convergence Tolerance", tol);
+  p->set<std::string>("Orthogonalization", "DGKS");
+  if (in->isType<int>("output frequency")) {
+    int f = in->get<int>("output frequency");
+    p->set<int>("Verbosity", 33);
+    p->set<int>("Output Style", 1);
+    p->set<int>("Output Frequency", f);
   }
   return p;
 }
 
-static RCP<Solver> build_ifpack2_solver(
-    RCP<const ParameterList> in, RCP<Matrix> A, RCP<Vector> x, RCP<Vector> b) {
-  auto ifpack2_params = get_ifpack2_params();
+enum SolverType { CG, GMRES };
+
+static RCP<Solver> build_ilu_solver(
+    RCP<const ParameterList> in,
+    RCP<Matrix> A,
+    RCP<Vector> x,
+    RCP<Vector> b,
+    int type) {
+  auto ilu_params = get_ifpack2_params();
   auto belos_params = get_belos_params(in);
   Ifpack2::Factory factory;
   auto P = factory.create<RM>("ILUT", A);
-  P->setParameters(*ifpack2_params);
+  P->setParameters(*ilu_params);
   P->initialize();
   P->compute();
   auto problem = rcp(new LinearProblem(A, x, b));
   problem->setLeftPrec(P);
   problem->setProblem();
-  auto solver = rcp(new GmresSolver(problem, belos_params));
-  return solver;
+  if (type == CG)
+    return rcp(new CGSolver(problem, belos_params));
+  else if (type == GMRES)
+    return rcp(new GmresSolver(problem, belos_params));
+  else
+    return Teuchos::null;
 }
 
-static RCP<Solver> build_solver(
-    RCP<const ParameterList> in, RCP<Matrix> A, RCP<Vector> x, RCP<Vector> b) {
-  return build_ifpack2_solver(in, A, x, b);
+static void call_solver(
+    RCP<const ParameterList> in,
+    RCP<Solver> solver) {
+  auto dofs = solver->getProblem().getRHS()->getGlobalLength();
+  print(" > linear system: num dofs %zu", dofs);
+  auto t0 = time();
+  solver->solve();
+  auto t1 = time();
+  auto iters = solver->getNumIters();
+  print(" > linear system solved in %d iterations", iters);
+  if (iters >= in->get<int>("maximum iterations"))
+    print(" >  but solve was incomplete! continuing anyway...");
+  print(" > linear system solved in %f seconds", t1 - t0);
+}
+
+void solve_ilu_cg(
+    RCP<const ParameterList> in,
+    RCP<Matrix> A,
+    RCP<Vector> x,
+    RCP<Vector> b) {
+  in->validateParameters(*get_valid_params(), 0);
+  auto solver = build_ilu_solver(in, A, x, b, CG);
+  call_solver(in, solver);
+}
+
+void solve_ilu_gmres(
+    RCP<const ParameterList> in,
+    RCP<Matrix> A,
+    RCP<Vector> x,
+    RCP<Vector> b) {
+  in->validateParameters(*get_valid_params(), 0);
+  auto solver = build_ilu_solver(in, A, x, b, GMRES);
+  call_solver(in, solver);
+}
+
+void solve_multigrid_cg(
+    RCP<const ParameterList>,
+    RCP<Matrix>,
+    RCP<Vector>,
+    RCP<Vector>) {
+  fail("unimplemented multigrid cg method");
+}
+
+void solve_multigrid_gmres(
+    RCP<const ParameterList>,
+    RCP<Matrix>,
+    RCP<Vector>,
+    RCP<Vector>) {
+  fail("unimplemented multigrid gmres method");
 }
 
 void solve_linear_system(
-    RCP<const ParameterList> in, RCP<Matrix> A, RCP<Vector> x, RCP<Vector> b) {
-  auto t0 = time();
-  in->validateParameters(*get_valid_params(), 0);
-  print(" > linear system: num dofs %zu", x->getGlobalLength());
-  auto solver = build_solver(in, A, x, b);
-  solver->solve();
-  auto iters = solver->getNumIters();
-  auto t1 = time();
-  if (iters >= in->get<int>("linear max iters"))
-    print(
-        " > linear solve failed to converge in %d iterations\n"
-        " > continuing using the incomplete solve...",
-        iters);
+    RCP<const ParameterList> in,
+    RCP<Matrix> A,
+    RCP<Vector> x,
+    RCP<Vector> b) {
+  assert(in->isType<std::string>("method"));
+  auto method = in->get<std::string>("method");
+  assert( (method == "CG") || (method == "GMRES"));
+  bool multigrid = false;
+  if (in->isSublist("multigrid")) multigrid = true;
+  if ((method == "CG") && (! multigrid))
+    solve_ilu_cg(in, A, x, b);
+  else if ((method == "GMRES") && (! multigrid))
+    solve_ilu_gmres(in, A, x, b);
+  else if ((method == "CG") && (multigrid))
+    solve_multigrid_cg(in, A, x, b);
+  else if ((method == "GMRES") && (multigrid))
+    solve_multigrid_gmres(in, A, x, b);
   else
-    print(" > linear system solved in %d iterations", iters);
-  print(" > linear system solved in %f seconds", t1 - t0);
+    fail("unkonwn linear solve combination");
 }
 
 }  // namespace goal
