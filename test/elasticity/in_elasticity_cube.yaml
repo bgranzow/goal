@@ -16,8 +16,9 @@ elasticity cube example:
       bc 3: [0,2,zmin,0.0]
       bc 4: [0,0,xmax,0.1]
   linear algebra:
-    linear tolerance: 1.0e-10
-    linear krylov size: 300
-    linear max iters: 300
+    method: GMRES
+    maximum iterations: 300
+    krylov size: 300
+    tolerance: 1.0e-10
   output:
     out file: out_elasticity_cube
