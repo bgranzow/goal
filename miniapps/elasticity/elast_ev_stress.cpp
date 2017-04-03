@@ -28,6 +28,10 @@ Stress<EVALT, TRAITS>::Stress(
   E = mp->get<double>("E");
   nu = mp->get<double>("nu");
 
+  /* populate index dimensions. */
+  num_ips = f->get_num_elem_ips();
+  num_dims = f->get_num_dims();
+
   /* populate the dependency structure for this evaluator. */
   this->addDependentField(grad_u);
   this->addEvaluatedField(cauchy);
