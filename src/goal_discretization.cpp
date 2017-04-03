@@ -1,4 +1,5 @@
 #include <apf.h>
+#include <apfShape.h>
 #include <apfAlbany.h>
 #include <apfMDS.h>
 #include <apfMesh2.h>
@@ -19,6 +20,7 @@ static RCP<ParameterList> get_valid_params() {
   p->set<std::string>("mesh file", "");
   p->set<std::string>("assoc file", "");
   p->set<bool>("reorder mesh", false);
+  p->set<bool>("quadratic", 0);
   p->set<int>("workset size", 0);
   p->set<apf::Mesh2*>("mesh", 0);
   p->set<apf::StkModels*>("associations", 0);
@@ -53,9 +55,15 @@ static bool set_mesh(apf::Mesh2** mesh, RCP<const ParameterList> p) {
   return owns;
 }
 
+static void make_quadratic(apf::Mesh2* mesh, RCP<const ParameterList> p) {
+  if (! p->isType<bool>("quadratic")) return;
+  if (! p->get<bool>("quadratic")) return;
+  if (mesh->getShape()->getOrder() == 2) return;
+  apf::changeMeshShape(mesh, apf::getSerendipity());
+}
+
 static void reorder_mesh(apf::Mesh2* mesh, RCP<const ParameterList> p) {
   if (p->get<bool>("reorder mesh")) apf::reorderMdsMesh(mesh);
-  mesh->verify();
 }
 
 static apf::StkModels* read_sets(apf::Mesh* m, RCP<const ParameterList> p) {
@@ -124,7 +132,9 @@ Discretization::Discretization(RCP<const ParameterList> p) {
   params = p;
   validate_params(p);
   owns_mesh = set_mesh(&mesh, params);
+  make_quadratic(mesh, params);
   reorder_mesh(mesh, params);
+  mesh->verify();
   owns_sets = set_associations(&sets, mesh, params);
   num_dims = mesh->getDimension();
   ws_size = params->get<int>("workset size");

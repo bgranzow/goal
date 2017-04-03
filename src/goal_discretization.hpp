@@ -40,6 +40,7 @@ class Discretization {
     * mesh file       | std::string
     * assoc file      | std::string
     * reorder mesh    | bool
+    * quadratic       | bool
     * workset size    | int
     * mesh            | apf::Mesh2*
     * associations    | apf::StkModels*
@@ -50,7 +51,11 @@ class Discretization {
     * 'mesh file' parameters. If the parameter 'associations' exists,
     * then the Discretization object will be constructed using an existing
     * associations data structure, otherwise, these associations will be
-    * loaded from file using the 'assoc file' parameter. */
+    * loaded from file using the 'assoc file' parameter. If the parameter
+    * 'coord order' exists, then the discretization structure will attempt
+    * to modify the APF mesh's underlying geometry representation to the
+    * given order. The optional parameter 'quadratic' is used to modify
+    * the geometry to a quadratic representation if it is not already. */
   Discretization(RCP<const ParameterList> p);
 
   /** \brief Discretization destructor.
