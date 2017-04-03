@@ -13,5 +13,6 @@ message(STATUS "Setting up elasticity mini-app tests")
 set(ELAST_EXE ${CMAKE_BINARY_DIR}/miniapps/elasticity/GoalElasticitySolver)
 add_serial_test(${ELAST_EXE} elasticity_square_serial)
 add_parallel_test(${ELAST_EXE} elasticity_square)
+add_parallel_test(${ELAST_EXE} elasticity_cube)
 
 bob_end_subdir()
