@@ -89,7 +89,7 @@ std::string Field::get_basis_name() const {
   std::map<int, std::string> map = {
       {LAGRANGE, "lagrange"}, {HIERARCHIC, "hierarchic"}};
   std::ostringstream oss;
-  oss << map[get_value_type()] << get_p_order();
+  oss << map[get_basis_type()] << get_p_order();
   auto name = oss.str();
   return name;
 }
