@@ -23,7 +23,7 @@ Residual<EVALT, TRAITS>::Residual(RCP<goal::Field> u)
   this->addDependentField(wdv);
   this->addDependentField(grad_w);
   this->addDependentField(cauchy);
-  this->addDependentField(resid);
+  this->addEvaluatedField(resid);
   this->setName("Elastic Residual");
 }
 
