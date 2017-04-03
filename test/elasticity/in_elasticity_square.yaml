@@ -1,7 +1,7 @@
 elasticity square example:
   discretization:
     geom file: ${Goal_DATA}/meshes/square/square.dmg
-    mesh file: ${Goal_DATA}/meshes/square/square-serial.smb
+    mesh file: ${Goal_DATA}/meshes/square/square.smb
     assoc file: ${Goal_DATA}/meshes/square/assoc.txt
     quadratic: true
     reorder mesh: true
@@ -19,4 +19,4 @@ elasticity square example:
     linear krylov size: 300
     linear max iters: 300
   output:
-    out file: out_elasticity_square_serial
+    out file: out_elasticity_square
