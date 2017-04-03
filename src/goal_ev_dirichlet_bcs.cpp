@@ -175,25 +175,24 @@ void DirichletBCs<goal::Traits::Jacobian, TRAITS>::apply_bc(
   auto field = indexer->get_field(idx);
   auto t = workset.t_current;
   size_t num_entries;
-  Teuchos::Array<LO> index(1);
-  Teuchos::Array<ST> entry(1);
   Teuchos::Array<LO> indices;
   Teuchos::Array<ST> entries;
-  entry[0] = 1.0;
   auto nodes = indexer->get_node_set_nodes(set, idx);
   for (std::size_t i = 0; i < nodes.size(); ++i) {
     auto node = nodes[i];
     LO row = indexer->get_owned_lid(idx, node, cmp);
     double v = get_bc_val(field, val, node, t, is_adjoint);
-    res[row] = sol[row] - v;
-    index[0] = row;
     num_entries = dRdu->getNumEntriesInLocalRow(row);
     indices.resize(num_entries);
     entries.resize(num_entries);
     dRdu->getLocalRowCopy(row, indices(), entries(), num_entries);
-    for (size_t c = 0; c < num_entries; ++c) entries[c] = 0.0;
+    ST diag = 1.0;
+    for (size_t c = 0; c < num_entries; ++c) {
+      if (indices[c] == row) diag = entries[c];
+      else entries[c] = 0.0;
+    }
+    res[row] = diag*(sol[row] - v);
     dRdu->replaceLocalValues(row, indices(), entries());
-    dRdu->replaceLocalValues(row, index(), entry());
   }
 }
 
