@@ -124,6 +124,7 @@ void Physics::build_error_dirichlet(FieldManager fm) {
 }  // namespace elast
 
 #include <goal_ev_utils.hpp>
+#include <goal_ev_dirichlet_bcs.hpp>
 
 #include "elast_ev_stress.hpp"
 #include "elast_ev_residual.hpp"
@@ -164,7 +165,21 @@ void elast::Physics::register_neumann(goal::FieldManager fm) {
 
 template <typename EvalT>
 void elast::Physics::register_dirichlet(goal::FieldManager fm) {
-  (void)fm;
+  /* bail if we are estimating the error. */
+  if (is_error) return;
+
+  /* get the dirichlet boundary condition parameters. */
+  auto dbc = rcpFromRef(params->sublist("dirichlet bcs"));
+
+  /* set up the Dirichlet BC evaluator. */
+  auto ev =
+    rcp(new goal::DirichletBCs<EvalT, goal::Traits>(dbc, indexer, is_dual));
+  fm->registerEvaluator<EvalT>(ev);
+  fm->requireField<EvalT>(*ev->evaluatedFields()[0]);
+
+  /* set the FAD data and finalize PHX field manager registration. */
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<EvalT>(NULL);
 }
 
 template void elast::Physics::register_volumetric<goal::Traits::Residual>(goal::FieldManager fm);

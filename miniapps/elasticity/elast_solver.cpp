@@ -1,9 +1,12 @@
+#include <apf.h>
+#include <apfMesh2.h>
 #include <goal_assembly.hpp>
 #include <goal_control.hpp>
 #include <goal_discretization.hpp>
 #include <goal_field.hpp>
 #include <goal_output.hpp>
 #include <goal_solution_info.hpp>
+#include <goal_linear_solvers.hpp>
 #include <Teuchos_YamlParameterListHelpers.hpp>
 
 #include "elast_physics.hpp"
@@ -38,6 +41,7 @@ class Solver {
   void solve();
 
  private:
+  void ensure_quadratic();
   void solve_primal();
   void solve_dual();
   void estimate_error();
@@ -60,13 +64,30 @@ Solver::Solver(RCP<const ParameterList> p) {
   output = rcp(new goal::Output(op, disc));
 }
 
+static void zero_fields(RCP<Physics> p) {
+  auto u = p->get_u();
+  for (size_t i = 0; i < u.size(); ++i) {
+    auto f = u[i]->get_apf_field();
+    apf::zeroField(f);
+  }
+}
+
 void Solver::solve_primal() {
   goal::print("*** primal problem");
+  zero_fields(physics);
   physics->build_coarse_indexer();
   physics->build_primal_model();
   auto indexer = physics->get_indexer();
   info = rcp(new goal::SolutionInfo(indexer));
-  compute_primal_jacobian(physics, info, disc, 0, 0);
+  goal::compute_primal_jacobian(physics, info, disc, 0, 0);
+  auto dRdu = info->owned->dRdu;
+  auto R = info->owned->R;
+  auto u = info->owned->u;
+  R->scale(-1.0);
+  auto lp = rcpFromRef(params->sublist("linear algebra"));
+  goal::solve_linear_system(lp, dRdu, u, R);
+  goal::fill_fields(physics->get_u(), indexer, u);
+  goal::compute_primal_residual(physics, info, disc, 0, 0);
   physics->destroy_model();
   physics->destroy_indexer();
 }
@@ -85,6 +106,7 @@ void Solver::adapt_mesh() {
 
 void Solver::solve() {
   solve_primal();
+  output->write(0);
 }
 
 }  // namespace elast
