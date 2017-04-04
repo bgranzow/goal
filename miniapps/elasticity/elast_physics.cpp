@@ -14,6 +14,7 @@ using Teuchos::rcp;
 static RCP<ParameterList> get_valid_params(RCP<goal::Discretization> d) {
   auto p = rcp(new ParameterList);
   p->sublist("dirichlet bcs");
+  p->sublist("neumann bcs");
   for (int i = 0; i < d->get_num_elem_blocks(); ++i) {
     auto block = d->get_elem_block_name(i);
     p->sublist(block);
@@ -98,7 +99,7 @@ void Physics::build_dual_volumetric(FieldManager fm) {
 
 void Physics::build_dual_neumann(FieldManager fm) {
   set_dual();
-  (void)fm;
+  register_neumann<Jacobian>(fm);
 }
 
 void Physics::build_dual_dirichlet(FieldManager fm) {
@@ -128,6 +129,7 @@ void Physics::build_error_dirichlet(FieldManager fm) {
 
 #include "elast_ev_stress.hpp"
 #include "elast_ev_residual.hpp"
+#include "elast_ev_traction_bcs.hpp"
 
 template <typename EvalT>
 void elast::Physics::register_volumetric(goal::FieldManager fm) {
@@ -160,7 +162,18 @@ void elast::Physics::register_volumetric(goal::FieldManager fm) {
 
 template <typename EvalT>
 void elast::Physics::register_neumann(goal::FieldManager fm) {
-  (void)fm;
+  /* bail if there are no neumann bcs specified. */
+  if (!params->isSublist("neumann bcs")) return;
+
+  /* build the traction bcs evaluator. */
+  auto bc = rcpFromRef(params->sublist("neumann bcs"));
+  auto ev = rcp(new elast::TractionBCs<EvalT, goal::Traits>(indexer, bc));
+  fm->registerEvaluator<EvalT>(ev);
+  fm->requireField<EvalT>(*ev->evaluatedFields()[0]);
+
+  /* set the FAD data and finalize PHX field manager registration. */
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<EvalT>(NULL);
 }
 
 template <typename EvalT>
