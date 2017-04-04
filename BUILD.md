@@ -166,6 +166,9 @@ goal steps and mini-application examples (default=`""`)
 * OPTIONAL: set `-DGoal_FAD_SIZE` to an integer value that denotes the
 maximum derivative array size for static forward automatic differentiation
 variables.
+* OPTIONAL: set `-DBUILD_TESTING=ON` to enable running regression tests.
+(defalut=`OFF`). This option requires that the `-DGoal_DATA` option point
+to a valid [goal-data][19] directory.
 
 [0]:https://git-scm.com
 [1]:https://cmake.org
