@@ -1,0 +1,181 @@
+/** \page MeshGen Mesh generation
+
+\tableofcontents
+
+\section meshgen_intro Introduction
+
+Mesh generation is a critical component of finite element
+workflows. In this documentation page, we will discuss
+a fully open-source workflow for generating finite element
+meshes with [Gmsh][1] and a Gmsh geometric modeling
+pre-processor utility [Gmodel][0]. It is also possible
+to generate meshes with a variety of other FEM software
+(e.g. [ugrid][2], [Simmetrix][3], [ANYS][4]), because
+mesh conversion utitlities are provided for these
+mesh formats with the PUMI software. However, we will
+not consider these worklows presently. In this tutorial,
+we will cover the mesh generation of the goal logo,
+as seen below.
+
+![test](@PROJECT_SOURCE_DIR@/doc/logobig.png)
+
+\section meshgen_gmodel Gmodel
+
+'[Gmodel][0] is a C++11 library that implements a minimal
+CAD kernel based on the `.geo` format used by the
+[Gmsh][1] mesh generation code, and is designed
+to make it easier for users to quickly construct
+CAD models for Gmsh.' - from the Gmodel repository.
+
+In this section we will overview how to use Gmodel
+to create and extrude some basic loops and how to
+weld surfaces with holes together to create a larger
+assembly of parts.
+
+\subsection meshgen_background Goal logo: background
+
+First we construct the solid block used for the background
+of the goal logo. We first include all symbols from the
+namespace `gmod`. An important `gmod` variable is the
+`default_size` variable. This will specify the mesh size
+(in absolute terms) for all variables that proceed its
+specification. As will be seen later, this variable
+can be modified to achieve varying mesh sizes at different
+portions of the mesh. A `std::vector` of `gmod::Vector`s
+is created to store all physical coordinates associated
+with a loop that defines the background we would like
+to create. Next, these coordinates are converted to
+geometric points and stored in the variable `back_pts`.
+Using these geometric points, a closed loop is formed
+using the `gmod::new_polyline()` method. This closed
+loop is then used to define a plane with the method
+`gmod::new_plane2`, and finally this plane is extruded
+in the z-direction to form a solid block.
+
+\code
+  using namespace gmod;
+  default_size = 0.5;
+
+  // background
+  std::vector<Vector> back_vtx = {
+    Vector{0, 0, 0},
+    Vector{5, 0, 0},
+    Vector{5, -3, 0},
+    Vector{0, -3, 0},
+    Vector{0, -6, 0},
+    Vector{8, -6, 0},
+    Vector{8, 0, 0},
+    Vector{24, 0, 0},
+    Vector{24, 14, 0},
+    Vector{21, 14, 0},
+    Vector{21, 8, 0},
+    Vector{0, 8, 0}};
+  auto back_pts = new_points(back_vtx);
+  auto back_loop = new_polyline(back_pts);
+  auto back_face = new_plane2(back_loop);
+  auto back = extrude_face(back_face, Vector{0, 0, -3}).middle;
+\endcode
+
+\subsection meshgen_letter_g Goal logo: the letter g
+
+Next, we modify the `gmod::default_size` variable so that
+the letters of the logo use a slightly smaller mesh-size
+during mesh generation. As was done previously, the outline
+of the letter `g` is defined by physical coordinates which
+are then converted to geometric vertices, which are used
+to form a closed loop, which is used to define a plane
+surface. As a point of departure from the previous step,
+though, we create a new square and cut a hole into the
+face that defines the letter g. We then extrude this
+face (that now has a hole in it) using `gmod::extrude_face`
+and weld the back plane of the extruded letter g to the
+front plane of the background block.
+
+\code
+  default_size = 0.3;
+
+  // g
+  std::vector<Vector> g_vtx = {
+    Vector{1, 1, 0},
+    Vector{6, 1, 0},
+    Vector{6, -4, 0},
+    Vector{1, -4, 0},
+    Vector{1, -5, 0},
+    Vector{7, -5, 0},
+    Vector{7, 7, 0},
+    Vector{1, 7, 0}};
+  auto g_pts = new_points(g_vtx);
+  auto g_loop = new_polyline(g_pts);
+  auto g_face = new_plane2(g_loop);
+  auto g_hole = new_square(
+      Vector{2, 2, 0},
+      Vector{4, 0, 0},
+      Vector{0, 4, 0});
+  add_hole_to_face(g_face, face_loop(g_hole));
+  auto g = extrude_face(g_face, Vector{0, 0, 1}).middle;
+  weld_plane_with_holes_into(back, g, back_face, g_face);
+\endcode
+
+\subsection meshgen_all_code The goal logo: complete code
+
+With the information described in the previous two sections,
+one has all the information needed to finish generating the letters
+for the goal logo. As a final note, every solid extruded component
+is added to a group, called `group`, using the method
+`gmod::add_to_group` to complete the assembly of parts, and this
+group is output both to the PUMI `.dmg` file format and the
+Gmsh `.geo` file format. The complete goal logo geometric
+generation code (`goal.cpp`) is shown below:
+
+\include @Goal_DATA@/meshes/goal/goal.cpp
+
+\subsection meshgen_compiling Compiling the goal logo gmodel code
+
+To compile and execute the code, one could run the following commands:
+
+\code
+mpicxx -std=c++11 goal.cpp -o goallogo -I${GMODEL_DIR}/include -L${GMODEL_DIR}/lib -lgmodel
+./goallogo
+\endcode
+
+where the `GMODEL_DIR` environment variable points to the
+appropriate Gmodel installation directory. Executing this code
+will result in the output of two files:
+- `goal.dmg`
+- `goal.geo`
+
+\section meshgen_gmsh Gmsh
+
+With the `goal.geo` file and an appropriate `gmsh` executable
+in your `PATH`, a mesh for the newly created geometry can be
+generated with Gmsh using the following command:
+
+\code
+gmsh -3 goal.geo goal.msh
+\endcode
+
+This will result in the output mesh:
+- `goal.msh`
+
+\section meshgen_pumi Conversion to PUMI
+
+Finally, once to convert the Gmsh mesh `goal.msh` to a valid
+PUMI mesh, the following command can be used:
+
+\code
+from_gmsh goal.dmg goal.msh goal.smb
+\endcode
+
+which will generate the output PUMI mesh
+- `goal.smb` 
+
+Here, the executable `from_gmsh` is provided by a valid PUMI
+installation.
+
+[0]:https://github.com/ibaned/gmodel
+[1]:http://gmsh.info
+[2]:http://ocefpaf.github.io/ugrid-conventions
+[3]:http://www.simmetrix.com
+[4]:http://www.ansys.com
+
+*/
