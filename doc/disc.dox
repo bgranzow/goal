@@ -4,24 +4,23 @@
 
 \section disc_overview Discretization overview
 
-The Discretization class exists as a wrapper around an APF mesh data
-structrure. Its purpose is to provide the APF mesh with information that
-defines a domain definition of the problem to be solved, as well as to
-construct degree of freedom connectivity maps and graphs that are
-in turn used to construct Tpetra matrices and vectors.
+The \ref goal::Discretization class exists as a wrapper around an
+APF mesh data structrure. Its purpose is to provide the APF mesh
+with information thatd efines a domain definition of the problem to be solved.
 
-Currently, the Discretization class assumes that the APF mesh is
-a wrapper around the
+Currently, the \ref goal::Discretization class assumes
+that the APF mesh is a wrapper around the
 <a href=https://github.com/SCOREC/core/tree/master/mds>PUMI</a>
 mesh data structure. However, because the APF is a generic wrapper
-around mesh data structures, the Discretization class could be
-further abstracted in the future to support additional
-mesh data structures.
+around mesh data structures, the \ref goal::Discretization class could
+be further abstracted in the future to support additional mesh data
+structures.
 
 \section algebra_objects Linear algebra objects
 
-The Discretization class constructs the following Tpetra linear algebra
-objects:
+Based on the \ref goal::Discretization class, the
+\ref goal::Indexer structure constructs the following Tpetra
+linear algebra objects:
 
 - An owned Tpetra Map
 - A ghosted Tpetra Map
@@ -39,7 +38,7 @@ In most finite element analysis codes, certain degrees of freedom are
 shared between parallel processes when they are located on or near part
 boundaries. We call degrees of freedom that are entirely local to a process
 <i>owned</i> and degrees of freedom that are shared between one or more
-processes <i>ghosted</i>. The maps and graphs that the Discretization
+processes <i>ghosted</i>. The maps and graphs that the \ref goal::Indexer
 constructs are related to the degrees of freedom of the abstract
 numerical analysis that is to be solved.
 
