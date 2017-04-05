@@ -17,7 +17,7 @@ not consider these worklows presently. In this tutorial,
 we will cover the mesh generation of the goal logo,
 as seen below.
 
-![test](@PROJECT_SOURCE_DIR@/doc/logobig.png)
+![The goal logo](./logobig.png)
 
 \section meshgen_gmodel Gmodel
 

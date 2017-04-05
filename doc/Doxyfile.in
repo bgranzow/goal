@@ -160,7 +160,8 @@ EXAMPLE_PATH           = \
 @PROJECT_SOURCE_DIR@/test/steps/step2.cpp
 EXAMPLE_PATTERNS       =
 EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             =
+IMAGE_PATH             = \
+@PROJECT_SOURCE_DIR@/doc
 INPUT_FILTER           =
 FILTER_PATTERNS        =
 FILTER_SOURCE_FILES    = NO
