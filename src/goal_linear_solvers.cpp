@@ -130,10 +130,10 @@ static void run_solver(
   solver->solve();
   auto t1 = time();
   auto iters = solver->getNumIters();
-  print(" > linear system solved in %d iterations", iters);
+  print(" > linear system: solved in %d iterations", iters);
   if (iters >= in->get<int>("maximum iterations"))
     print(" >  but solve was incomplete! continuing anyway...");
-  print(" > linear system solved in %f seconds", t1 - t0);
+  print(" > linear system: solved in %f seconds", t1 - t0);
 }
 
 void solve_ilu_cg(
