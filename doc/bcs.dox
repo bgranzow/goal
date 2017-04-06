@@ -73,7 +73,7 @@ a one on the diagonal yields the system:
 
 \f[
 \begin{bmatrix}
-1                 & 0                 & 0                 \\
+\mathcal{J}_{11}  & 0                 & 0                 \\
 \mathcal{J}_{21}  & \mathcal{J}_{22}  & \mathcal{J}_{23}  \\
 \mathcal{J}_{31}  & \mathcal{J}_{32}  & \mathcal{J}_{33} 
 \end{bmatrix}
@@ -94,19 +94,21 @@ R_3
 \end{bmatrix}
 \f]
 
-Rather than specifying \f$ \delta u_1 = -R_1 \f$, we would
+Rather than specifying
+\f$ \mathcal{J}_{11} \delta u_1 = -R_1 \f$, we would
 like to ensure that
 
 \f[
 u_1^{(n+1)} = \delta u_1^{(n)} + u_1^{(n)} = g_1
 \f]
 
-Making the substitution \f$ \delta u_1^{(n)} = -R_1 \f$ into the
-previous equation, it becomes clear that the desired modification
-for the residual vector is:
+Making the substitution
+\f$ \delta u_1^{(n)} = - R_1 / \mathcal{J}_{11} \f$
+into the previous equation, it becomes clear that the desired
+modification for the residual vector is:
 
 \f[
-R_1 = u_1^{(n)} - g_1
+R_1 = \mathcal{J}_{11} ( u_1^{(n)} - g_1 )
 \f]
 
 Such a selection will ensure that \f$ u_1 = g_1 \f$ for all
@@ -115,8 +117,10 @@ we would like to constrain \f$ u_i = g_i \f$ for some \f$ i \f$,
 we update the residual vector at each nonlinear iteration as:
 
 \f[
-R_i = u_i^{(n)} - g_i
+R_i = \mathcal{J}_{ii} ( u_i^{(n)} - g_i ),
 \f]
+
+where summation on \f$ i \f$ is not implied.
 
 \subsection dbcs_rows_dual The dual problem
 
@@ -133,7 +137,7 @@ as shown below:
 
 \f[
 \begin{bmatrix}
-1                   & 0                  & 0                  \\
+\mathcal{J}^T_{11}  & 0                  & 0                  \\
 \mathcal{J}^T_{21}  & \mathcal{J}^T_{22} & \mathcal{J}^T_{23} \\
 \mathcal{J}^T_{31}  & \mathcal{J}^T_{32} & \mathcal{J}^T_{33}
 \end{bmatrix}
