@@ -1,3 +1,7 @@
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/goal_config_in.hpp
+  ${CMAKE_CURRENT_BINARY_DIR}/goal_config.hpp)
+
 set(Goal_SOURCES
 goal_control.cpp
 goal_dimension.cpp

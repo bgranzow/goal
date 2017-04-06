@@ -16,5 +16,8 @@ add_parallel_test(${ELAST_EXE} elasticity_square)
 add_parallel_test(${ELAST_EXE} elasticity_square_traction)
 add_parallel_test(${ELAST_EXE} elasticity_cube)
 add_parallel_test(${ELAST_EXE} elasticity_cube_traction)
+if(Goal_MueLu)
+  add_parallel_test(${ELAST_EXE} elasticity_cube_multigrid)
+endif()
 
 bob_end_subdir()
