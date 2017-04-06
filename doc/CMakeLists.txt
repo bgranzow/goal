@@ -10,7 +10,7 @@ configure_file(
 function(doc_config fname)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/${fname}
-    ${CMAKE_CURRENT_BINARY_DIR}/${fname})
+    ${CMAKE_CURRENT_BINARY_DIR}/${fname} @ONLY)
 endfunction()
 
 doc_config(meshgen.dox)

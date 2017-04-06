@@ -134,7 +134,7 @@ generation code (`goal.cpp`) is shown below:
 To compile and execute the code, one could run the following commands:
 
 \code
-mpicxx -std=c++11 goal.cpp -o goallogo -I$(GMODEL_DIR)/include -L$(GMODEL_DIR)/lib -lgmodel
+mpicxx -std=c++11 goal.cpp -o goallogo -I${GMODEL_DIR}/include -L${GMODEL_DIR}/lib -lgmodel
 ./goallogo
 \endcode
 
