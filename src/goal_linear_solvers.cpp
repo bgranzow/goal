@@ -111,6 +111,11 @@ static RCP<Solver> build_multigrid_solver(
   else if (type == GMRES)
     solver = rcp(new GmresSolver(problem, belos_params));
 #else
+  (void)in;
+  (void)A;
+  (void)x;
+  (void)b;
+  (void)type;
   fail("calling multigrid preconditioner but Goal_MueLu=OFF!");
 #endif
   return solver;
