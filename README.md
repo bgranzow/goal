@@ -14,7 +14,7 @@ It aims to provide a sandbox of analysis tools that:
 To get started:
 
 - view the [build instructions][0]
-- view the [development][1] documentation
+- view the [documentation pages][1]
 - view [this primer][2] on forward automatic differentation
 - view [this primer][3] on adjoint-based error estimation
 
