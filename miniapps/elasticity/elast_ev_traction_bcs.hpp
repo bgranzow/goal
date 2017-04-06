@@ -1,5 +1,7 @@
-#ifndef GOAL_EV_TRACTION_BCS_HPP
-#define GOAL_EV_TRACTION_BCS_HPP
+#ifndef ELAST_EV_TRACTION_BCS_HPP
+#define ELAST_EV_TRACTION_BCS_HPP
+
+/** \file elast_ev_traction_bcs.hpp */
 
 #include <Phalanx_Evaluator_WithBaseImpl.hpp>
 #include <Phalanx_Evaluator_Derived.hpp>
