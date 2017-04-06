@@ -147,6 +147,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/miniapps/elasticity/elast_ev_stress.hpp \
 @PROJECT_SOURCE_DIR@/miniapps/elasticity/elast_ev_residual.hpp \
 @PROJECT_SOURCE_DIR@/miniapps/elasticity/elast_ev_traction_bcs.hpp \
+@PROJECT_SOURCE_DIR@/miniapps/elasticity/elast_ev_von_mises.hpp \
 @PROJECT_SOURCE_DIR@/miniapps/elasticity/elast_physics.hpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =

@@ -12,6 +12,7 @@ set(Goal_ELASTICITY_SOURCES
 elast_ev_stress.cpp
 elast_ev_residual.cpp
 elast_ev_traction_bcs.cpp
+elast_ev_von_mises.cpp
 elast_physics.cpp
 )
 
