@@ -24,6 +24,7 @@ goal_ev_interpolate_vector.cpp
 goal_ev_scatter_vector.cpp
 goal_ev_scatter_functional.cpp
 goal_ev_dirichlet_bcs.cpp
+goal_ev_condensed_dbcs.cpp
 goal_ev_utils.cpp
 )
 
@@ -53,6 +54,7 @@ goal_ev_interpolate_vector.hpp
 goal_ev_scatter_vector.hpp
 goal_ev_scatter_functional.hpp
 goal_ev_dirichlet_bcs.hpp
+goal_ev_condensed_dbcs.hpp
 goal_ev_utils.hpp
 )
 

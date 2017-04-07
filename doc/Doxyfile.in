@@ -132,6 +132,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_ev_scatter_vector.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_scatter_functional.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_dirichlet_bcs.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_ev_condensed_dbcs.hpp \
 \
 @PROJECT_SOURCE_DIR@/test/steps/steps.dox \
 @PROJECT_SOURCE_DIR@/test/steps/step1.dox \
