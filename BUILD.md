@@ -131,7 +131,7 @@ cmake .. \
 -DCMAKE_CXX_COMPILER=<path-to-mpicxx> \
 -DCMAKE_INSTALL_PREFIX=<path-to-install> \
 -DTrilinos_PREFIX=<path-to-trilinos-install> \
--DScorec_PREFIX=<path-to-pumi-install>
+-DSCOREC_PREFIX=<path-to-pumi-install>
 make -j 4
 make install
 ```
@@ -143,7 +143,7 @@ available options is provided below:
 
 * REQUIRED: set `-DCMAKE_CXX_COMPILER` to the relevant mpi c++ compiler.
 * REQUIRED: set `-DTrilinos_PREFIX` to point to the Trilinos installation.
-* REQUIRED: set `-DScorec_PREFIX` to point to the PUMI installation.
+* REQUIRED: set `-DSCOREC_PREFIX` to point to the PUMI installation.
 * REQUIRED: set `-DCMAKE_INSTALL_PREFIX` to indicate the goal install location.
 * OPTIONAL: set CXX compiler flags.
   * Note: `-DCMAKE_CXX_FLAGS` does not affect the build.
