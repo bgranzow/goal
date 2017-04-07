@@ -58,7 +58,7 @@ class DirichletBCs<goal::Traits::Residual, TRAITS>
   /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);
 
-  /** \brief Fill in the local multidimensional arrays. */
+  /** \brief Modify the owned linear algebra data. */
   void evaluateFields(EvalData workset);
 
  private:
@@ -104,7 +104,7 @@ class DirichletBCs<goal::Traits::Jacobian, TRAITS>
   /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);
 
-  /** \brief Fill in the local multidimensional arrays. */
+  /** \brief Modify the owned linear algebra data. */
   void evaluateFields(EvalData workset);
 
  private:
