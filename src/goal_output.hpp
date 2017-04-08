@@ -5,9 +5,11 @@
 
 #include <Teuchos_RCP.hpp>
 
+/** \cond */
 namespace Teuchos {
 class ParameterList;
 };
+/** \endcond */
 
 namespace goal {
 
