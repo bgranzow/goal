@@ -66,6 +66,9 @@ class Physics : public goal::Physics {
   /** \brief Destroy the physics object. */
   ~Physics();
 
+  /** \brief Get the Dirichlet boundary condition parameters. */
+  RCP<const ParameterList> get_dbc_params();
+
  private:
   void set_primal();
   void set_dual();

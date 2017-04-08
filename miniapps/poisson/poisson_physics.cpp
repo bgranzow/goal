@@ -49,6 +49,10 @@ Physics::Physics(
 Physics::~Physics() {
 }
 
+RCP<const ParameterList> Physics::get_dbc_params() {
+  return rcpFromRef(params->sublist("dirichlet bcs"));
+}
+
 void Physics::set_primal() {
   is_primal = true;
   is_dual = false;

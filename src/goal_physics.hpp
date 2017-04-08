@@ -11,6 +11,7 @@ namespace goal {
 
 using Teuchos::RCP;
 using Teuchos::ArrayRCP;
+using Teuchos::ParameterList;
 
 /** \brief A field manager templated on \ref goal::Traits. */
 typedef RCP<PHX::FieldManager<goal::Traits> > FieldManager;
@@ -58,6 +59,12 @@ class Physics {
   /** \brief Destroy the physics object.
     * \details This does nothing. */
   virtual ~Physics();
+
+  /** \brief Get the Dirichlet boundary condition parameters.
+    * \details Each member of this parameter list should be of type:
+    * Teuchos::Array<std::string> with entries of the form:
+    * [ dof field idx, dof field component, node set name, bc value]. */
+  virtual RCP<const ParameterList> get_dbc_params() = 0;
 
   /** \brief Returns the current indexer. */
   RCP<Indexer> get_indexer() { return indexer; }

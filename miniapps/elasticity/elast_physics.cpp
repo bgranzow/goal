@@ -10,6 +10,7 @@
 namespace elast {
 
 using Teuchos::rcp;
+using Teuchos::rcpFromRef;
 
 static RCP<ParameterList> get_valid_params(RCP<goal::Discretization> d) {
   auto p = rcp(new ParameterList);
@@ -54,6 +55,10 @@ Physics::Physics(
 
 Physics::~Physics() {
   for (std::size_t i = 0; i < u.size(); ++i) u[i] = Teuchos::null;
+}
+
+RCP<const ParameterList> Physics::get_dbc_params() {
+  return rcpFromRef(params->sublist("dirichlet bcs"));
 }
 
 void Physics::set_primal() {
@@ -181,10 +186,8 @@ void elast::Physics::register_dirichlet(goal::FieldManager fm) {
   /* bail if we are estimating the error. */
   if (is_error) return;
 
-  /* get the dirichlet boundary condition parameters. */
-  auto dbc = rcpFromRef(params->sublist("dirichlet bcs"));
-
   /* set up the Dirichlet BC evaluator. */
+  auto dbc = get_dbc_params();
   auto ev =
     rcp(new goal::DirichletBCs<EvalT, goal::Traits>(dbc, indexer, is_dual));
   fm->registerEvaluator<EvalT>(ev);
