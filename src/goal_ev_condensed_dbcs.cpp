@@ -3,6 +3,7 @@
 #include <apfNumbering.h>
 #include <apfShape.h>
 #include <Phalanx_DataLayout_MDALayout.hpp>
+#include <Tpetra_RowMatrixTransposer_decl.hpp>
 
 #include "goal_control.hpp"
 #include "goal_ev_condensed_dbcs.hpp"
@@ -136,7 +137,7 @@ CondensedDBCs<goal::Traits::Jacobian, TRAITS>::CondensedDBCs(
   indexer = i;
   is_adjoint = adj;
   validate_params(indexer, params);
-  auto name = "Dirichlet BCs";
+  auto name = "Condensed Dirichlet BCs";
   PHX::Tag<ScalarT> op(name, rcp(new PHX::MDALayout<Dummy>(0)));
   this->addEvaluatedField(op);
   this->setName(name);
@@ -159,48 +160,64 @@ void CondensedDBCs<goal::Traits::Jacobian, TRAITS>::preEvaluate(
 }
 
 template <typename TRAITS>
-void CondensedDBCs<goal::Traits::Jacobian, TRAITS>::apply_bc(
-    EvalData workset, Teuchos::Array<std::string> const& a) {
-  auto idx = stoi(a[0]);
-  auto cmp = stoi(a[1]);
-  auto set = a[2];
-  auto val = a[3];
-  auto u = info->owned->u;
-  auto R = info->owned->R;
-  auto dRdu = info->owned->dRdu;
-  auto sol = u->get1dView();
-  auto res = R->get1dViewNonConst();
-  auto field = indexer->get_field(idx);
-  auto t = workset.t_current;
-  size_t num_entries;
-  Teuchos::Array<LO> indices;
-  Teuchos::Array<ST> entries;
-  auto nodes = indexer->get_node_set_nodes(set, idx);
-  for (std::size_t i = 0; i < nodes.size(); ++i) {
-    auto node = nodes[i];
-    LO row = indexer->get_owned_lid(idx, node, cmp);
-    double v = get_bc_val(field, val, node, t, is_adjoint);
-    num_entries = dRdu->getNumEntriesInLocalRow(row);
-    indices.resize(num_entries);
-    entries.resize(num_entries);
-    dRdu->getLocalRowCopy(row, indices(), entries(), num_entries);
-    ST diag = 1.0;
-    for (size_t c = 0; c < num_entries; ++c) {
-      if (indices[c] == row) diag = entries[c];
-      else entries[c] = 0.0;
-    }
-    res[row] = diag*(sol[row] - v);
-    dRdu->replaceLocalValues(row, indices(), entries());
-  }
-}
-
-template <typename TRAITS>
 void CondensedDBCs<goal::Traits::Jacobian, TRAITS>::evaluateFields(
     EvalData workset) {
+
+  using Transposer = Tpetra::RowMatrixTransposer<ST, LO, GO, KNode>;
+  auto u = info->owned->u;
+  auto R = info->owned->R;
+  auto sol = u->get1dView();
+  auto res = R->get1dViewNonConst();
+  auto dRdu = info->owned->dRdu;
+  auto transposer = rcp(new Transposer(dRdu));
+  auto dRduT = transposer->createTranspose();
+
+  size_t num_entries;
+  Teuchos::Array<GO> indices;
+  Teuchos::Array<ST> entries;
+  Teuchos::Array<GO> index(1);
+  Teuchos::Array<ST> entry(1);
+
   for (auto i = params->begin(); i != params->end(); ++i) {
-    auto entry = params->entry(i);
-    auto a = getValue<Array<std::string> >(entry);
-    apply_bc(workset, a);
+    auto param_entry = params->entry(i);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto idx = stoi(a[0]);
+    auto cmp = stoi(a[1]);
+    auto set = a[2];
+    auto val = a[3];
+    auto t = workset.t_current;
+    auto field = indexer->get_field(idx);
+    auto nodes = indexer->get_node_set_nodes(set, idx);
+
+    for (std::size_t i = 0; i < nodes.size(); ++i) {
+      auto node = nodes[i];
+      LO dof_lid = indexer->get_owned_lid(idx, node, cmp);
+      GO dof_gid = indexer->get_owned_map()->getGlobalElement(dof_lid);
+      index[0] = dof_gid;
+
+      double v = get_bc_val(field, val, node, t, is_adjoint);
+      ST R_exact = sol[dof_lid] - v;
+
+      num_entries = dRdu->getNumEntriesInGlobalRow(dof_gid);
+      indices.resize(num_entries);
+      entries.resize(num_entries);
+      dRduT->getGlobalRowCopy(dof_gid, indices(), entries(), num_entries);
+
+      entry[0] = 0.0;
+      for (std::size_t i = 0; i < num_entries; ++i) {
+        GO row = indices[i];
+        R->sumIntoGlobalValue(row, -R_exact*entries[i]);
+        dRdu->replaceGlobalValues(row, index(), entry());
+      }
+
+      entry[0] = 1.0;
+      dRdu->getGlobalRowCopy(dof_gid, indices(), entries(), num_entries);
+      for (std::size_t i = 0; i < num_entries; ++i)
+        entries[i] = 0.0;
+      dRdu->replaceGlobalValues(dof_gid, indices(), entries());
+      dRdu->replaceGlobalValues(dof_gid, index(), entry());
+      R->replaceGlobalValue(dof_gid, R_exact);
+    }
   }
 }
 

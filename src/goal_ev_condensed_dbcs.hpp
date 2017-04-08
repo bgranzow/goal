@@ -113,7 +113,6 @@ class CondensedDBCs<goal::Traits::Jacobian, TRAITS>
   RCP<Indexer> indexer;
   RCP<const ParameterList> params;
   RCP<SolutionInfo> info;
-  void apply_bc(EvalData workset, Teuchos::Array<std::string> const& a);
 };
 
 }  // namespace goal
