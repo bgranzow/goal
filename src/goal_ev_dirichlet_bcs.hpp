@@ -16,12 +16,20 @@ using Teuchos::RCP;
 using Teuchos::ParameterList;
 
 class Field;
+class Physics;
 class Indexer;
 class SolutionInfo;
 
 template <typename EVALT, typename TRAITS>
 class DirichletBCs;
 /** \endcond */
+
+/** \brief Prescibe the solution \f$ u \f$ at DBC nodes.
+  * \param phy The relevant \ref goal::Physics structure.
+  * \param t The current physical evaluation time.
+  * \details This will set DBC values DOF fields accessed by the
+  * method \ref goal::Physics::get_indexer. */
+void set_dbc_values(RCP<Physics> phy, const double t);
 
 /** \brief Apply Dirichlet boundary conditions to the right hand side vector.
   * \details This evaluator will modify the right hand side of a linear system
@@ -66,7 +74,7 @@ class DirichletBCs<goal::Traits::Residual, TRAITS>
   RCP<Indexer> indexer;
   RCP<const ParameterList> params;
   RCP<SolutionInfo> info;
-  void apply_bc(EvalData workset, Teuchos::Array<std::string> const& a);
+  void apply_bc(Teuchos::Array<std::string> const& a);
 };
 
 /** \brief Apply Dirichlet boundary conditions to the entire linear system.
@@ -112,7 +120,7 @@ class DirichletBCs<goal::Traits::Jacobian, TRAITS>
   RCP<Indexer> indexer;
   RCP<const ParameterList> params;
   RCP<SolutionInfo> info;
-  void apply_bc(EvalData workset, Teuchos::Array<std::string> const& a);
+  void apply_bc(Teuchos::Array<std::string> const& a);
 };
 
 }  // namespace goal

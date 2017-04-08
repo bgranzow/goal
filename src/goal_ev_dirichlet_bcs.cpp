@@ -7,6 +7,7 @@
 #include "goal_control.hpp"
 #include "goal_ev_dirichlet_bcs.hpp"
 #include "goal_field.hpp"
+#include "goal_physics.hpp"
 #include "goal_indexer.hpp"
 #include "goal_solution_info.hpp"
 #include "goal_workset.hpp"
@@ -15,21 +16,9 @@ namespace goal {
 
 using Teuchos::rcp;
 using Teuchos::rcpFromRef;
-
-static void validate_params(RCP<Indexer> indexer, RCP<const ParameterList> p) {
-  using Teuchos::Array;
-  using Teuchos::ParameterList;
-  using Teuchos::ParameterEntry;
-  using Teuchos::getValue;
-  for (auto it = p->begin(); it != p->end(); ++it) {
-    auto entry = p->entry(it);
-    auto a = getValue<Array<std::string> >(entry);
-    assert(a.size() == 4);
-    auto idx = stoi(a[0]);
-    auto set = a[2];
-    indexer->get_node_set_nodes(set, idx);
-  }
-}
+using Teuchos::Array;
+using Teuchos::ParameterEntry;
+using Teuchos::getValue;
 
 static double get_interpolatory_bc_val(RCP<Field> f, std::string const& val,
     apf::Node const& node, const double t) {
@@ -59,15 +48,50 @@ static double get_hierarchic_bc_val(RCP<Field> f, std::string const& val,
 }
 
 static double get_bc_val(RCP<Field> f, std::string const& val,
-    apf::Node const& node, const double t, bool is_adjoint) {
+    apf::Node const& node, const double t) {
   double v = 0.0;
-  if (is_adjoint)
-    v = 0.0;
-  else if (f->get_basis_type() == LAGRANGE)
+  if (f->get_basis_type() == LAGRANGE)
     v = get_interpolatory_bc_val(f, val, node, t);
   else if (f->get_basis_type() == HIERARCHIC)
     v = get_hierarchic_bc_val(f, val, node, t);
   return v;
+}
+
+void set_dbc_values(RCP<Physics> phy, const double t) {
+  auto params = phy->get_dbc_params();
+  auto indexer = phy->get_indexer();
+  for (auto it = params->begin(); it != params->end(); ++it) {
+    auto entry = params->entry(it);
+    auto a = getValue<Array<std::string> >(entry);
+    auto idx = stoi(a[0]);
+    auto cmp = stoi(a[1]);
+    auto set = a[2];
+    auto val = a[3];
+    auto f = indexer->get_field(idx);
+    auto apf_f = f->get_apf_field();
+    auto nodes = indexer->get_node_set_nodes(set, idx);
+    double vals[3] = {0, 0, 0};
+    for (std::size_t i = 0; i < nodes.size(); ++i) {
+      auto node = nodes[i];
+      auto v = get_bc_val(f, val, node, t);
+      auto e = node.entity;
+      auto n = node.node;
+      apf::getComponents(apf_f, e, n, vals);
+      vals[cmp] = v;
+      apf::setComponents(apf_f, e, n, vals);
+    }
+  }
+}
+
+static void validate_params(RCP<Indexer> indexer, RCP<const ParameterList> p) {
+  for (auto it = p->begin(); it != p->end(); ++it) {
+    auto entry = p->entry(it);
+    auto a = getValue<Array<std::string> >(entry);
+    assert(a.size() == 4);
+    auto idx = stoi(a[0]);
+    auto set = a[2];
+    indexer->get_node_set_nodes(set, idx);
+  }
 }
 
 template <typename TRAITS>
@@ -99,37 +123,28 @@ void DirichletBCs<goal::Traits::Residual, TRAITS>::preEvaluate(PreEvalData i) {
 
 template <typename TRAITS>
 void DirichletBCs<goal::Traits::Residual, TRAITS>::apply_bc(
-    EvalData workset, Teuchos::Array<std::string> const& a) {
+    Teuchos::Array<std::string> const& a) {
   auto idx = stoi(a[0]);
   auto cmp = stoi(a[1]);
   auto set = a[2];
-  auto val = a[3];
-  auto u = info->owned->u;
-  auto R = info->owned->R;
-  auto sol = u->get1dView();
-  auto res = R->get1dViewNonConst();
-  auto field = indexer->get_field(idx);
-  auto t = workset.t_current;
+  auto R = info->owned->R->get1dViewNonConst();
   auto nodes = indexer->get_node_set_nodes(set, idx);
   for (std::size_t i = 0; i < nodes.size(); ++i) {
     auto node = nodes[i];
     LO row = indexer->get_owned_lid(idx, node, cmp);
-    double v = get_bc_val(field, val, node, t, is_adjoint);
-    res[row] = sol[row] - v;
+    R[row] = 0.0;
   }
 }
 
 template <typename TRAITS>
 void DirichletBCs<goal::Traits::Residual, TRAITS>::evaluateFields(
     EvalData workset) {
-  using Teuchos::Array;
-  using Teuchos::ParameterEntry;
-  using Teuchos::getValue;
   for (auto i = params->begin(); i != params->end(); ++i) {
     auto entry = params->entry(i);
     auto a = getValue<Array<std::string> >(entry);
-    apply_bc(workset, a);
+    apply_bc(a);
   }
+  (void)workset;
 }
 
 template <typename TRAITS>
@@ -162,18 +177,12 @@ void DirichletBCs<goal::Traits::Jacobian, TRAITS>::preEvaluate(PreEvalData i) {
 
 template <typename TRAITS>
 void DirichletBCs<goal::Traits::Jacobian, TRAITS>::apply_bc(
-    EvalData workset, Teuchos::Array<std::string> const& a) {
+    Teuchos::Array<std::string> const& a) {
   auto idx = stoi(a[0]);
   auto cmp = stoi(a[1]);
   auto set = a[2];
-  auto val = a[3];
-  auto u = info->owned->u;
-  auto R = info->owned->R;
+  auto R = info->owned->R->get1dViewNonConst();
   auto dRdu = info->owned->dRdu;
-  auto sol = u->get1dView();
-  auto res = R->get1dViewNonConst();
-  auto field = indexer->get_field(idx);
-  auto t = workset.t_current;
   size_t num_entries;
   Teuchos::Array<LO> indices;
   Teuchos::Array<ST> entries;
@@ -181,32 +190,27 @@ void DirichletBCs<goal::Traits::Jacobian, TRAITS>::apply_bc(
   for (std::size_t i = 0; i < nodes.size(); ++i) {
     auto node = nodes[i];
     LO row = indexer->get_owned_lid(idx, node, cmp);
-    double v = get_bc_val(field, val, node, t, is_adjoint);
     num_entries = dRdu->getNumEntriesInLocalRow(row);
     indices.resize(num_entries);
     entries.resize(num_entries);
     dRdu->getLocalRowCopy(row, indices(), entries(), num_entries);
-    ST diag = 1.0;
-    for (size_t c = 0; c < num_entries; ++c) {
-      if (indices[c] == row) diag = entries[c];
-      else entries[c] = 0.0;
-    }
-    res[row] = diag*(sol[row] - v);
+    for (size_t c = 0; c < num_entries; ++c)
+      if (indices[c] != row)
+        entries[c] = 0.0;
     dRdu->replaceLocalValues(row, indices(), entries());
+    R[row] = 0.0;
   }
 }
 
 template <typename TRAITS>
 void DirichletBCs<goal::Traits::Jacobian, TRAITS>::evaluateFields(
     EvalData workset) {
-  using Teuchos::Array;
-  using Teuchos::ParameterEntry;
-  using Teuchos::getValue;
   for (auto i = params->begin(); i != params->end(); ++i) {
-    auto entry = params->entry(i);
-    auto a = getValue<Array<std::string> >(entry);
-    apply_bc(workset, a);
+    auto param_entry = params->entry(i);
+    auto a = getValue<Array<std::string> >(param_entry);
+    apply_bc(a);
   }
+  (void)workset;
 }
 
 template class DirichletBCs<goal::Traits::Residual, goal::Traits>;
