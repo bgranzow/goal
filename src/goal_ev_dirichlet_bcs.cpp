@@ -81,6 +81,7 @@ void set_dbc_values(RCP<Physics> phy, const double t) {
       vals[cmp] = v;
       apf::setComponents(apf_f, e, n, vals);
     }
+    apf::synchronize(apf_f);
   }
 }
 
