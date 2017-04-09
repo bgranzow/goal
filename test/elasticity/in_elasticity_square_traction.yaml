@@ -16,7 +16,7 @@ elasticity square example:
     neumann bcs:
       bc 1: [top, 0.0, 1.0]
   linear algebra:
-    method: GMRES
+    method: CG
     maximum iterations: 300
     krylov size: 300
     tolerance: 1.0e-10

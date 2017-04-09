@@ -15,7 +15,7 @@ elasticity square example:
       bc 2: [0,1,bottom,0.0]
       bc 3: [0,0,right,0.01]
   linear algebra:
-    method: GMRES
+    method: CG
     maximum iterations: 300
     krylov size: 300
     tolerance: 1.0e-10
