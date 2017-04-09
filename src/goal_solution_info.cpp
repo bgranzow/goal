@@ -19,20 +19,20 @@ SolutionInfo::SolutionInfo(RCP<Indexer> indexer) {
   auto gg = indexer->get_ghost_graph();
   importer = rcp(new Import(om, gm));
   exporter = rcp(new Export(gm, om));
-  owned->u = rcp(new Vector(om));
+  owned->du = rcp(new Vector(om));
   owned->R = rcp(new Vector(om));
   owned->dJdu = rcp(new Vector(om));
   owned->z = rcp(new Vector(om));
   owned->dRdu = rcp(new Matrix(og));
-  ghost->u = rcp(new Vector(gm));
+  ghost->du = rcp(new Vector(gm));
   ghost->R = rcp(new Vector(gm));
   ghost->dRdu = rcp(new Matrix(gg));
   ghost->dJdu = rcp(new Vector(gm));
   ghost->z = rcp(new Vector(gm));
 }
 
-void SolutionInfo::gather_u() {
-  owned->u->doExport(*(ghost->u), *exporter, Tpetra::INSERT);
+void SolutionInfo::gather_du() {
+  owned->du->doExport(*(ghost->du), *exporter, Tpetra::INSERT);
 }
 
 void SolutionInfo::gather_R() {
@@ -51,8 +51,8 @@ void SolutionInfo::gather_z() {
   owned->z->doExport(*(ghost->z), *exporter, Tpetra::ADD);
 }
 
-void SolutionInfo::scatter_u() {
-  ghost->u->doImport(*(owned->u), *importer, Tpetra::INSERT);
+void SolutionInfo::scatter_du() {
+  ghost->du->doImport(*(owned->du), *importer, Tpetra::INSERT);
 }
 
 void SolutionInfo::scatter_R() {
@@ -71,12 +71,12 @@ void SolutionInfo::scatter_z() {
   ghost->z->doImport(*(owned->z), *importer, Tpetra::INSERT);
 }
 
-static void fill_field(RCP<Field> f, RCP<Indexer> i, RCP<Vector> x) {
+static void add_to_field(RCP<Field> f, RCP<Indexer> i, RCP<Vector> du) {
   auto idx = f->get_associated_dof_idx();
   auto apf_field = f->get_apf_field();
   auto components = f->get_num_components();
   auto numbering = i->get_apf_numbering(idx);
-  auto data = x->get1dView();
+  auto data = du->get1dView();
   apf::DynamicArray<apf::Node> owned;
   apf::getNodes(numbering, owned);
   double values[3] = {0.0, 0.0, 0.0};
@@ -84,19 +84,21 @@ static void fill_field(RCP<Field> f, RCP<Indexer> i, RCP<Vector> x) {
     auto node = owned[n];
     auto ent = node.entity;
     auto entn = node.node;
+    apf::getComponents(apf_field, ent, entn, values);
     for (int c = 0; c < components; ++c) {
       LO row = i->get_owned_lid(idx, node, c);
-      values[c] = data[row];
+      values[c] += data[row];
     }
     apf::setComponents(apf_field, ent, entn, values);
   }
   apf::synchronize(apf_field);
 }
 
-void fill_fields(
-    std::vector<RCP<Field> > fields, RCP<Indexer> indexer, RCP<Vector> x) {
+void add_to_fields(
+    std::vector<RCP<Field> > fields, RCP<Indexer> indexer, RCP<Vector> du) {
   double t0 = time();
-  for (size_t i = 0; i < fields.size(); ++i) fill_field(fields[i], indexer, x);
+  for (size_t i = 0; i < fields.size(); ++i)
+    add_to_field(fields[i], indexer, du);
   double t1 = time();
   print(" > fields filled in %f seconds", t1 - t0);
 }

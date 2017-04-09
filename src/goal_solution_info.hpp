@@ -20,8 +20,8 @@ class Discretization;
   * algebra data structures that are required for both primal and
   * dual solves. */
 struct LinearObj {
-  /** \brief The DOF solution vector. */
-  RCP<Vector> u;
+  /** \brief The DOF solution increment vector. */
+  RCP<Vector> du;
 
   /** \brief The residual vector. */
   RCP<Vector> R;
@@ -44,9 +44,9 @@ class SolutionInfo {
     * \param indexer The relevant \ref goal::Indexer. */
   SolutionInfo(RCP<Indexer> indexer);
 
-  /** \brief Transfer data from ghost->u to owned->u.
+  /** \brief Transfer data from ghost->du to owned->du.
     * \details This is called with the Tpetra::INSERT directive. */
-  void gather_u();
+  void gather_du();
 
   /** \brief Transfer data from ghost->R to owned->R.
     * \details This is called with the Tpetra::ADD directive. */
@@ -66,7 +66,7 @@ class SolutionInfo {
 
   /** \brief Transfer data from owned->u to ghost->u.
     * \details This is called with the Tpetra::INSERT directive. */
-  void scatter_u();
+  void scatter_du();
 
   /** \brief Transfer data from owned->R to ghost->R.
     * \details This is called with the Tpetra::ADD directive. */
@@ -98,9 +98,9 @@ class SolutionInfo {
 /** \brief Fill in fields from the global solution vector.
   * \param fields The fields to fill in.
   * \param indexer The relevant DOF indexer.
-  * \param x The relevant solution vector. */
-void fill_fields(
-    std::vector<RCP<Field> > fields, RCP<Indexer> indexer, RCP<Vector> x);
+  * \param du The relevant solution vector. */
+void add_to_fields(
+    std::vector<RCP<Field> > fields, RCP<Indexer> indexer, RCP<Vector> du);
 
 }  // namespace goal
 

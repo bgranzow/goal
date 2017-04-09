@@ -118,7 +118,6 @@ template <typename TRAITS>
 void DirichletBCs<goal::Traits::Residual, TRAITS>::preEvaluate(PreEvalData i) {
   info = rcpFromRef(i);
   assert(info->owned->R != Teuchos::null);
-  assert(info->owned->u != Teuchos::null);
 }
 
 template <typename TRAITS>
@@ -171,7 +170,6 @@ template <typename TRAITS>
 void DirichletBCs<goal::Traits::Jacobian, TRAITS>::preEvaluate(PreEvalData i) {
   info = rcpFromRef(i);
   assert(info->owned->R != Teuchos::null);
-  assert(info->owned->u != Teuchos::null);
   assert(info->owned->dRdu != Teuchos::null);
 }
 

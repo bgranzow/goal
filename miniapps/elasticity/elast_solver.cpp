@@ -3,6 +3,8 @@
 #include <goal_assembly.hpp>
 #include <goal_control.hpp>
 #include <goal_discretization.hpp>
+#include <goal_ev_dirichlet_bcs.hpp>
+#include <goal_indexer.hpp>
 #include <goal_field.hpp>
 #include <goal_output.hpp>
 #include <goal_solution_info.hpp>
@@ -47,6 +49,7 @@ class Solver {
   void estimate_error();
   void adapt_mesh();
   RCP<const ParameterList> params;
+  RCP<const ParameterList> dbc_params;
   RCP<goal::Discretization> disc;
   RCP<elast::Physics> physics;
   RCP<goal::SolutionInfo> info;
@@ -59,6 +62,7 @@ Solver::Solver(RCP<const ParameterList> p) {
   auto dp = rcpFromRef(params->sublist("discretization"));
   auto pp = rcpFromRef(params->sublist("physics"));
   auto op = rcpFromRef(params->sublist("output"));
+  dbc_params = rcpFromRef(pp->sublist("dirichlet bcs"));
   disc = rcp(new goal::Discretization(dp));
   physics = rcp(new elast::Physics(pp, disc));
   output = rcp(new goal::Output(op, disc));
@@ -77,17 +81,19 @@ void Solver::solve_primal() {
   zero_fields(physics);
   physics->build_coarse_indexer();
   physics->build_primal_model();
+  goal::set_dbc_values(physics, 0.0);
   auto indexer = physics->get_indexer();
   info = rcp(new goal::SolutionInfo(indexer));
-  goal::compute_primal_jacobian(physics, info, disc, 0, 0);
+  goal::compute_primal_jacobian(physics, info, disc, 0.0, 0.0);
   auto dRdu = info->owned->dRdu;
   auto R = info->owned->R;
-  auto u = info->owned->u;
+  auto du = info->owned->du;
+  du->putScalar(0.0);
   R->scale(-1.0);
   auto lp = rcpFromRef(params->sublist("linear algebra"));
-  goal::solve_linear_system(lp, dRdu, u, R);
-  goal::fill_fields(physics->get_u(), indexer, u);
-  goal::compute_primal_residual(physics, info, disc, 0, 0);
+  goal::solve_linear_system(lp, dRdu, du, R);
+  goal::add_to_fields(physics->get_u(), indexer, du);
+  goal::compute_primal_residual(physics, info, disc, 0.0, 0.0);
   physics->destroy_model();
   physics->destroy_indexer();
 }

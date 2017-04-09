@@ -54,7 +54,6 @@ void compute_primal_residual(RCP<Physics> p, RCP<SolutionInfo> i,
     RCP<Discretization> d, const double t_current, const double t_previous) {
   typedef goal::Traits::Residual Residual;
   auto t0 = time();
-  i->scatter_u();
   i->owned->R->putScalar(0.0);
   i->ghost->R->putScalar(0.0);
   Workset ws;
@@ -72,7 +71,6 @@ void compute_primal_jacobian(RCP<Physics> p, RCP<SolutionInfo> i,
     RCP<Discretization> d, const double t_current, const double t_previous) {
   typedef goal::Traits::Jacobian Jacobian;
   auto t0 = time();
-  i->scatter_u();
   i->owned->R->putScalar(0.0);
   i->ghost->R->putScalar(0.0);
   i->owned->dRdu->resumeFill();
@@ -97,7 +95,6 @@ void compute_dual_jacobian(RCP<Physics> p, RCP<SolutionInfo> i,
     RCP<Discretization> d, const double t_current, const double t_previous) {
   typedef goal::Traits::Jacobian J;
   auto t0 = time();
-  i->scatter_u();
   i->owned->dJdu->putScalar(0.0);
   i->ghost->dJdu->putScalar(0.0);
   i->owned->dRdu->resumeFill();
@@ -123,7 +120,6 @@ void compute_error_residual(RCP<Physics> p, RCP<SolutionInfo> i,
     RCP<Discretization> d, const double t_current, const double t_previous) {
   typedef goal::Traits::Residual R;
   auto t0 = time();
-  i->scatter_u();
   i->owned->R->putScalar(0.0);
   i->ghost->R->putScalar(0.0);
   Workset ws;
