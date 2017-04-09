@@ -3,6 +3,7 @@
 #include <apfNumbering.h>
 #include <apfShape.h>
 #include <Phalanx_DataLayout_MDALayout.hpp>
+#include <Tpetra_RowMatrixTransposer_decl.hpp>
 
 #include "goal_control.hpp"
 #include "goal_ev_dirichlet_bcs.hpp"
@@ -96,15 +97,16 @@ static void validate_params(RCP<Indexer> indexer, RCP<const ParameterList> p) {
 
 template <typename TRAITS>
 DirichletBCs<goal::Traits::Residual, TRAITS>::DirichletBCs(
-    RCP<const ParameterList> p, RCP<Indexer> i, bool adj) {
+    RCP<const ParameterList> p, RCP<Indexer> i, bool c, bool adj) {
   params = p;
   indexer = i;
-  is_adjoint = adj;
   validate_params(indexer, params);
   auto name = "Dirichlet BCs";
   PHX::Tag<ScalarT> op(name, rcp(new PHX::MDALayout<Dummy>(0)));
   this->addEvaluatedField(op);
   this->setName(name);
+  (void)c;
+  (void)adj;
 }
 
 template <typename TRAITS>
@@ -148,9 +150,10 @@ void DirichletBCs<goal::Traits::Residual, TRAITS>::evaluateFields(
 
 template <typename TRAITS>
 DirichletBCs<goal::Traits::Jacobian, TRAITS>::DirichletBCs(
-    RCP<const ParameterList> p, RCP<Indexer> i, bool adj) {
+    RCP<const ParameterList> p, RCP<Indexer> i, bool c, bool adj) {
   params = p;
   indexer = i;
+  is_condensed = c;
   is_adjoint = adj;
   validate_params(indexer, params);
   auto name = "Dirichlet BCs";
@@ -174,40 +177,81 @@ void DirichletBCs<goal::Traits::Jacobian, TRAITS>::preEvaluate(PreEvalData i) {
 }
 
 template <typename TRAITS>
-void DirichletBCs<goal::Traits::Jacobian, TRAITS>::apply_bc(
-    Teuchos::Array<std::string> const& a) {
-  auto idx = stoi(a[0]);
-  auto cmp = stoi(a[1]);
-  auto set = a[2];
+void DirichletBCs<goal::Traits::Jacobian, TRAITS>::apply_bc() {
   auto R = info->owned->R->get1dViewNonConst();
   auto dRdu = info->owned->dRdu;
   size_t num_entries;
   Teuchos::Array<LO> indices;
   Teuchos::Array<ST> entries;
-  auto nodes = indexer->get_node_set_nodes(set, idx);
-  for (std::size_t i = 0; i < nodes.size(); ++i) {
-    auto node = nodes[i];
-    LO row = indexer->get_owned_lid(idx, node, cmp);
-    num_entries = dRdu->getNumEntriesInLocalRow(row);
-    indices.resize(num_entries);
-    entries.resize(num_entries);
-    dRdu->getLocalRowCopy(row, indices(), entries(), num_entries);
-    for (size_t c = 0; c < num_entries; ++c)
-      if (indices[c] != row)
-        entries[c] = 0.0;
-    dRdu->replaceLocalValues(row, indices(), entries());
-    R[row] = 0.0;
+  for (auto i = params->begin(); i != params->end(); ++i) {
+    auto param_entry = params->entry(i);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto idx = stoi(a[0]);
+    auto cmp = stoi(a[1]);
+    auto set = a[2];
+    auto nodes = indexer->get_node_set_nodes(set, idx);
+    for (std::size_t i = 0; i < nodes.size(); ++i) {
+      auto node = nodes[i];
+      LO row = indexer->get_owned_lid(idx, node, cmp);
+      num_entries = dRdu->getNumEntriesInLocalRow(row);
+      indices.resize(num_entries);
+      entries.resize(num_entries);
+      dRdu->getLocalRowCopy(row, indices(), entries(), num_entries);
+      for (size_t c = 0; c < num_entries; ++c)
+        if (indices[c] != row)
+          entries[c] = 0.0;
+      dRdu->replaceLocalValues(row, indices(), entries());
+      R[row] = 0.0;
+    }
   }
+}
+
+template <typename TRAITS>
+void DirichletBCs<goal::Traits::Jacobian, TRAITS>::condense_columns() {
+  using Transposer = Tpetra::RowMatrixTransposer<ST, LO, GO, KNode>;
+  auto R = info->owned->R;
+  auto dRdu = info->owned->dRdu;
+  auto transposer = rcp(new Transposer(dRdu));
+  auto dRduT = transposer->createTranspose();
+  size_t num_entries;
+  Teuchos::Array<GO> indices;
+  Teuchos::Array<ST> entries;
+  Teuchos::Array<GO> index(1);
+  Teuchos::Array<ST> entry(1);
+  entry[0] = 0.0;
+  for (auto i = params->begin(); i != params->end(); ++i) {
+    auto param_entry = params->entry(i);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto idx = stoi(a[0]);
+    auto cmp = stoi(a[1]);
+    auto set = a[2];
+    auto nodes = indexer->get_node_set_nodes(set, idx);
+    for (std::size_t i = 0; i < nodes.size(); ++i) {
+      auto node = nodes[i];
+      LO dof_lid = indexer->get_owned_lid(idx, node, cmp);
+      GO dof_gid = indexer->get_owned_map()->getGlobalElement(dof_lid);
+      index[0] = dof_gid;
+      num_entries = dRduT->getNumEntriesInGlobalRow(dof_gid);
+      indices.resize(num_entries);
+      entries.resize(num_entries);
+      dRduT->getGlobalRowCopy(dof_gid, indices(), entries(), num_entries);
+      for (size_t r = 0; r < num_entries; ++r)
+        if (indices[r] != dof_gid)
+          dRdu->replaceGlobalValues(indices[r], index(), entry());
+    }
+  }
+}
+
+template <typename TRAITS>
+void DirichletBCs<goal::Traits::Jacobian, TRAITS>::apply_dual_bc() {
 }
 
 template <typename TRAITS>
 void DirichletBCs<goal::Traits::Jacobian, TRAITS>::evaluateFields(
     EvalData workset) {
-  for (auto i = params->begin(); i != params->end(); ++i) {
-    auto param_entry = params->entry(i);
-    auto a = getValue<Array<std::string> >(param_entry);
-    apply_bc(a);
-  }
+  apply_bc();
+  if (is_condensed) condense_columns();
+  if (is_adjoint) apply_dual_bc();
   (void)workset;
 }
 

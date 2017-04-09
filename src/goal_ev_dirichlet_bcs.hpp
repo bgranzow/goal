@@ -56,8 +56,9 @@ class DirichletBCs<goal::Traits::Residual, TRAITS>
     * list should be a Tuechos::Array<std::string> of the form:
     * - [ dof field idx, dof field component, node set name, bc value ].
     * \param i The relevant \ref goal::Indexer for DOF information.
+    * \param c True if Jacobian columns should be zeroed.
     * \param adj True if the dual boundary conditions should be applied. */
-  DirichletBCs(RCP<const ParameterList> p, RCP<Indexer> i, bool adj);
+  DirichletBCs(RCP<const ParameterList> p, RCP<Indexer> i, bool c, bool adj);
 
   /** \brief Collect the linear algebra containers.
     * \param i The pre-evaluation data ( \ref goal::SolutionInfo ). */
@@ -102,8 +103,9 @@ class DirichletBCs<goal::Traits::Jacobian, TRAITS>
     * list should be a Tuechos::Array<std::string> of the form:
     * - [ dof field idx, dof field component, node set name, bc value ].
     * \param i The relevant \ref goal::Indexer for DOF information.
+    * \param c True if Jacobian columns should be zeroed.
     * \param adj True if the dual boundary conditions should be applied. */
-  DirichletBCs(RCP<const ParameterList> p, RCP<Indexer> i, bool adj);
+  DirichletBCs(RCP<const ParameterList> p, RCP<Indexer> i, bool c, bool adj);
 
   /** \brief Collect the linear algebra containers.
     * \param i The pre-evaluation data ( \ref goal::SolutionInfo ). */
@@ -116,11 +118,14 @@ class DirichletBCs<goal::Traits::Jacobian, TRAITS>
   void evaluateFields(EvalData workset);
 
  private:
+  bool is_condensed;
   bool is_adjoint;
   RCP<Indexer> indexer;
   RCP<const ParameterList> params;
   RCP<SolutionInfo> info;
-  void apply_bc(Teuchos::Array<std::string> const& a);
+  void apply_bc();
+  void condense_columns();
+  void apply_dual_bc();
 };
 
 }  // namespace goal

@@ -98,7 +98,7 @@ class SolutionInfo {
 /** \brief Fill in fields from the global solution vector.
   * \param fields The fields to fill in.
   * \param indexer The relevant DOF indexer.
-  * \param du The relevant solution vector. */
+  * \param du The relevant solution increment vector. */
 void add_to_fields(
     std::vector<RCP<Field> > fields, RCP<Indexer> indexer, RCP<Vector> du);
 

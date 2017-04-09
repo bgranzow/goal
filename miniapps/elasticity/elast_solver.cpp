@@ -49,7 +49,6 @@ class Solver {
   void estimate_error();
   void adapt_mesh();
   RCP<const ParameterList> params;
-  RCP<const ParameterList> dbc_params;
   RCP<goal::Discretization> disc;
   RCP<elast::Physics> physics;
   RCP<goal::SolutionInfo> info;
@@ -62,7 +61,6 @@ Solver::Solver(RCP<const ParameterList> p) {
   auto dp = rcpFromRef(params->sublist("discretization"));
   auto pp = rcpFromRef(params->sublist("physics"));
   auto op = rcpFromRef(params->sublist("output"));
-  dbc_params = rcpFromRef(pp->sublist("dirichlet bcs"));
   disc = rcp(new goal::Discretization(dp));
   physics = rcp(new elast::Physics(pp, disc));
   output = rcp(new goal::Output(op, disc));

@@ -188,8 +188,8 @@ void elast::Physics::register_dirichlet(goal::FieldManager fm) {
 
   /* set up the Dirichlet BC evaluator. */
   auto dbc = get_dbc_params();
-  auto ev =
-    rcp(new goal::DirichletBCs<EvalT, goal::Traits>(dbc, indexer, is_dual));
+  auto ev = rcp(new goal::DirichletBCs<EvalT, goal::Traits>(
+        dbc, indexer, true, is_dual));
   fm->registerEvaluator<EvalT>(ev);
   fm->requireField<EvalT>(*ev->evaluatedFields()[0]);
 
