@@ -3,6 +3,12 @@ if(NOT DOXYGEN_FOUND)
   return()
 endif()
 
+if("${Goal_DATA}" STREQUAL "")
+  message(STATUS "skipping documentation...")
+  message(STATUS "-> because Goal_DATA was not set")
+  return()
+endif()
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
   ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
