@@ -50,26 +50,71 @@ is given by a linear system of the form:
 where corresponding Dirichlet boundary conditions for the
 forward problem are homogenized.
 
-\section dbcs_rows Full system: zeroing rows
+\subsection dbcs_apply Prescribing the solution
 
-\subsection dbcs_rows_forward The forward problem
+At the beginning of a time/load step, users are expected
+to prescribe DOF values to the relevant DOF \ref goal::Field's
+that are fixed by the specified Dirichlet boundary conditions.
+This is readily accomplished by the API method:
+- \ref goal::set_dbc_values
 
-Let us consider specifying the Dirichlet boundary
-condition \f$ u = g \f$ for some portion of the domain
-boundary. In perhaps the simplest approach for specifying
-Dirichlet boundary conditions, the matrix row \f$ i \f$
-corresponding to the appropriate degree of freedom is
-zeroed out, and a one is placed in the diagonal entry
-of this row. This presents the question, how must the
-residual vector be modified so that the solution vector
-satisfies exactly \f$ u_i = g_i \f$? For simplicity, let's
-consider a simple case with \f$ 3 \f$ degrees of freedom,
-where we would like to specify \f$ u_1 = g_1 \f$ for the
-first degree of freedom, and leave the other degrees of
-freedom unconstrained. (Note: in this context, calling
-\f$ u_1 \f$ a degree of freedom is a misnomer, as it
-is fully constrained). Zeroing out the first row and placing
-a one on the diagonal yields the system:
+This is equivalent to setting components of the solution vector
+\f$ u \f$ equal to the prescibed values \f$ g \f$, as
+
+\f[
+u_i = g_i.
+\f]
+
+In the context of Newton's method, the initial guess
+\f$ u^{(0)} \f$ is modified exactly once to the vector
+\f$ u^{(0)_g} \f$ to exactly prescribe the Dirichlet
+boundary conditions. We then ensure that the rows
+corresponding to Dirichlet boundary conditions never
+stray from their prescribed values by requiring that
+corresponding rows in the Newton update vector are
+exactly zero.
+
+\f[
+\delta u^{(n)}_i = 0.
+\f]
+
+This homogeneous prescription of the Newton update
+is done for every Newton iteration:
+
+\f[
+\frac{\partial R}{\partial u} \biggr|_{u^{(n)_g}} \,
+\delta u^{(n)} =
+R( u^{(n)_g} ).
+\f]
+
+\section dbcs_forward_application The forward problem
+
+For simplicity, let's consider a simple case with
+\f$ 3 \f$ degrees of freedom, where we would like
+to specify \f$ u_1 = g_1 \f$ and leave all other
+degrees of freedom unconstrained. If our initial guess
+was the zero vector, our first step would be to modify
+our initial guess to exactly satisfy the prescribed
+DBC value.
+
+\f[
+u^{(0)} =
+\begin{bmatrix}
+g_1 \\
+0 \\
+0
+\end{bmatrix}
+\f]
+
+\subsection dbcs_forward_rows Zeroing rows
+
+Next, we would like to apply the Dirichlet boundary conditions
+to Newton iterations of the forward problem.
+The first step we take is to zero rows of the
+Jacobian matrix \f$ \mathcal{J} \f$ that correspond to
+Dirichlet boundary conditions, while leaving the diagonal
+entry of the row untouched. In our simple \f$ 3 \f$ DOF
+problem, our Newton iteration now looks like:
 
 \f[
 \begin{bmatrix}
@@ -88,52 +133,117 @@ a one on the diagonal yields the system:
 
 -
 \begin{bmatrix}
-R_1 \\
+0 \\
 R_2 \\
 R_3
+\end{bmatrix},
+\f]
+
+where we note that we have modified the residual entry \f$ R_1 \f$
+and set it to zero so that the increment \f$ \delta u^{(n)}_1 \f$
+is exactly zero. In this way, we note that the application of all
+Dirichlet boundary conditions for the forward problem reduces
+to the application of prescribing zero updates for the Dirichlet
+boundary condition rows in the Newton linear system.
+
+\subsection dbcs_forward_cols Zeroing columns
+
+Because the update vector is prescribed to be exactly zero at
+Dirichlet boundary condition rows, it is fully uncoupled to
+all other Degrees of freedom in the problem! This means we
+can simply zero the corresponding Dirichlet boundary condition
+column with no additional modifications to the right hand
+side vector (the residual vector).
+
+\f[
+\begin{bmatrix}
+\mathcal{J}_{11}  & 0                 & 0                 \\
+0                 & \mathcal{J}_{22}  & \mathcal{J}_{23}  \\
+0                 & \mathcal{J}_{32}  & \mathcal{J}_{33} 
 \end{bmatrix}
+
+\begin{bmatrix}
+\delta u_1^{(n)} \\
+\delta u_2^{(n)} \\
+\delta u_3^{(n)}
+\end{bmatrix}
+
+=
+
+-
+\begin{bmatrix}
+0 \\
+R_2 \\
+R_3
+\end{bmatrix},
 \f]
 
-Rather than specifying
-\f$ \mathcal{J}_{11} \delta u_1 = -R_1 \f$, we would
-like to ensure that
+Note that this approach preserves symmetry of the operator
+\f$ \mathcal{J} \f$. Zeroing columns is not done by default
+in Goal, as it can potentially be an expensive process (due
+to parallel communication).
+
+\subsection dbcs_forward_condense System reduction (complete condensation)
+
+As mentioned previously, the Dirichlet boundary
+condition row is now fully uncoupled from the linear system,
+and in principle, we could now simple solve the reduced linear system:
 
 \f[
-u_1^{(n+1)} = \delta u_1^{(n)} + u_1^{(n)} = g_1
+\begin{bmatrix}
+\mathcal{J}_{22}  & \mathcal{J}_{23}  \\
+\mathcal{J}_{32}  & \mathcal{J}_{33} 
+\end{bmatrix}
+
+\begin{bmatrix}
+\delta u_2^{(n)} \\
+\delta u_3^{(n)}
+\end{bmatrix}
+
+=
+
+-
+\begin{bmatrix}
+R_2 \\
+R_3
+\end{bmatrix},
 \f]
 
-Making the substitution
-\f$ \delta u_1^{(n)} = - R_1 / \mathcal{J}_{11} \f$
-into the previous equation, it becomes clear that the desired
-modification for the residual vector is:
+In practice, this can be accomplished in two ways. The first is to
+form and store the full system, as described previously, then form
+the reduced system and copy relevant data from the full system
+to the reduced system. This is likely cost-prohibitive due to
+memory restraints, but would still be feasible in a user application
+in Goal (no attempt has been provided to make a user-interface
+for such a feature). As a second approach, it is possible to
+form the reduced matrix based on marking Dirichlet boundary
+nodes at the very beginning of the simulation, where additional
+modifications must be made at the assembly stage. This approach
+is not supported in Goal, and would likely require a very large
+amount of work to support.
 
-\f[
-R_1 = \mathcal{J}_{11} ( u_1^{(n)} - g_1 )
-\f]
+\section dbcs_dual_application The dual problem
 
-Such a selection will ensure that \f$ u_1 = g_1 \f$ for all
-nonlinear iterations during Newton's method. In general, if
-we would like to constrain \f$ u_i = g_i \f$ for some \f$ i \f$,
-we update the residual vector at each nonlinear iteration as:
+As mentioned previously, when taking a discrete adjoint approach
+in forming the dual problem, nodes that are prescribed Dirichlet
+boundary conditions in the primal problem are prescribed homogeneous
+Dirichlet boundary conditions in the dual problem. To gain some
+intuition as to why, we note that the dual solution itself
+represents the sensitivity of the functional quantity of interest
+\f$ J \f$ to perturbations in the residual \f$ R \f$.
 
-\f[
-R_i = \mathcal{J}_{ii} ( u_i^{(n)} - g_i ),
-\f]
+Again, let us consider our model \f$ 3 \f$ degree of freedom
+problem where we would like to prescribe \f$ u_1 = g_1 \f$.
+This implies we would like to apply the corresponding
+homogenized boundary condition \f$ z_1 = 0 \f$ for the
+dual problem.
 
-where summation on \f$ i \f$ is not implied.
+\subsection dbcs_dual_rows Zeroing rows
 
-\subsection dbcs_rows_dual The dual problem
-
-Again, let us consider a simple \f$ 3 \f$ degree of freedom
-system, where we would like to constrain \f$ u_1 = g_1 \f$
-for the forward problem. The corresponding dual degree of
-freedom is homogenized at this boundary condition, meaning
-we must specify \f$ z_1 = 0 \f$. Since the dual problem is
-linear (in contrast to the generally nonlinear forward
-problem), we can achieve this simply by zeroing out the
-first row, placing a one on its diagonal, and placing
-a zero in the first row of the right hand side vector,
-as shown below:
+As was done for the primal problem, our first step will
+be to zero the rows of the Jacobian transpose matrix
+\f$ \mathcal{J}^T \f$ that correspond to Dirichlet boundary
+conditions,
 
 \f[
 \begin{bmatrix}
@@ -154,23 +264,74 @@ z_3
 0 \\
 \left[ {\partial J}/{\partial u} \right]_2 \\
 \left[ {\partial J}/{\partial u} \right]_3
-\end{bmatrix}
+\end{bmatrix},
 \f]
 
-In general for Dirichlet constraints \f$ u_i = g_i \f$ for
-the forward problem, we constrain the functional derivative
-vector for the dual problem as:
+where we have modified the functional derivative vector
+such that \f$ [ \partial J / \partial u ]_1 = 0 \f$ to exactly
+impose \f$ z_1 = 0 \f$.
+
+\subsection dbcs_dual_cols Zeroing columns
+
+Again, because the degree of freedom \f$ z_1 = 0 \f$ and is
+fully uncoupled from the linear system, we can zero out
+the corresponding Dirichlet boundary condition column
+without further modification to the right hand side vector.
 
 \f[
-\left[ \frac{\partial J}{\partial u} \right]_i = 0.
+\begin{bmatrix}
+\mathcal{J}^T_{11}  & 0                  & 0                  \\
+0                   & \mathcal{J}^T_{22} & \mathcal{J}^T_{23} \\
+0                   & \mathcal{J}^T_{32} & \mathcal{J}^T_{33}
+\end{bmatrix}
+
+\begin{bmatrix}
+z_1 \\
+z_2 \\
+z_3
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+0 \\
+\left[ {\partial J}/{\partial u} \right]_2 \\
+\left[ {\partial J}/{\partial u} \right]_3
+\end{bmatrix},
 \f]
 
-\section dbcs_rows_cols Full system: zeroing rows and columns
+\subsection dbcs_dual_condense System reduction (complete condensation)
 
-Note that the previous approach destroys the symmetry of
-the problem. To preserve symmetry, it would be useful to
-zero out rows and columns corresponding to degrees of freedom.
-This is ongoing work...
+Finally, as was noted for the primal problem, the full system can
+be reduced to:
+
+\f[
+\begin{bmatrix}
+\mathcal{J}^T_{22} & \mathcal{J}^T_{23} \\
+\mathcal{J}^T_{32} & \mathcal{J}^T_{33}
+\end{bmatrix}
+
+\begin{bmatrix}
+z_2 \\
+z_3
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+\left[ {\partial J}/{\partial u} \right]_2 \\
+\left[ {\partial J}/{\partial u} \right]_3
+\end{bmatrix},
+\f]
+
+where all comments about the feasibility of this approach that
+were made for the primal problem still apply here.
+
+\subsection dbc_dual_nohomo Nonhomogeneous boundary conditions
+
+It may be desirable to support non-homogenous Dirichlet boundary
+conditions for the dual problem in the context of user-implemented
+continuous dual models. This is not yet supported.
 
 \section dbcs_note Note
 Note that since \ref goal is a library, users are not simply
