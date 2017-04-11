@@ -16,10 +16,11 @@ using Teuchos::RCP;
 class Field;
 /** \endcond */
 
-/** \brief Compute the KS-functional of a scalar quantity \f$ q(u) \f$.
+/** \brief Compute the KS-functional of a scalar quantity \f$ g(u) \f$.
   * \details This evaluator computes the so-called KS-functional, which
   * attempts to approximate maximal values over the domain of a scalar
-  * quantity \f$ g(u) \f$. The functional is given as:
+  * quantity \f$ g(u) \f$, and achieves the maximal value in the limit
+  * \f$ p \to \infty \f$. The functional is given as:
   *
   * \f[
   * J(u) = \frac{1}{p} \ln \left[
@@ -64,8 +65,8 @@ class QoIKS : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   /** \brief Construct the evaluator.
     * \param u The relevant DOF \ref goal::Field \f$ u \f$.
     * \param n The name of the scalar quantity \f$ g(u) \f$.
-    * \param p The scaling factor for the KS functional.
-    * \param m The arbitrary numerical constant. */
+    * \param p The scaling factor \f$ p \f$ for the KS functional.
+    * \param m The arbitrary numerical constant \f$ m \f$. */
   QoIKS(RCP<Field> u, std::string const& n, double p, double m);
 
   /** \brief Finalize the field manager registration. */

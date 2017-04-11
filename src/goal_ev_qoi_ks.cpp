@@ -50,7 +50,8 @@ template <typename EVALT, typename TRAITS>
 void QoIKS<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
   auto dJdu = info.ghost->dJdu;
   PCU_Add_Doubles(&qoi_tmp, 1);
-  dJdu->scale(1.0/(p * qoi_tmp));
+  double factor = 1.0/(p * qoi_tmp);
+  dJdu->scale(factor);
   qoi_val = m + (1.0/p)*std::log(qoi_tmp);
 }
 
