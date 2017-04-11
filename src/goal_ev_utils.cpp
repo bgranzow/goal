@@ -8,6 +8,9 @@
 #include "goal_ev_vector_shape.hpp"
 #include "goal_ev_interpolate_vector.hpp"
 #include "goal_ev_scatter_vector.hpp"
+#include "goal_ev_qoi_ks.hpp"
+#include "goal_ev_qoi_pnorm.hpp"
+#include "goal_ev_scatter_functional.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
 
@@ -64,6 +67,55 @@ void require_adjoint_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm) {
   fm->registerEvaluator<EvalT>(scatter);
   auto op = scatter->evaluatedFields()[0];
   fm->requireField<EvalT>(*op);
+}
+
+static RCP<const ParameterList> get_valid_p_qoi_params() {
+  auto p = rcp(new ParameterList);
+  p->set<std::string>("name", "");
+  p->set<std::string>("scalar name", "");
+  p->set<int>("p", 0);
+  p->set<int>("m", 0);
+  return p;
+}
+
+void require_qoi_ks(RCP<const ParameterList> p, RCP<Field> u,
+    RCP<Indexer> i, FieldManager fm) {
+  using T = goal::Traits;
+  using J = goal::Traits::Jacobian;
+  p->validateParameters(*get_valid_p_qoi_params(), 0);
+  auto qoi_n = p->get<std::string>("scalar name");
+  auto qoi_p = p->get<int>("p");
+  auto qoi_m = p->get<int>("m");
+  auto qoi = rcp(new QoIKS<J, T>(u, qoi_n, qoi_p, qoi_m));
+  auto scatter = rcp(new ScatterFunctional<J, T>(u, i, "KS Functional"));
+  auto op = scatter->evaluatedFields()[0];
+  fm->registerEvaluator<J>(qoi);
+  fm->registerEvaluator<J>(scatter);
+  fm->requireField<J>(*op);
+}
+
+void require_qoi_pnorm(RCP<const ParameterList> p, RCP<Field> u,
+    RCP<Indexer> i, FieldManager fm) {
+  using T = goal::Traits;
+  using J = goal::Traits::Jacobian;
+  p->validateParameters(*get_valid_p_qoi_params(), 0);
+  auto qoi_n = p->get<std::string>("scalar name");
+  auto qoi_p = p->get<int>("p");
+  auto qoi_m = p->get<int>("m");
+  auto qoi = rcp(new QoIPNorm<J, T>(u, qoi_n, qoi_p, qoi_m));
+  auto scatter = rcp(new ScatterFunctional<J, T>(u, i, "P-Norm Functional"));
+  auto op = scatter->evaluatedFields()[0];
+  fm->registerEvaluator<J>(qoi);
+  fm->registerEvaluator<J>(scatter);
+  fm->requireField<J>(*op);
+}
+
+void require_qoi(RCP<const ParameterList> p, RCP<Field> u,
+    RCP<Indexer> i, FieldManager fm) {
+  auto n = p->get<std::string>("name");
+  if (n == "ks") require_qoi_ks(p, u, i, fm);
+  else if (n == "p norm") require_qoi_pnorm(p, u, i, fm);
+  else fail("unknown qoi: %s", n.c_str());
 }
 
 template void register_dof<goal::Traits::Residual>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
