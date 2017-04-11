@@ -82,7 +82,7 @@ class QoIKS : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   double p;
   double m;
   double qoi_tmp;
-  double qoi_value;
+  double qoi_val;
   PHX::MDField<double, Elem, IP> wdv;
   PHX::MDField<ScalarT, Elem, IP> g;
   PHX::MDField<ScalarT, Elem> J;
