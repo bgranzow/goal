@@ -8,9 +8,11 @@
 namespace goal {
 
 /** \brief Initialize parallel services.
+  * \param init_mpi Should a call be made to initialize MPI?
+  * \param init_pcu Should a call be made to initialize PCU?
   * \details This method calls initialize routines for MPI and PCU, as well
   * as initializing the real-time expression string parser. */
-void initialize();
+void initialize(bool init_mpi = true, bool init_pcu = true);
 
 /** \brief Finalize parallel services.
   * \details This method calls finalize routines for MPI and PCU. */

@@ -8,7 +8,9 @@
 
 namespace goal {
 
-static bool is_initd;
+static bool is_initd = false;
+static bool goal_initd_pcu = false;
+static bool goal_initd_mpi = false;
 static PG_RuntimeCompiler::Function evaluator(5);
 
 static void init_expression() {
@@ -19,18 +21,24 @@ static void init_expression() {
   evaluator.addVar("double", "val");
 }
 
-void initialize() {
+void initialize(bool init_mpi, bool init_pcu) {
   if (is_initd) return;
-  MPI_Init(0, 0);
-  PCU_Comm_Init();
+  if (init_mpi) {
+    MPI_Init(0, 0);
+    goal_initd_mpi = true;
+  }
+  if (init_pcu) {
+    PCU_Comm_Init();
+    goal_initd_pcu = true;
+  }
   init_expression();
   is_initd = true;
 }
 
 void finalize() {
   assert(is_initd);
-  PCU_Comm_Free();
-  MPI_Finalize();
+  if (goal_initd_pcu) PCU_Comm_Free();
+  if (goal_initd_mpi) MPI_Finalize();
   is_initd = false;
 }
 
