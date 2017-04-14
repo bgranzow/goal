@@ -15,12 +15,14 @@ QoIKS<EVALT, TRAITS>::QoIKS(
       m(m_),
       qoi_tmp(0.0),
       qoi_val(0.0),
+      wdv(u->get_wdv_name(), u->get_weight_dl()),
       g(name, u->get_scalar_ip_dl()),
       J("KS Functional", u->get_elem_scalar_dl()) {
   /* populate the index dimensions. */
   num_ips = u->get_num_elem_ips();
 
   /* set the dependency structure of this evaluator. */
+  this->addDependentField(wdv);
   this->addDependentField(g);
   this->addEvaluatedField(J);
   this->setName("KS Functional");
