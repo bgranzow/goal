@@ -19,7 +19,7 @@ VonMises<EVALT, TRAITS>::VonMises(RCP<goal::Field> u)
   /* populate the dependency structure for this evaluator. */
   this->addDependentField(cauchy);
   this->addEvaluatedField(von_mises);
-  this->setName("Cauchy");
+  this->setName("Von Mises Stress");
 }
 
 template <typename EVALT, typename TRAITS>
