@@ -117,8 +117,7 @@ static apf::StkModels* read_sets(apf::Mesh* m, RCP<const ParameterList> p) {
 static bool set_associations(
     apf::StkModels** sets, apf::Mesh2* m, RCP<const ParameterList> p) {
   bool owns = true;
-  if (p->isType<std::string>("geom file") &&
-      p->isType<std::string>("mesh file"))
+  if (p->isType<std::string>("assoc file"))
     *sets = read_sets(m, p);
   else if (p->isType<apf::StkModels*>("associations")) {
     *sets = p->get<apf::StkModels*>("associations");
