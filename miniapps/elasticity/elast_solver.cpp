@@ -24,6 +24,7 @@ static RCP<ParameterList> get_valid_params() {
   auto p = rcp(new ParameterList);
   p->sublist("discretization");
   p->sublist("physics");
+  p->sublist("adaptation");
   p->sublist("linear algebra");
   p->sublist("output");
   return p;
@@ -48,11 +49,14 @@ class Solver {
   void solve_dual();
   void estimate_error();
   void adapt_mesh();
+  void solve_primal_only();
+  void solve_adaptively();
   RCP<const ParameterList> params;
   RCP<goal::Discretization> disc;
   RCP<elast::Physics> physics;
   RCP<goal::SolutionInfo> info;
   RCP<goal::Output> output;
+  bool should_adapt;
 };
 
 Solver::Solver(RCP<const ParameterList> p) {
@@ -64,6 +68,8 @@ Solver::Solver(RCP<const ParameterList> p) {
   disc = rcp(new goal::Discretization(dp));
   physics = rcp(new elast::Physics(pp, disc));
   output = rcp(new goal::Output(op, disc));
+  if (params->isSublist("adaptation")) should_adapt = true;
+  else should_adapt = false;
 }
 
 static void zero_fields(RCP<Physics> p) {
@@ -93,11 +99,16 @@ void Solver::solve_primal() {
   goal::add_to_fields(physics->get_u(), indexer, du);
   goal::compute_primal_residual(physics, info, disc, 0.0, 0.0);
   physics->destroy_model();
-  physics->destroy_indexer();
 }
 
 void Solver::solve_dual() {
   goal::print("*** dual problem");
+  physics->build_dual_model();
+  goal::compute_dual_jacobian(physics, info, disc, 0.0, 0.0);
+  auto dRdu = info->owned->dRdu;
+  auto dJdu = info->owned->dJdu;
+  auto z = info->owned->z;
+  z->putScalar(0.0);
 }
 
 void Solver::estimate_error() {
@@ -108,9 +119,20 @@ void Solver::adapt_mesh() {
   goal::print("*** mesh adaptation");
 }
 
-void Solver::solve() {
+void Solver::solve_primal_only() {
   solve_primal();
   output->write(0);
+}
+
+void Solver::solve_adaptively() {
+  solve_primal();
+  solve_dual();
+  output->write(0);
+}
+
+void Solver::solve() {
+  if (should_adapt) solve_adaptively();
+  else solve_primal_only();
 }
 
 }  // namespace elast

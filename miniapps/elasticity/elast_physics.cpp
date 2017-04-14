@@ -16,6 +16,7 @@ static RCP<ParameterList> get_valid_params(RCP<goal::Discretization> d) {
   auto p = rcp(new ParameterList);
   p->sublist("dirichlet bcs");
   p->sublist("neumann bcs");
+  p->sublist("qoi");
   for (int i = 0; i < d->get_num_elem_blocks(); ++i) {
     auto block = d->get_elem_block_name(i);
     p->sublist(block);
@@ -133,6 +134,7 @@ void Physics::build_error_dirichlet(FieldManager fm) {
 #include <goal_ev_dirichlet_bcs.hpp>
 
 #include "elast_ev_stress.hpp"
+#include "elast_ev_von_mises.hpp"
 #include "elast_ev_residual.hpp"
 #include "elast_ev_traction_bcs.hpp"
 
@@ -154,11 +156,23 @@ void elast::Physics::register_volumetric(goal::FieldManager fm) {
   fm->registerEvaluator<EvalT>(cauchy);
 
   /* compute the momentum residual. */
-  auto residual = rcp(new elast::Residual<EvalT, goal::Traits>(disp));
-  fm->registerEvaluator<EvalT>(residual);
+  if (is_primal || is_dual) {
+    auto residual = rcp(new elast::Residual<EvalT, goal::Traits>(disp));
+    fm->registerEvaluator<EvalT>(residual);
+  }
 
   /* require the primal scatter. */
-  goal::require_primal_scatter<EvalT>(disp, indexer, fm);
+  if (is_primal)
+    goal::require_primal_scatter<EvalT>(disp, indexer, fm);
+
+  /* require the dual scatter. */
+  if (is_dual) {
+    goal::require_adjoint_scatter<EvalT>(disp, indexer, fm);
+    auto vm = rcp(new elast::VonMises<EvalT, goal::Traits>(disp));
+    fm->registerEvaluator<EvalT>(vm);
+    auto qoip = rcpFromRef(params->sublist("qoi"));
+    goal::require_qoi(qoip, disp, indexer, fm);
+  }
 
   /* finalize the field manager registration. */
   goal::set_extended_data_type_dims(indexer, fm);
