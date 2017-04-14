@@ -73,8 +73,8 @@ static RCP<const ParameterList> get_valid_p_qoi_params() {
   auto p = rcp(new ParameterList);
   p->set<std::string>("name", "");
   p->set<std::string>("scalar name", "");
-  p->set<int>("p", 0);
-  p->set<int>("m", 0);
+  p->set<double>("p", 0);
+  p->set<double>("m", 0);
   return p;
 }
 
@@ -84,8 +84,8 @@ void require_qoi_ks(RCP<const ParameterList> p, RCP<Field> u,
   using J = goal::Traits::Jacobian;
   p->validateParameters(*get_valid_p_qoi_params(), 0);
   auto qoi_n = p->get<std::string>("scalar name");
-  auto qoi_p = p->get<int>("p");
-  auto qoi_m = p->get<int>("m");
+  auto qoi_p = p->get<double>("p");
+  auto qoi_m = p->get<double>("m");
   auto qoi = rcp(new QoIKS<J, T>(u, qoi_n, qoi_p, qoi_m));
   auto scatter = rcp(new ScatterFunctional<J, T>(u, i, "KS Functional"));
   auto op = scatter->evaluatedFields()[0];
@@ -100,8 +100,8 @@ void require_qoi_pnorm(RCP<const ParameterList> p, RCP<Field> u,
   using J = goal::Traits::Jacobian;
   p->validateParameters(*get_valid_p_qoi_params(), 0);
   auto qoi_n = p->get<std::string>("scalar name");
-  auto qoi_p = p->get<int>("p");
-  auto qoi_m = p->get<int>("m");
+  auto qoi_p = p->get<double>("p");
+  auto qoi_m = p->get<double>("m");
   auto qoi = rcp(new QoIPNorm<J, T>(u, qoi_n, qoi_p, qoi_m));
   auto scatter = rcp(new ScatterFunctional<J, T>(u, i, "P-Norm Functional"));
   auto op = scatter->evaluatedFields()[0];
