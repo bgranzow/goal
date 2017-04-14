@@ -8,6 +8,12 @@
 
 #include "goal_dimension.hpp"
 
+/** \cond */
+namespace apf {
+class MeshEntity;
+}
+/** \endcond */
+
 namespace goal {
 
 using Teuchos::RCP;
