@@ -36,9 +36,10 @@ using Teuchos::ParameterList;
 class Physics : public goal::Physics {
  private:
    /** \cond */
+   using T = goal::Traits;
+   using R = goal::Traits::Residual;
+   using J = goal::Traits::Jacobian;
    using FieldManager = goal::FieldManager;
-   using Residual = goal::Traits::Residual;
-   using Jacobian = goal::Traits::Jacobian;
    /** \endcond */
 
  public:
@@ -74,10 +75,6 @@ class Physics : public goal::Physics {
   RCP<const ParameterList> get_dbc_params();
 
  private:
-  void set_primal();
-  void set_dual();
-  void set_error();
-
   void build_primal_volumetric(FieldManager fm);
   void build_primal_neumann(FieldManager) {}
   void build_primal_dirichlet(FieldManager fm);
@@ -88,20 +85,9 @@ class Physics : public goal::Physics {
   void build_error_neumann(FieldManager) {}
   void build_error_dirichlet(FieldManager) {}
 
-  template <typename EvalT>
-  void register_volumetric(FieldManager fm);
-
-  template <typename EvalT>
-  void register_dirichlet(FieldManager fm);
-
   RCP<const ParameterList> params;
   std::string ff;
-  std::string functional_type;
   std::string set;
-
-  bool is_primal;
-  bool is_dual;
-  bool is_error;
 };
 
 }  // namespace poisson

@@ -1,8 +1,12 @@
 #include <goal_control.hpp>
 #include <goal_field.hpp>
+#include <goal_ev_utils.hpp>
+#include <goal_ev_dirichlet_bcs.hpp>
+#include <goal_ev_qoi_scalar_point.hpp>
 #include <Teuchos_ParameterList.hpp>
 
 #include "poisson_physics.hpp"
+#include "poisson_ev_residual.hpp"
 
 namespace poisson {
 
@@ -10,19 +14,16 @@ using Teuchos::rcp;
 
 static RCP<ParameterList> get_valid_params() {
   auto p = rcp(new ParameterList);
+  p->sublist("dirichlet bcs");
   p->set<std::string>("forcing function", "");
   p->set<std::string>("point set", "");
-  p->set<std::string>("functional type", "");
-  p->sublist("dirichlet bcs");
   return p;
 }
 
 static void validate_params(RCP<const ParameterList> p) {
-  assert(p->isType<std::string>("forcing function"));
-  assert(p->isType<std::string>("functional type"));
   assert(p->isSublist("dirichlet bcs"));
-  auto type = p->get<std::string>("functional type");
-  if (type == "point-wise") assert(p->isType<std::string>("point set"));
+  assert(p->isType<std::string>("forcing function"));
+  assert(p->isType<std::string>("point set"));
   p->validateParameters(*get_valid_params(), 0);
 }
 
@@ -32,18 +33,13 @@ Physics::Physics(
   params = p;
   validate_params(p);
   ff = params->get<std::string>("forcing function");
-  functional_type = p->get<std::string>("functional type");
-  if (functional_type == "point-wise")
-    set = params->get<std::string>("point set");
+  set = params->get<std::string>("point set");
   goal::FieldInfo info =
     {disc, "u", 1, 1, goal::SCALAR, goal::HIERARCHIC};
   u.push_back(rcp(new goal::Field(&info)));
   u[0]->set_associated_dof_idx(0);
   u[0]->set_dof_status(true);
   u[0]->set_seed(1.0);
-  is_primal = false;
-  is_dual = false;
-  is_error = false;
 }
 
 Physics::~Physics() {
@@ -53,64 +49,46 @@ RCP<const ParameterList> Physics::get_dbc_params() {
   return rcpFromRef(params->sublist("dirichlet bcs"));
 }
 
-void Physics::set_primal() {
-  is_primal = true;
-  is_dual = false;
-  is_error = false;
-}
-
-void Physics::set_dual() {
-  is_primal = false;
-  is_dual = true;
-  is_error = false;
-}
-
-void Physics::set_error() {
-  is_primal = false;
-  is_dual = false;
-  is_error = true;
-}
-
 void Physics::build_primal_volumetric(FieldManager fm) {
-  set_primal();
-  register_volumetric<Residual>(fm);
-  register_volumetric<Jacobian>(fm);
+  auto uu = u[0];
+  goal::register_dof<R>(uu, indexer, fm);
+  goal::register_dof<J>(uu, indexer, fm);
+  auto resid_R = rcp(new poisson::Residual<R, T>(uu, ff));
+  auto resid_J = rcp(new poisson::Residual<J, T>(uu, ff));
+  fm->registerEvaluator<R>(resid_R);
+  fm->registerEvaluator<J>(resid_J);
+  goal::require_primal_scatter<R>(uu, indexer, fm);
+  goal::require_primal_scatter<J>(uu, indexer, fm);
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<R>(NULL);
+  fm->postRegistrationSetupForType<J>(NULL);
 }
 
 void Physics::build_primal_dirichlet(FieldManager fm) {
-  set_primal();
-  register_dirichlet<Residual>(fm);
-  register_dirichlet<Jacobian>(fm);
+  auto dbc = rcpFromRef(params->sublist("dirichlet bcs"));
+  auto dbc_R = rcp(new goal::DirichletBCs<R, T>(
+        dbc, indexer, /*condense=*/ true, /*adjoint=*/ false));
+  auto dbc_J = rcp(new goal::DirichletBCs<J, T>(
+        dbc, indexer, /*condense=*/ true, /*adjoint=*/ false));
+  fm->registerEvaluator<R>(dbc_R);
+  fm->registerEvaluator<J>(dbc_J);
+  fm->requireField<R>(*dbc_R->evaluatedFields()[0]);
+  fm->requireField<J>(*dbc_J->evaluatedFields()[0]);
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<R>(NULL);
+  fm->postRegistrationSetupForType<J>(NULL);
 }
 
 void Physics::build_dual_volumetric(FieldManager fm) {
-  set_dual();
-  register_volumetric<Jacobian>(fm);
+  (void)fm;
 }
 
 void Physics::build_dual_dirichlet(FieldManager fm) {
-  set_dual();
-  register_dirichlet<Jacobian>(fm);
+  (void)fm;
 }
 
 void Physics::build_error_volumetric(FieldManager fm) {
-  set_error();
-  register_volumetric<Residual>(fm);
+  (void)fm;
 }
 
 }  // namespace poisson
-
-template <typename EvalT>
-void poisson::Physics::register_volumetric(goal::FieldManager fm) {
-  (void)fm;
-}
-
-template <typename EvalT>
-void poisson::Physics::register_dirichlet(goal::FieldManager fm) {
-  (void)fm;
-}
-
-template void poisson::Physics::register_volumetric<goal::Traits::Residual>(goal::FieldManager fm);
-template void poisson::Physics::register_volumetric<goal::Traits::Jacobian>(goal::FieldManager fm);
-template void poisson::Physics::register_dirichlet<goal::Traits::Residual>(goal::FieldManager fm);
-template void poisson::Physics::register_dirichlet<goal::Traits::Jacobian>(goal::FieldManager fm);

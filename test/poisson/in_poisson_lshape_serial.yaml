@@ -8,7 +8,6 @@ poisson example:
     workset size: 1000
   physics:
     forcing function: 1.0 + 0.0
-    functional type: point
     point set: point
     dirichlet bcs:
       bc 1: [0,0,all,0.0]
