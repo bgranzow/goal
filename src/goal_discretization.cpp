@@ -170,7 +170,7 @@ int Discretization::get_num_side_sets() const {
 int Discretization::get_num_node_sets() const { return sets->models[0].size(); }
 
 std::string Discretization::get_elem_block_name(const int idx) const {
-  assert(idx < get_num_node_sets());
+  assert(idx < get_num_elem_blocks());
   return sets->models[num_dims][idx]->stkName;
 }
 
