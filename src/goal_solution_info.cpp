@@ -95,12 +95,12 @@ static void add_to_field(RCP<Field> f, RCP<Indexer> i, RCP<Vector> du) {
 }
 
 void add_to_fields(
-    std::vector<RCP<Field> > fields, RCP<Indexer> indexer, RCP<Vector> du) {
+    std::vector<RCP<Field> > const& f, RCP<Indexer> i, RCP<Vector> du) {
   double t0 = time();
-  for (size_t i = 0; i < fields.size(); ++i)
-    add_to_field(fields[i], indexer, du);
+  for (size_t j = 0; j < f.size(); ++j)
+    add_to_field(f[j], i, du);
   double t1 = time();
-  print(" > fields filled in %f seconds", t1 - t0);
+  print(" > added to fields in %f seconds", t1 - t0);
 }
 
 }  // namespace goal

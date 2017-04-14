@@ -95,12 +95,12 @@ class SolutionInfo {
   RCP<Export> exporter;
 };
 
-/** \brief Fill in fields from the global solution vector.
-  * \param fields The fields to fill in.
-  * \param indexer The relevant DOF indexer.
+/** \brief Add to fields from the global increment vector.
+  * \param f The fields to fill in.
+  * \param i The relevant DOF indexer.
   * \param du The relevant solution increment vector. */
 void add_to_fields(
-    std::vector<RCP<Field> > fields, RCP<Indexer> indexer, RCP<Vector> du);
+    std::vector<RCP<Field> > const& f, RCP<Indexer> i, RCP<Vector> du);
 
 }  // namespace goal
 
