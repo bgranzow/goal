@@ -10,6 +10,7 @@
 
 /** \cond */
 namespace apf {
+class Mesh;
 class MeshEntity;
 }
 /** \endcond */

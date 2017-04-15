@@ -10,6 +10,7 @@
 #include "goal_ev_scatter_vector.hpp"
 #include "goal_ev_qoi_ks.hpp"
 #include "goal_ev_qoi_pnorm.hpp"
+#include "goal_ev_qoi_scalar_point.hpp"
 #include "goal_ev_scatter_functional.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
@@ -104,6 +105,19 @@ void require_qoi_pnorm(RCP<const ParameterList> p, RCP<Field> u,
   auto qoi_m = p->get<double>("m");
   auto qoi = rcp(new QoIPNorm<J, T>(u, qoi_n, qoi_p, qoi_m));
   auto scatter = rcp(new ScatterFunctional<J, T>(u, i, "P-Norm Functional"));
+  auto op = scatter->evaluatedFields()[0];
+  fm->registerEvaluator<J>(qoi);
+  fm->registerEvaluator<J>(scatter);
+  fm->requireField<J>(*op);
+}
+
+void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
+    std::string const& set, FieldManager fm) {
+  using T = goal::Traits;
+  using J = goal::Traits::Jacobian;
+  auto qoi = rcp(new QoIScalarPoint<J, T>(u, i, set));
+  auto scatter =
+    rcp(new ScatterFunctional<J, T>(u, i, "Scalar Point Functional"));
   auto op = scatter->evaluatedFields()[0];
   fm->registerEvaluator<J>(qoi);
   fm->registerEvaluator<J>(scatter);

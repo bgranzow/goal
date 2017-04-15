@@ -34,7 +34,7 @@ QoIScalarPoint<EVALT, TRAITS>::QoIScalarPoint(
   /* set the dependency structure of this evaluator. */
   this->addDependentField(u);
   this->addEvaluatedField(pw_u);
-  this->setName("Scalar Point Wise Functional");
+  this->setName("Scalar Point Functional");
 }
 
 template <typename EVALT, typename TRAITS>

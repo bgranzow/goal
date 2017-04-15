@@ -60,6 +60,15 @@ void require_qoi_ks(RCP<const ParameterList> p, RCP<Field> u,
 void require_qoi_pnorm(RCP<const ParameterList> p, RCP<Field> u,
     RCP<Indexer> i, FieldManager fm);
 
+/** \brief Require the scatter of a point-wise QoI for a scalar DOF field.
+  * \param u The relevant DOF \ref goal::Field.
+  * \param i The relevant \ref goal::Indexer.
+  * \param set The node-set that defines the evaluation point.
+  * \param fm The field manager that constructs the physics evaluations.
+  * \details See \ref goal::QoIScalarPoint. */
+void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
+    std::string const& set, FieldManager fm);
+
 /** \brief Require the scatter of a QoI from above.
   * \param p A QoI parameter list. The parameter "name" will
   * determine which QoI is required:
