@@ -1,10 +1,13 @@
 #include <apf.h>
 #include <apfMesh.h>
+#include <goal_assembly.hpp>
 #include <goal_control.hpp>
 #include <goal_discretization.hpp>
+#include <goal_ev_dirichlet_bcs.hpp>
 #include <goal_field.hpp>
 #include <goal_output.hpp>
 #include <goal_solution_info.hpp>
+#include <goal_linear_solvers.hpp>
 #include <ma.h>
 #include <Teuchos_YamlParameterListHelpers.hpp>
 
@@ -77,6 +80,18 @@ void Solver::solve_primal() {
   zero_fields(u_fields);
   physics->build_coarse_indexer();
   physics->build_primal_model();
+  goal::set_dbc_values(physics, 0.0);
+  auto indexer = physics->get_indexer();
+  info = rcp(new goal::SolutionInfo(indexer));
+  goal::compute_primal_jacobian(physics, info, disc, 0.0, 0.0);
+  auto dRdu = info->owned->dRdu;
+  auto R = info->owned->R;
+  auto du = info->owned->du;
+  du->putScalar(0.0);
+  R->scale(-1.0);
+  auto lp = rcpFromRef(params->sublist("linear algebra"));
+  goal::solve_linear_system(lp, dRdu, du, R);
+  goal::add_to_fields(physics->get_u(), indexer, du);
   physics->destroy_model();
   physics->destroy_indexer();
 }
@@ -95,6 +110,7 @@ void Solver::adapt_mesh() {
 
 void Solver::solve() {
   solve_primal();
+  output->write(0);
 }
 
 } // namespace poisson

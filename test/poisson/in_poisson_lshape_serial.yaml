@@ -12,8 +12,9 @@ poisson example:
     dirichlet bcs:
       bc 1: [0,0,all,0.0]
   linear algebra:
-    linear tolerance: 1.0e-10
-    linear krylov size: 300
-    linear max iters: 300
+    method: CG
+    tolerance: 1.0e-10
+    krylov size: 300
+    maximum iterations: 300
   output:
     out file: out_poisson
