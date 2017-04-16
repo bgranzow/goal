@@ -66,21 +66,22 @@ void Physics::build_primal_volumetric(FieldManager fm) {
 
 void Physics::build_primal_dirichlet(FieldManager fm) {
   auto dbc = rcpFromRef(params->sublist("dirichlet bcs"));
-  auto dbc_R = rcp(new goal::DirichletBCs<R, T>(
-        dbc, indexer, /*condense=*/ true, /*adjoint=*/ false));
-  auto dbc_J = rcp(new goal::DirichletBCs<J, T>(
-        dbc, indexer, /*condense=*/ true, /*adjoint=*/ false));
-  fm->registerEvaluator<R>(dbc_R);
-  fm->registerEvaluator<J>(dbc_J);
-  fm->requireField<R>(*dbc_R->evaluatedFields()[0]);
-  fm->requireField<J>(*dbc_J->evaluatedFields()[0]);
+  goal::require_dbc<R>(dbc, indexer, true, false, fm);
+  goal::require_dbc<J>(dbc, indexer, true, false, fm);
   goal::set_extended_data_type_dims(indexer, fm);
   fm->postRegistrationSetupForType<R>(NULL);
   fm->postRegistrationSetupForType<J>(NULL);
 }
 
 void Physics::build_dual_volumetric(FieldManager fm) {
-  (void)fm;
+  auto uu = u_fine[0];
+  goal::register_dof<J>(uu, indexer, fm);
+  auto resid = rcp(new poisson::Residual<J, T>(uu, ff));
+  fm->registerEvaluator<J>(resid);
+  goal::require_adjoint_scatter<J>(uu, indexer, fm);
+  goal::require_qoi_scalar_point(uu, indexer, set, fm);
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<J>(NULL);
 }
 
 void Physics::build_dual_dirichlet(FieldManager fm) {

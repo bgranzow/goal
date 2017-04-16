@@ -8,6 +8,7 @@
 #include "goal_ev_vector_shape.hpp"
 #include "goal_ev_interpolate_vector.hpp"
 #include "goal_ev_scatter_vector.hpp"
+#include "goal_ev_dirichlet_bcs.hpp"
 #include "goal_ev_qoi_ks.hpp"
 #include "goal_ev_qoi_pnorm.hpp"
 #include "goal_ev_qoi_scalar_point.hpp"
@@ -68,6 +69,15 @@ void require_adjoint_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm) {
   fm->registerEvaluator<EvalT>(scatter);
   auto op = scatter->evaluatedFields()[0];
   fm->requireField<EvalT>(*op);
+}
+
+template <typename EvalT>
+void require_dbc(RCP<const ParameterList> p, RCP<Indexer> i, bool condense,
+    bool adj, FieldManager fm) {
+  auto ev =
+    rcp(new goal::DirichletBCs<EvalT, goal::Traits>(p, i, condense, adj));
+  fm->registerEvaluator<EvalT>(ev);
+  fm->requireField<EvalT>(*ev->evaluatedFields()[0]);
 }
 
 static RCP<const ParameterList> get_valid_p_qoi_params() {
@@ -138,5 +148,7 @@ template void require_primal_scatter<goal::Traits::Residual>(RCP<Field> u, RCP<I
 template void require_primal_scatter<goal::Traits::Jacobian>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 template void require_adjoint_scatter<goal::Traits::Residual>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 template void require_adjoint_scatter<goal::Traits::Jacobian>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
+template void require_dbc<goal::Traits::Residual>(RCP<const ParameterList> p, RCP<Indexer> i, bool condense, bool adj, FieldManager fm);
+template void require_dbc<goal::Traits::Jacobian>(RCP<const ParameterList> p, RCP<Indexer> i, bool condense, bool adj, FieldManager fm);
 
 }  // namespace goal

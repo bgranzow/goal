@@ -28,6 +28,16 @@ void require_primal_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 template <typename EvalT>
 void require_adjoint_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 
+/** \brief Require primal Dirichlet boundary conditions.
+  * \param p The relevant DBC parameterlist.
+  * \param i The relevant \ref goal::Indexer.
+  * \param condense True if DBC columns should be condensed from the Jacobian.
+  * \param adj True if the dual boundary conditions should be applied.
+  * \param fm The field manager that constructs the physics evaluations. */
+template <typename EvalT>
+void require_dbc(RCP<const ParameterList> p, RCP<Indexer> i,
+    bool adj, bool condense, FieldManager fm);
+
 /** \brief Require the scatter of the KS QoI.
   * \param p A QoI parameter list with the following parameters:
   *
@@ -60,15 +70,6 @@ void require_qoi_ks(RCP<const ParameterList> p, RCP<Field> u,
 void require_qoi_pnorm(RCP<const ParameterList> p, RCP<Field> u,
     RCP<Indexer> i, FieldManager fm);
 
-/** \brief Require the scatter of a point-wise QoI for a scalar DOF field.
-  * \param u The relevant DOF \ref goal::Field.
-  * \param i The relevant \ref goal::Indexer.
-  * \param set The node-set that defines the evaluation point.
-  * \param fm The field manager that constructs the physics evaluations.
-  * \details See \ref goal::QoIScalarPoint. */
-void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
-    std::string const& set, FieldManager fm);
-
 /** \brief Require the scatter of a QoI from above.
   * \param p A QoI parameter list. The parameter "name" will
   * determine which QoI is required:
@@ -79,6 +80,16 @@ void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
   * \param fm The field manager that constructs the physics evaluations. */
 void require_qoi(RCP<const ParameterList> p, RCP<Field> u, RCP<Indexer> i,
     FieldManager fm);
+
+
+/** \brief Require the scatter of a point-wise QoI for a scalar DOF field.
+  * \param u The relevant DOF \ref goal::Field.
+  * \param i The relevant \ref goal::Indexer.
+  * \param set The node-set that defines the evaluation point.
+  * \param fm The field manager that constructs the physics evaluations.
+  * \details See \ref goal::QoIScalarPoint. */
+void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
+    std::string const& set, FieldManager fm);
 
 }  // namespace goal
 
