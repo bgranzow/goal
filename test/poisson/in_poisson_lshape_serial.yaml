@@ -18,3 +18,4 @@ poisson example:
     maximum iterations: 300
   output:
     out file: out_poisson
+    interpolate: [u_dual_fine]

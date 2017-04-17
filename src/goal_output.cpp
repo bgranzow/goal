@@ -52,6 +52,8 @@ Output::Output(RCP<const ParameterList> p, RCP<Discretization> d) {
   name = params->get<std::string>("out file");
   if (params->isParameter("turn off")) turn_off = params->get<bool>("turn off");
   if (params->isParameter("interval")) interval = params->get<int>("interval");
+  if (params->isParameter("interpolate"))
+    fields = params->get<Teuchos::Array<std::string> >("interpolate");
   if (!turn_off) write_initial_pvd(name, pos);
 }
 
@@ -72,13 +74,38 @@ static void update_pvd(
   }
 }
 
+static void interpolate(
+    apf::Mesh* m, Teuchos::Array<std::string> const& names) {
+  for (int i = 0; i < names.size(); ++i) {
+    auto name = names[i].c_str();
+    apf::Field* f = m->findField(name);
+    assert(f);
+    auto iname = names[i] + "_interp";
+    auto type = apf::getValueType(f);
+    apf::Field* g = apf::createFieldOn(m, iname.c_str(), type);
+    apf::projectField(g, f);
+  }
+}
+
+static void destroy(
+    apf::Mesh* m, Teuchos::Array<std::string> const& names) {
+  for (int i = 0; i < names.size(); ++i) {
+    auto name = names[i] + "_interp";
+    apf::Field* g = m->findField(name.c_str());
+    assert(g);
+    apf::destroyField(g);
+  }
+}
+
 void Output::write_vtk(const double t) {
   auto m = disc->get_apf_mesh();
   std::ostringstream oss;
   oss << name << "_" << index;
   std::string vtu = oss.str();
   update_pvd(name, vtu, pos, t);
+  interpolate(m, fields);
   apf::writeVtkFiles(vtu.c_str(), m);
+  destroy(m, fields);
   ++index;
 }
 

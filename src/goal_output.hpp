@@ -4,6 +4,7 @@
 /** \file goal_output.hpp */
 
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_Array.hpp>
 
 /** \cond */
 namespace Teuchos {
@@ -34,12 +35,16 @@ class Output {
     * out file        | std::string
     * interval        | int
     * turn off        | bool
+    * interpolate     | Teuchos::Array<std::string>
     *
     * parameter descriptions:
     * - out file, the base name to dump the visualization output.
     * - interval, dump the ouptut only at every \f$ i^{th} \f$ specified
     * interval for which \ref Output::write is called.
     * - turn off, completely turn off dumping output to file.
+    * - interpolate, if this parameter is specified each field
+    * corresponding to the names in this array will be interpolated onto
+    * the mesh for output.
     *
     * \param d The relevant \ref goal::Discretization. */
   Output(RCP<const ParameterList> p, RCP<Discretization> d);
@@ -52,6 +57,7 @@ class Output {
   void write_vtk(const double t);
   RCP<const ParameterList> params;
   RCP<Discretization> disc;
+  Teuchos::Array<std::string> fields;
   bool turn_off;
   int interval;
   std::string name;
