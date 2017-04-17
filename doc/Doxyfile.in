@@ -131,6 +131,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_ev_interpolate_vector.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_scatter_vector.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_scatter_functional.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_ev_dual_scalar_weight.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_dirichlet_bcs.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_qoi_ks.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_qoi_pnorm.hpp \

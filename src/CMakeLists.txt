@@ -23,6 +23,7 @@ goal_ev_vector_shape.cpp
 goal_ev_interpolate_vector.cpp
 goal_ev_scatter_vector.cpp
 goal_ev_scatter_functional.cpp
+goal_ev_dual_scalar_weight.cpp
 goal_ev_dirichlet_bcs.cpp
 goal_ev_qoi_ks.cpp
 goal_ev_qoi_pnorm.cpp
@@ -55,6 +56,7 @@ goal_ev_vector_shape.hpp
 goal_ev_interpolate_vector.hpp
 goal_ev_scatter_vector.hpp
 goal_ev_scatter_functional.hpp
+goal_ev_dual_scalar_weight.hpp
 goal_ev_dirichlet_bcs.hpp
 goal_ev_qoi_ks.hpp
 goal_ev_qoi_pnorm.hpp
