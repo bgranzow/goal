@@ -104,6 +104,6 @@ class Physics : public goal::Physics {
   int p_order;
 };
 
-}  // namespace elast
+}  /* namespace elast */
 
 #endif

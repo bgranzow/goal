@@ -8,4 +8,4 @@ PHX_DIM_TAG_IMPLEMENTATION(Dim)
 PHX_DIM_TAG_IMPLEMENTATION(IP)
 PHX_DIM_TAG_IMPLEMENTATION(Dummy)
 
-}  // namespace goal
+}  /* namespace goal */

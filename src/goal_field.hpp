@@ -280,6 +280,6 @@ class Field {
 /** \brief Project data from one field to another. */
 void project_field(RCP<Field> to, RCP<Field> from);
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

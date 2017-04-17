@@ -85,4 +85,4 @@ void GatherScalar<goal::Traits::Jacobian, TRAITS>::evaluateFields(
 template class GatherScalar<goal::Traits::Residual, goal::Traits>;
 template class GatherScalar<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

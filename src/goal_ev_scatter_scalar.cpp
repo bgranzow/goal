@@ -138,4 +138,4 @@ void ScatterScalar<goal::Traits::Jacobian, TRAITS>::evaluateFields(
 template class ScatterScalar<goal::Traits::Residual, goal::Traits>;
 template class ScatterScalar<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

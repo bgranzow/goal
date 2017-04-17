@@ -128,7 +128,7 @@ void Solver::solve() {
   output->write(0);
 }
 
-} // namespace poisson
+} /* namespace poisson */
 
 
 int main(int argc, char** argv) {

@@ -138,6 +138,6 @@ class Discretization {
   std::map<std::string, std::vector<apf::MeshEntity*> > side_sets;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

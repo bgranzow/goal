@@ -56,4 +56,4 @@ void VonMises<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class VonMises<goal::Traits::Residual, goal::Traits>;
 template class VonMises<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace elast
+}  /* namespace elast */

@@ -109,6 +109,6 @@ class GatherScalar<goal::Traits::Jacobian, TRAITS>
   PHX::MDField<ScalarT, Elem, Node> u;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

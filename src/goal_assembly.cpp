@@ -144,4 +144,4 @@ template void assemble_dirichlet<goal::Traits::Residual>(
 template void assemble_dirichlet<goal::Traits::Jacobian>(
     Workset& ws, RCP<Physics> p, RCP<SolutionInfo> i, RCP<Discretization> d);
 
-}  // namespace goal
+}  /* namespace goal */

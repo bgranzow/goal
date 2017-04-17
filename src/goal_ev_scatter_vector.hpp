@@ -135,6 +135,6 @@ class ScatterVector<goal::Traits::Jacobian, TRAITS>
   PHX::MDField<const ScalarT, Elem, Node, Dim> resid;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

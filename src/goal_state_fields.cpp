@@ -189,4 +189,4 @@ template void StateFields::get_tensor(
 template void StateFields::get_tensor(char const* name, apf::MeshEntity* e,
     int n, minitensor::Tensor<FadType>& v);
 
-}  // namespace goal
+}  /* namespace goal */

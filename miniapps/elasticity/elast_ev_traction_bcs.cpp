@@ -118,4 +118,4 @@ void TractionBCs<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class TractionBCs<goal::Traits::Residual, goal::Traits>;
 template class TractionBCs<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace elast
+}  /* namespace elast */

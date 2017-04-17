@@ -67,4 +67,4 @@ void QoIScalarPoint<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
 
 template class QoIScalarPoint<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

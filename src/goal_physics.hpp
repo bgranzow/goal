@@ -183,6 +183,6 @@ class Physics {
   * which element block the indexer is currently operating over. */
 void set_extended_data_type_dims(RCP<Indexer> indexer, FieldManager fm);
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

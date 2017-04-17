@@ -62,4 +62,4 @@ void InterpolateVector<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class InterpolateVector<goal::Traits::Residual, goal::Traits>;
 template class InterpolateVector<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

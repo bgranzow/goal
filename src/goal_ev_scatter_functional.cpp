@@ -58,4 +58,4 @@ void ScatterFunctional<goal::Traits::Jacobian, TRAITS>::evaluateFields(
 
 template class ScatterFunctional<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

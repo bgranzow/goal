@@ -135,7 +135,7 @@ void Solver::solve() {
   else solve_primal_only();
 }
 
-}  // namespace elast
+}  /* namespace elast */
 
 int main(int argc, char** argv) {
   goal::initialize();

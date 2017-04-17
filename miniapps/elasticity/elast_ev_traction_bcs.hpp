@@ -86,6 +86,6 @@ class TractionBCs : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   int num_dims;
 };
 
-}  // namespace elast
+}  /* namespace elast */
 
 #endif

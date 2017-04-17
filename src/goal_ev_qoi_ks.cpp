@@ -59,4 +59,4 @@ void QoIKS<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
 
 template class QoIKS<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

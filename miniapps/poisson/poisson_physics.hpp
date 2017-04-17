@@ -90,6 +90,6 @@ class Physics : public goal::Physics {
   std::string set;
 };
 
-}  // namespace poisson
+}  /* namespace poisson */
 
 #endif

@@ -82,4 +82,4 @@ void Stress<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class Stress<goal::Traits::Residual, goal::Traits>;
 template class Stress<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace elast
+}  /* namespace elast */

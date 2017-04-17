@@ -87,6 +87,6 @@ class QoIScalarPoint : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<ScalarT, Elem> pw_u;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

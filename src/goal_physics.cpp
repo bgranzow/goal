@@ -183,4 +183,4 @@ void set_extended_data_type_dims(RCP<Indexer> indexer, FieldManager fm) {
   }
 }
 
-}  // namespace goal
+}  /* namespace goal */

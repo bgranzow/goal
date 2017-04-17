@@ -76,6 +76,6 @@ class VonMises : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<ScalarT, Elem, IP> von_mises;
 };
 
-}  // namespace elast
+}  /* namespace elast */
 
 #endif

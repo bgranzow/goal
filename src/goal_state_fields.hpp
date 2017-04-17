@@ -109,6 +109,6 @@ class StateFields {
   std::vector<apf::Field*> old_states;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

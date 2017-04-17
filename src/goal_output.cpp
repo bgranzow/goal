@@ -89,4 +89,4 @@ void Output::write(const double t) {
   write_vtk(t);
 }
 
-}  // namespace goal
+}  /* namespace goal */

@@ -151,4 +151,4 @@ template void require_adjoint_scatter<goal::Traits::Jacobian>(RCP<Field> u, RCP<
 template void require_dbc<goal::Traits::Residual>(RCP<const ParameterList> p, RCP<Indexer> i, bool condense, bool adj, FieldManager fm);
 template void require_dbc<goal::Traits::Jacobian>(RCP<const ParameterList> p, RCP<Indexer> i, bool condense, bool adj, FieldManager fm);
 
-}  // namespace goal
+}  /* namespace goal */

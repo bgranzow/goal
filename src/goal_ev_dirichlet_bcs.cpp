@@ -288,4 +288,4 @@ void DirichletBCs<goal::Traits::Jacobian, TRAITS>::evaluateFields(
 template class DirichletBCs<goal::Traits::Residual, goal::Traits>;
 template class DirichletBCs<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

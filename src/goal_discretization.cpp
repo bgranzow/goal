@@ -249,4 +249,4 @@ void Discretization::compute_side_sets() {
   mesh->end(it);
 }
 
-}  // namespace goal
+}  /* namespace goal */

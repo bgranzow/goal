@@ -76,4 +76,4 @@ double eval(std::string const& v, double x, double y, double z, double t) {
 
 double time() { return PCU_Time(); }
 
-}  // namespace goal
+}  /* namespace goal */

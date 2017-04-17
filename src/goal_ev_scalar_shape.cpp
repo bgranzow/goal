@@ -67,4 +67,4 @@ void ScalarShape<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class ScalarShape<goal::Traits::Residual, goal::Traits>;
 template class ScalarShape<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

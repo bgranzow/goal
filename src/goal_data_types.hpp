@@ -58,6 +58,6 @@ typedef Tpetra::CrsMatrix<ST, LO, GO, KNode> Matrix;
 /** \brief Tpetra matrix output class type. */
 typedef Tpetra::MatrixMarket::Writer<Matrix> MM_Writer;
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

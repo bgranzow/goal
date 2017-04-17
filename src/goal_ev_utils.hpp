@@ -91,6 +91,6 @@ void require_qoi(RCP<const ParameterList> p, RCP<Field> u, RCP<Indexer> i,
 void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
     std::string const& set, FieldManager fm);
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

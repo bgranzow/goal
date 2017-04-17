@@ -13,6 +13,6 @@ PHX_DIM_TAG_DECLARATION(Dim)
 PHX_DIM_TAG_DECLARATION(IP)
 PHX_DIM_TAG_DECLARATION(Dummy)
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

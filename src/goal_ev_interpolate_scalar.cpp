@@ -59,4 +59,4 @@ void InterpolateScalar<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class InterpolateScalar<goal::Traits::Residual, goal::Traits>;
 template class InterpolateScalar<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

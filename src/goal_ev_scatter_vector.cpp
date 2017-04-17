@@ -148,4 +148,4 @@ void ScatterVector<goal::Traits::Jacobian, TRAITS>::evaluateFields(
 template class ScatterVector<goal::Traits::Residual, goal::Traits>;
 template class ScatterVector<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

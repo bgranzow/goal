@@ -73,6 +73,6 @@ class QoIPNorm : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<ScalarT, Elem> J;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

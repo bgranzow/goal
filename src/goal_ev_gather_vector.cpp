@@ -91,4 +91,4 @@ void GatherVector<goal::Traits::Jacobian, TRAITS>::evaluateFields(
 template class GatherVector<goal::Traits::Residual, goal::Traits>;
 template class GatherVector<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

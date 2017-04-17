@@ -76,7 +76,7 @@ struct Traits : public PHX::TraitsBase {
   typedef SolutionInfo& PostEvalData;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 /** \cond */
 namespace PHX {

@@ -128,7 +128,7 @@ void Physics::build_error_dirichlet(FieldManager fm) {
   (void)fm;
 }
 
-}  // namespace elast
+}  /* namespace elast */
 
 #include <goal_ev_utils.hpp>
 #include <goal_ev_dirichlet_bcs.hpp>

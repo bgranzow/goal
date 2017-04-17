@@ -83,6 +83,6 @@ class Residual : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<ScalarT, Elem, Node, Dim> resid;
 };
 
-}  // namespace elast
+}  /* namespace elast */
 
 #endif

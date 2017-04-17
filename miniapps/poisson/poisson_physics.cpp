@@ -95,4 +95,4 @@ void Physics::build_error_volumetric(FieldManager fm) {
   (void)fm;
 }
 
-}  // namespace poisson
+}  /* namespace poisson */

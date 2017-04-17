@@ -59,4 +59,4 @@ void QoIPNorm<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
 
 template class QoIPNorm<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

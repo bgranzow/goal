@@ -138,6 +138,6 @@ class ScatterScalar<goal::Traits::Jacobian, TRAITS>
   PHX::MDField<const ScalarT, Elem, Node> resid;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

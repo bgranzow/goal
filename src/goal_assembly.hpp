@@ -76,4 +76,4 @@ void compute_dual_jacobian(RCP<Physics> p, RCP<SolutionInfo> i,
 void compute_error_residual(RCP<Physics> p, RCP<SolutionInfo> i,
     RCP<Discretization> d, const double t_current, const double t_previous);
 
-}  // namespace goal
+}  /* namespace goal */

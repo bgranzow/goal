@@ -102,6 +102,6 @@ class SolutionInfo {
 void add_to_fields(
     std::vector<RCP<Field> > const& f, RCP<Indexer> i, RCP<Vector> du);
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

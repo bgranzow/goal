@@ -103,4 +103,4 @@ void add_to_fields(
   print(" > added to fields in %f seconds", t1 - t0);
 }
 
-}  // namespace goal
+}  /* namespace goal */

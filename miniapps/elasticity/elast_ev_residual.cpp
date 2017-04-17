@@ -56,4 +56,4 @@ void Residual<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class Residual<goal::Traits::Residual, goal::Traits>;
 template class Residual<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace elast
+}  /* namespace elast */

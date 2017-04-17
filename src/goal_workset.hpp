@@ -38,6 +38,6 @@ struct Workset {
   std::vector<apf::MeshEntity*> entities;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

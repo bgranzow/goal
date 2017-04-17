@@ -245,4 +245,4 @@ void Indexer::compute_node_sets() {
   }
 }
 
-}  // namespace goal
+}  /* namespace goal */

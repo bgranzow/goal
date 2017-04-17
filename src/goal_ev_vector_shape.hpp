@@ -76,6 +76,6 @@ class VectorShape : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<double, Elem, Node, IP, Dim, Dim> grad_shape;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

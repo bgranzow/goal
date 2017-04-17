@@ -93,6 +93,6 @@ class Residual : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<ScalarT, Elem, Node> resid;
 };
 
-}  // namespace poisson
+}  /* namespace poisson */
 
 #endif

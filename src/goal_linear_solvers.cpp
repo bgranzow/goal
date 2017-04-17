@@ -198,4 +198,4 @@ void solve_linear_system(
     fail("unkonwn linear solve combination");
 }
 
-}  // namespace goal
+}  /* namespace goal */

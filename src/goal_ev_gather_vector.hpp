@@ -111,6 +111,6 @@ class GatherVector<goal::Traits::Jacobian, TRAITS>
   PHX::MDField<ScalarT, Elem, Node, Dim> u;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

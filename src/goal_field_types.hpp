@@ -23,6 +23,6 @@ enum BasisType {
   HIERARCHIC = 1
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

@@ -98,6 +98,6 @@ class Stress : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<ScalarT, Elem, IP, Dim, Dim> cauchy;
 };
 
-}  // namespace goal
+}  /* namespace elast */
 
 #endif

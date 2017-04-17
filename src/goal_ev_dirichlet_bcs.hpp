@@ -128,6 +128,6 @@ class DirichletBCs<goal::Traits::Jacobian, TRAITS>
   void apply_dual_bc();
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

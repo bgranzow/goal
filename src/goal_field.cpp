@@ -268,4 +268,4 @@ void project_field(RCP<Field> to, RCP<Field> from) {
     fail("project: unknown value type");
 }
 
-}  // namespace goal
+}  /* namespace goal */

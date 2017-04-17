@@ -76,6 +76,6 @@ class ScalarShape : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<double, Elem, Node, IP, Dim> grad_shape;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

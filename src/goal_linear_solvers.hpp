@@ -76,6 +76,6 @@ void solve_multigrid_gmres(
 void solve_linear_system(
     RCP<const ParameterList> p, RCP<Matrix> A, RCP<Vector> x, RCP<Vector> b);
 
-} // namespace goal
+} /* namespace goal */
 
 #endif

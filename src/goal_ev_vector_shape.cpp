@@ -69,4 +69,4 @@ void VectorShape<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 template class VectorShape<goal::Traits::Residual, goal::Traits>;
 template class VectorShape<goal::Traits::Jacobian, goal::Traits>;
 
-}  // namespace goal
+}  /* namespace goal */

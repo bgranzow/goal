@@ -35,6 +35,6 @@ double eval(std::string const& v, double x, double y, double z, double t);
 /** \brief Get the wall time in seconds. */
 double time();
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

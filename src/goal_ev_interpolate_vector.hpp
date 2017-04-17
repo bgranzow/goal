@@ -81,6 +81,6 @@ class InterpolateVector : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   PHX::MDField<ScalarT, Elem, IP, Dim, Dim> grad_u;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif

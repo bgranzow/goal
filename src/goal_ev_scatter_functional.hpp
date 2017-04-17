@@ -76,6 +76,6 @@ class ScatterFunctional<goal::Traits::Jacobian, TRAITS>
   PHX::MDField<const ScalarT, Elem> functional;
 };
 
-}  // namespace goal
+}  /* namespace goal */
 
 #endif
