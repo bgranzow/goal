@@ -175,6 +175,7 @@ void DirichletBCs<goal::Traits::Jacobian, TRAITS>::preEvaluate(PreEvalData i) {
   info = rcpFromRef(i);
   assert(info->owned->R != Teuchos::null);
   assert(info->owned->dRdu != Teuchos::null);
+  if (is_adjoint) assert(info->owned->dJdu != Teuchos::null);
 }
 
 template <typename TRAITS>
@@ -245,6 +246,34 @@ void DirichletBCs<goal::Traits::Jacobian, TRAITS>::condense_columns() {
 
 template <typename TRAITS>
 void DirichletBCs<goal::Traits::Jacobian, TRAITS>::apply_dual_bc() {
+  auto R = info->owned->R->get1dViewNonConst();
+  auto dJdu = info->owned->dJdu->get1dViewNonConst();
+  auto dRdu = info->owned->dRdu;
+  size_t num_entries;
+  Teuchos::Array<LO> indices;
+  Teuchos::Array<ST> entries;
+  for (auto i = params->begin(); i != params->end(); ++i) {
+    auto param_entry = params->entry(i);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto idx = stoi(a[0]);
+    auto cmp = stoi(a[1]);
+    auto set = a[2];
+    auto nodes = indexer->get_node_set_nodes(set, idx);
+    for (std::size_t i = 0; i < nodes.size(); ++i) {
+      auto node = nodes[i];
+      LO row = indexer->get_owned_lid(idx, node, cmp);
+      num_entries = dRdu->getNumEntriesInLocalRow(row);
+      indices.resize(num_entries);
+      entries.resize(num_entries);
+      dRdu->getLocalRowCopy(row, indices(), entries(), num_entries);
+      for (size_t c = 0; c < num_entries; ++c)
+        if (indices[c] != row)
+          entries[c] = 0.0;
+      dRdu->replaceLocalValues(row, indices(), entries());
+      R[row] = 0.0;
+      dJdu[row] = 0.00;
+    }
+  }
 }
 
 template <typename TRAITS>

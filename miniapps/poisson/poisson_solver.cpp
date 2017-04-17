@@ -98,6 +98,20 @@ void Solver::solve_primal() {
 
 void Solver::solve_dual() {
   goal::print("*** dual problem");
+  physics->build_enriched_data();
+  physics->build_fine_indexer();
+  physics->build_dual_model();
+  auto indexer = physics->get_indexer();
+  info = rcp(new goal::SolutionInfo(indexer));
+  goal::compute_dual_jacobian(physics, info, disc, 0, 0);
+  auto dRduT = info->owned->dRdu;
+  auto dJdu = info->owned->dJdu;
+  auto z = info->owned->z;
+  auto lp = rcpFromRef(params->sublist("linear algebra"));
+  goal::solve_linear_system(lp, dRduT, z, dJdu);
+  goal::add_to_fields(physics->get_z_fine(), indexer, z);
+  physics->destroy_model();
+  physics->destroy_indexer();
 }
 
 void Solver::estimate_error() {
@@ -110,6 +124,7 @@ void Solver::adapt_mesh() {
 
 void Solver::solve() {
   solve_primal();
+  solve_dual();
   output->write(0);
 }
 

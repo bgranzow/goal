@@ -127,7 +127,7 @@ void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
   using J = goal::Traits::Jacobian;
   auto qoi = rcp(new QoIScalarPoint<J, T>(u, i, set));
   auto scatter =
-    rcp(new ScatterFunctional<J, T>(u, i, "Scalar Point Functional"));
+    rcp(new ScatterFunctional<J, T>(u, i, "Point-Wise " + u->get_name()));
   auto op = scatter->evaluatedFields()[0];
   fm->registerEvaluator<J>(qoi);
   fm->registerEvaluator<J>(scatter);

@@ -85,7 +85,10 @@ void Physics::build_dual_volumetric(FieldManager fm) {
 }
 
 void Physics::build_dual_dirichlet(FieldManager fm) {
-  (void)fm;
+  auto dbc = rcpFromRef(params->sublist("dirichlet bcs"));
+  goal::require_dbc<J>(dbc, indexer, true, true, fm);
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<J>(NULL);
 }
 
 void Physics::build_error_volumetric(FieldManager fm) {
