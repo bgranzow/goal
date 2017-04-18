@@ -76,6 +76,9 @@ void DualScalarWeight<EVALT, TRAITS>::evaluateFields(EvalData workset) {
             z_fine_min_z_val * GPU[vtx][dim];
       }
     }
+    apf::destroyElement(z_fine_elem);
+    apf::destroyElement(z_elem);
+    apf::destroyMeshElement(me);
   }
 }
 
