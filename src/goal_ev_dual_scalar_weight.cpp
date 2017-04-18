@@ -16,8 +16,8 @@ DualScalarWeight<EVALT, TRAITS>::DualScalarWeight(
     RCP<Field> z_, RCP<Field> z_fine_) :
     z(z_),
     z_fine(z_fine_),
-    w(z->get_name(), z->get_PU_dl()),
-    grad_w(z->get_grad_name(), z->get_grad_PU_dl()) {
+    w(z_fine->get_name(), z->get_PU_dl()),
+    grad_w(z_fine->get_grad_name(), z->get_grad_PU_dl()) {
   /* make sure we're doing sane stuff */
   assert(z->get_value_type() == SCALAR);
   assert(z_fine->get_value_type() == SCALAR);
