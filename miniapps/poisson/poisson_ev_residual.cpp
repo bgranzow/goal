@@ -19,13 +19,36 @@ Residual<EVALT, TRAITS>::Residual(
       grad_w(f->get_grad_basis_name(), f->get_grad_weight_dl()),
       grad_u(f->get_grad_name(), f->get_grad_interpolated_dl()),
       resid(f->get_residual_name(), f->get_dl()) {
-
-  /* populate the index dimensions for this evaluator */
+  /* populate the index dimensions for this evaluator. */
   num_nodes = sol->get_num_elem_nodes();
   num_ips = sol->get_num_elem_ips();
   num_dims = sol->get_num_dims();
 
-  /* populate the dependency structure of this evaluator */
+  /* populate the dependency structure of this evaluator. */
+  this->addDependentField(wdv);
+  this->addDependentField(w);
+  this->addDependentField(grad_w);
+  this->addDependentField(grad_u);
+  this->addEvaluatedField(resid);
+  this->setName("Poisson Residual");
+}
+
+template <typename EVALT, typename TRAITS>
+Residual<EVALT, TRAITS>::Residual(
+    RCP<goal::Field> u, RCP<goal::Field> z, std::string const& source)
+    : sol(u),
+      ff(source),
+      wdv(u->get_wdv_name(), u->get_scalar_ip_dl()),
+      w(z->get_name(), z->get_PU_dl()),
+      grad_w(z->get_grad_name(), z->get_grad_PU_dl()),
+      grad_u(u->get_grad_name(), u->get_grad_interpolated_dl()),
+      resid(u->get_residual_name(), z->get_residual_PU_dl()) {
+  /* populate the index dimensions. */
+  num_nodes = sol->get_num_elem_vtx();
+  num_ips = sol->get_num_elem_ips();
+  num_dims = sol->get_num_dims();
+
+  /* populate the dependency structure of this evaluator. */
   this->addDependentField(wdv);
   this->addDependentField(w);
   this->addDependentField(grad_w);
