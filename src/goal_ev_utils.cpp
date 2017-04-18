@@ -13,6 +13,8 @@
 #include "goal_ev_qoi_pnorm.hpp"
 #include "goal_ev_qoi_scalar_point.hpp"
 #include "goal_ev_scatter_functional.hpp"
+#include "goal_ev_dual_scalar_weight.hpp"
+#include "goal_ev_dual_vector_weight.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
 
@@ -54,6 +56,21 @@ void require_primal_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm) {
   fm->registerEvaluator<EvalT>(scatter);
   auto op = scatter->evaluatedFields()[0];
   fm->requireField<EvalT>(*op);
+}
+
+template <typename EvalT>
+void register_dual(RCP<Field> z, RCP<Field> z_fine, FieldManager fm) {
+  auto z_type = z->get_value_type();
+  auto z_fine_type = z_fine->get_value_type();
+  assert (z_type == z_fine_type);
+  RCP<PHX::Evaluator<goal::Traits> > weight;
+  if (z_type == SCALAR)
+    weight = rcp(new DualScalarWeight<EvalT, goal::Traits>(z, z_fine));
+  else if (z_type == VECTOR)
+    weight = rcp(new DualVectorWeight<EvalT, goal::Traits>(z, z_fine));
+  else
+    fail("cannot register dual weight");
+  fm->registerEvaluator<EvalT>(weight);
 }
 
 template <typename EvalT>
@@ -144,6 +161,7 @@ void require_qoi(RCP<const ParameterList> p, RCP<Field> u,
 
 template void register_dof<goal::Traits::Residual>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 template void register_dof<goal::Traits::Jacobian>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
+template void register_dual<goal::Traits::Residual>(RCP<Field> z, RCP<Field> z_fine, FieldManager fm);
 template void require_primal_scatter<goal::Traits::Residual>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 template void require_primal_scatter<goal::Traits::Jacobian>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 template void require_adjoint_scatter<goal::Traits::Residual>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);

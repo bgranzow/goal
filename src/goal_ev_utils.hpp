@@ -14,6 +14,13 @@ namespace goal {
 template <typename EvalT>
 void register_dof(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 
+/** \brief Register a dual weighting field.
+  * \param z The coarse dual \ref goal::Field on \f$ V^H \f$.
+  * \param z_fine The fine dual \ref goal::Field on \f$ V^h \f$.
+  * \param fm The field manager that constructs the physics evaluations. */
+template <typename EvalT>
+void register_dual(RCP<Field> z, RCP<Field> z_fine, FieldManager fm);
+
 /** \brief Require the scatter operation for the primal model.
   * \param u The relevant DOF \ref goal::Field.
   * \param i The relevant \ref goal::Indexer.
@@ -80,7 +87,6 @@ void require_qoi_pnorm(RCP<const ParameterList> p, RCP<Field> u,
   * \param fm The field manager that constructs the physics evaluations. */
 void require_qoi(RCP<const ParameterList> p, RCP<Field> u, RCP<Indexer> i,
     FieldManager fm);
-
 
 /** \brief Require the scatter of a point-wise QoI for a scalar DOF field.
   * \param u The relevant DOF \ref goal::Field.
