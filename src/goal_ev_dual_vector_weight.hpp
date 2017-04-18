@@ -60,7 +60,7 @@ class DualVectorWeight : public PHX::EvaluatorWithBaseImpl<TRAITS>,
 
   /** \brief Construct the evaluator.
     * \param z The dual \ref goal::Field on the coarse space \f$ V^H \f$.
-    * \param z_fine The dual \ref goal::Field on the fine space \f$ V^h f$. */
+    * \param z_fine The dual \ref goal::Field on the fine space \f$ V^h \f$. */
   DualVectorWeight(RCP<Field> z, RCP<Field> z_fine);
 
   /** \brief Finalize the field manager registration. */

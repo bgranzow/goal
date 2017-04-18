@@ -229,20 +229,20 @@ class Field {
     * \ref goal::VECTOR     | (Elem, Node, IP, Dim) */
   RCP<PHX::DataLayout> get_PU_dl();
 
-  /** \brief Get the data layout of a partition of unity.
-    * \details
-    * \ref goal::FieldType  | data layout
-    * --------------------  | -----------
-    * \ref goal::SCALAR     | (Elem, Node, IP)
-    * \ref goal::VECTOR     | (Elem, Node, IP, Dim) */
-  RCP<PHX::DataLayout> get_grad_PU_dl();
-
-  /** \brief Get the data layout of the gradient of partition of unity.
+  /** \brief Get the data layout of the gradient of a partition of unity.
     * \details
     * \ref goal::FieldType  | data layout
     * --------------------  | -----------
     * \ref goal::SCALAR     | (Elem, Node, IP, Dim)
     * \ref goal::VECTOR     | (Elem, Node, IP, Dim, Dim) */
+  RCP<PHX::DataLayout> get_grad_PU_dl();
+
+  /** \brief Get the data layout of the residual of a partition of unity.
+    * \details
+    * \ref goal::FieldType  | data layout
+    * --------------------  | -----------
+    * \ref goal::SCALAR     | (Elem, Node)
+    * \ref goal::VECTOR     | (Elem, Node, Dim) */
   RCP<PHX::DataLayout> get_residual_PU_dl();
 
   /** \brief Get the data layout of a scalar at IPs.

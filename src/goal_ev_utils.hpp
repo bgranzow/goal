@@ -10,28 +10,48 @@ namespace goal {
 /** \brief Register a degree of freedom field.
   * \param u The relevant DOF \ref goal::Field.
   * \param i The relevant \ref goal::Indexer.
-  * \param fm The field manager that constructs the physics evaluations. */
+  * \param fm The field manager that constructs the physics evaluations.
+  * \details See the evaluators:
+  * - \ref goal::GatherScalar<goal::Traits::Residual, TRAITS>
+  * - \ref goal::GatherScalar<goal::Traits::Jacobian, TRAITS>
+  * - \ref goal::ScalarShape
+  * - \ref goal::InterpolateScalar
+  * - \ref goal::GatherVector<goal::Traits::Residual, TRAITS>
+  * - \ref goal::GatherVector<goal::Traits::Jacobian, TRAITS>
+  * - \ref goal::VectorShape
+  * - \ref goal::InterpolateVector */
 template <typename EvalT>
 void register_dof(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 
 /** \brief Register a dual weighting field.
   * \param z The coarse dual \ref goal::Field on \f$ V^H \f$.
   * \param z_fine The fine dual \ref goal::Field on \f$ V^h \f$.
-  * \param fm The field manager that constructs the physics evaluations. */
+  * \param fm The field manager that constructs the physics evaluations.
+  * \details See the evaluators:
+  * - \ref goal::DualScalarWeight
+  * - \ref goal::DualVectorWeight */
 template <typename EvalT>
 void register_dual(RCP<Field> z, RCP<Field> z_fine, FieldManager fm);
 
 /** \brief Require the scatter operation for the primal model.
   * \param u The relevant DOF \ref goal::Field.
   * \param i The relevant \ref goal::Indexer.
-  * \param fm The field manager that constructs the physics evaluations. */
+  * \param fm The field manager that constructs the physics evaluations.
+  * \details See the evaluators:
+  * - \ref goal::ScatterScalar<goal::Traits::Residual, TRAITS>
+  * - \ref goal::ScatterScalar<goal::Traits::Jacobian, TRAITS>
+  * - \ref goal::ScatterVector<goal::Traits::Residual, TRAITS>
+  * - \ref goal::ScatterVector<goal::Traits::Jacobian, TRAITS> */
 template <typename EvalT>
 void require_primal_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 
 /** \brief Require the scatter operation for the adjoint model.
   * \param u The relevant DOF \ref goal::Field.
   * \param i The relevant \ref goal::Indexer.
-  * \param fm The field manager that constructs the physics evaluations. */
+  * \param fm The field manager that constructs the physics evaluations.
+  * \details See the evaluators:
+  * - \ref goal::ScatterScalar<goal::Traits::Jacobian, TRAITS>
+  * - \ref goal::ScatterVector<goal::Traits::Jacobian, TRAITS> */
 template <typename EvalT>
 void require_adjoint_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
 
@@ -40,7 +60,10 @@ void require_adjoint_scatter(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
   * \param i The relevant \ref goal::Indexer.
   * \param condense True if DBC columns should be condensed from the Jacobian.
   * \param adj True if the dual boundary conditions should be applied.
-  * \param fm The field manager that constructs the physics evaluations. */
+  * \param fm The field manager that constructs the physics evaluations.
+  * \details See the evaluator:
+  * - \ref goal::DirichletBCs<goal::Traits::Residual, TRAITS>
+  * - \ref goal::DirichletBCs<goal::Traits::Jacobian, TRAITS> */
 template <typename EvalT>
 void require_dbc(RCP<const ParameterList> p, RCP<Indexer> i,
     bool adj, bool condense, FieldManager fm);
@@ -57,7 +80,7 @@ void require_dbc(RCP<const ParameterList> p, RCP<Indexer> i,
   * \param u The relevant DOF \ref goal::Field.
   * \param i The relevant \ref goal::Indexer.
   * \param fm The field manager that constructs the physics evaluations.
-  * \details See \ref goal::QoIPNorm. */
+  * \details See \ref goal::QoIKS. */
 void require_qoi_ks(RCP<const ParameterList> p, RCP<Field> u,
     RCP<Indexer> i, FieldManager fm);
 
