@@ -74,6 +74,10 @@ class Physics : public goal::Physics {
   /** \brief Get the Dirichlet boundary condition parameters. */
   RCP<const ParameterList> get_dbc_params();
 
+  /** \brief Restrict the fine dual solution to the coarse space.
+    * \details Restrict \f$ z^h \f$ to \f$ z^H \f$. */
+  void restrict_z_fine();
+
  private:
   void build_primal_volumetric(FieldManager fm);
   void build_primal_neumann(FieldManager) {}

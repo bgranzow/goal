@@ -49,6 +49,10 @@ RCP<const ParameterList> Physics::get_dbc_params() {
   return rcpFromRef(params->sublist("dirichlet bcs"));
 }
 
+void Physics::restrict_z_fine() {
+  project_field(z[0], z_fine[0]);
+}
+
 void Physics::build_primal_volumetric(FieldManager fm) {
   auto uu = u[0];
   goal::register_dof<R>(uu, indexer, fm);
