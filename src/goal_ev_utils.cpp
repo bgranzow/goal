@@ -15,6 +15,8 @@
 #include "goal_ev_scatter_functional.hpp"
 #include "goal_ev_dual_scalar_weight.hpp"
 #include "goal_ev_dual_vector_weight.hpp"
+#include "goal_ev_scalar_error.hpp"
+#include "goal_ev_vector_error.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
 
@@ -157,6 +159,22 @@ void require_qoi(RCP<const ParameterList> p, RCP<Field> u,
   if (n == "ks") require_qoi_ks(p, u, i, fm);
   else if (n == "p norm") require_qoi_pnorm(p, u, i, fm);
   else fail("unknown qoi: %s", n.c_str());
+}
+
+void require_error(RCP<Field> u, RCP<Field> e, FieldManager fm) {
+  using T = goal::Traits;
+  using R = goal::Traits::Residual;
+  auto type = u->get_value_type();
+  RCP<PHX::Evaluator<goal::Traits> > error;
+  if (type == SCALAR)
+    error = rcp(new ScalarError<R, T>(u, e));
+  else if (type == VECTOR)
+    error = rcp(new VectorError<R, T>(u, e));
+  else
+    fail("cannot require error");
+  auto op = error->evaluatedFields()[0];
+  fm->registerEvaluator<R>(error);
+  fm->requireField<R>(*op);
 }
 
 template void register_dof<goal::Traits::Residual>(RCP<Field> u, RCP<Indexer> i, FieldManager fm);
