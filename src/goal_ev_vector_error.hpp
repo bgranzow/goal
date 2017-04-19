@@ -14,6 +14,8 @@ using Teuchos::RCP;
 
 /** \cond */
 class Field;
+class Indexer;
+class SolutionInfo;
 /** \endcond */
 
 /** \brief Fill in the global error field for a vector PDE.
@@ -43,21 +45,24 @@ class VectorError : public PHX::EvaluatorWithBaseImpl<TRAITS>,
 
   /** \brief Construct the evaluator.
     * \param u The primal solution vector DOF \ref goal::Field.
-    * \param e The corresponding vector error \ref goal::Field. */
-  VectorError(RCP<Field> u, RCP<Field> e);
+    * \param e The corresponding vector error \ref goal::Field.
+    * \param i The relevant \ref goal::Indexer. */
+  VectorError(RCP<Field> u, RCP<Field> e, RCP<Indexer> i);
 
   /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);
 
+  /** \brief Grab the linear algebra data. */
+  void preEvaluate(PreEvalData info);
+
   /** \brief Fill in the local error field. */
   void evaluateFields(EvalData workset);
-
-  /** \brief Synchronize the error field accross partitions. */
-  void postEvaluate(PostEvalData info);
-  
+ 
  private:
   RCP<Field> u;
   RCP<Field> e;
+  RCP<Indexer> indexer;
+  RCP<SolutionInfo> info;
   PHX::MDField<const ScalarT, Elem, Node> resid;
 };
 

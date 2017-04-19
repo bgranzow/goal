@@ -5,21 +5,29 @@
 
 #include "goal_ev_scalar_error.hpp"
 #include "goal_field.hpp"
+#include "goal_indexer.hpp"
 #include "goal_traits.hpp"
+#include "goal_solution_info.hpp"
 #include "goal_workset.hpp"
 
 namespace goal {
 
 using Teuchos::rcp;
+using Teuchos::rcpFromRef;
 
 template <typename EVALT, typename TRAITS>
-ScalarError<EVALT, TRAITS>::ScalarError(RCP<Field> u_, RCP<Field> e_)
+ScalarError<EVALT, TRAITS>::ScalarError(
+    RCP<Field> u_, RCP<Field> e_, RCP<Indexer> i)
     : u(u_),
       e(e_),
+      indexer(i),
       resid(u->get_residual_name(), u->get_residual_PU_dl()) {
   /* make sure we're doing sane stuff. */
   assert(e->get_value_type() == SCALAR);
   assert(u->get_value_type() == SCALAR);
+
+  /* populate the index dimensions. */
+  num_vtx = u->get_num_elem_vtx();
 
   /* populate the dependency structure for this evaluator. */
   auto name = "Error: " + u->get_name();
@@ -37,13 +45,22 @@ void ScalarError<EVALT, TRAITS>::postRegistrationSetup(
 }
 
 template <typename EVALT, typename TRAITS>
-void ScalarError<EVALT, TRAITS>::evaluateFields(EvalData workset) {
-  (void)workset;
+void ScalarError<EVALT, TRAITS>::preEvaluate(PreEvalData i) {
+  info = rcpFromRef(i);
+  assert(info->ghost->R != Teuchos::null);
 }
 
 template <typename EVALT, typename TRAITS>
-void ScalarError<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
-  (void)info;
+void ScalarError<EVALT, TRAITS>::evaluateFields(EvalData workset) {
+  auto R = info->ghost->R;
+  auto field_idx = u->get_associated_dof_idx();
+  for (int elem = 0; elem < workset.size; ++elem) {
+    auto e = workset.entities[elem];
+    for (int vtx = 0; vtx < num_vtx; ++vtx) {
+      LO row = indexer->get_ghost_lid(field_idx, e, vtx, 0);
+      R->sumIntoLocalValue(row, resid(elem, vtx));
+    }
+  }
 }
 
 template class ScalarError<goal::Traits::Residual, goal::Traits>;

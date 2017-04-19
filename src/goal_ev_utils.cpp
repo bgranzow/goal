@@ -161,15 +161,16 @@ void require_qoi(RCP<const ParameterList> p, RCP<Field> u,
   else fail("unknown qoi: %s", n.c_str());
 }
 
-void require_error(RCP<Field> u, RCP<Field> e, FieldManager fm) {
+void require_error(RCP<Field> u, RCP<Field> e, RCP<Indexer> i,
+    FieldManager fm) {
   using T = goal::Traits;
   using R = goal::Traits::Residual;
   auto type = u->get_value_type();
   RCP<PHX::Evaluator<goal::Traits> > error;
   if (type == SCALAR)
-    error = rcp(new ScalarError<R, T>(u, e));
+    error = rcp(new ScalarError<R, T>(u, e, i));
   else if (type == VECTOR)
-    error = rcp(new VectorError<R, T>(u, e));
+    error = rcp(new VectorError<R, T>(u, e, i));
   else
     fail("cannot require error");
   auto op = error->evaluatedFields()[0];

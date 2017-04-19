@@ -123,11 +123,13 @@ void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
 /** \brief Require the fill of the error field via dual weighted residual.
   * \param u The relevant DOF \ref goal::Field.
   * \param e The relevant error \ref goal::Field to fill.
+  * \param i The relevant \ref goal::Indexer.
   * \param fm The field manager that constructs the physics evaluations.
   * \details See the evaluators:
   * - \ref goal::ScalarError
   * - \ref goal::VectorError */
-void require_error(RCP<Field> u, RCP<Field> e, FieldManager fm);
+void require_error(RCP<Field> u, RCP<Field> e, RCP<Indexer> i,
+    FieldManager fm);
 
 }  /* namespace goal */
 

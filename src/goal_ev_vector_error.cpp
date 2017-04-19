@@ -3,19 +3,23 @@
 #include <apfShape.h>
 #include <Phalanx_DataLayout_MDALayout.hpp>
 
-#include "goal_ev_scalar_error.hpp"
+#include "goal_ev_vector_error.hpp"
 #include "goal_field.hpp"
+#include "goal_solution_info.hpp"
 #include "goal_traits.hpp"
 #include "goal_workset.hpp"
 
 namespace goal {
 
 using Teuchos::rcp;
+using Teuchos::rcpFromRef;
 
 template <typename EVALT, typename TRAITS>
-ScalarError<EVALT, TRAITS>::ScalarError(RCP<Field> u_, RCP<Field> e_)
+VectorError<EVALT, TRAITS>::VectorError(
+    RCP<Field> u_, RCP<Field> e_, RCP<Indexer> i)
     : u(u_),
       e(e_),
+      indexer(i),
       resid(u->get_residual_name(), u->get_residual_PU_dl()) {
   /* make sure we're doing sane stuff. */
   assert(e->get_value_type() == SCALAR);
@@ -30,22 +34,23 @@ ScalarError<EVALT, TRAITS>::ScalarError(RCP<Field> u_, RCP<Field> e_)
 }
 
 template <typename EVALT, typename TRAITS>
-void ScalarError<EVALT, TRAITS>::postRegistrationSetup(
+void VectorError<EVALT, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   this->utils.setFieldData(resid, fm);
   (void)d;
 }
 
 template <typename EVALT, typename TRAITS>
-void ScalarError<EVALT, TRAITS>::evaluateFields(EvalData workset) {
-  (void)workset;
+void VectorError<EVALT, TRAITS>::preEvaluate(PreEvalData i) {
+  info = rcpFromRef(i);
+  assert(info->owned->R != Teuchos::null);
 }
 
 template <typename EVALT, typename TRAITS>
-void ScalarError<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
-  (void)info;
+void VectorError<EVALT, TRAITS>::evaluateFields(EvalData workset) {
+  (void)workset;
 }
 
-template class ScalarError<goal::Traits::Residual, goal::Traits>;
+template class VectorError<goal::Traits::Residual, goal::Traits>;
 
 } /* namespace goal */
