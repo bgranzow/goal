@@ -8,6 +8,7 @@
 #include <goal_output.hpp>
 #include <goal_solution_info.hpp>
 #include <goal_linear_solvers.hpp>
+#include <goal_size_field.hpp>
 #include <ma.h>
 #include <Teuchos_YamlParameterListHelpers.hpp>
 
@@ -30,13 +31,24 @@ static RCP<ParameterList> get_valid_params() {
   return p;
 }
 
+static RCP<ParameterList> get_valid_adapt_params() {
+  auto p = rcp(new ParameterList);
+  p->set<int>("num cycles", 0);
+  p->set<int>("initial target elems", 0);
+  return p;
+}
+
 static void validate_params(RCP<const ParameterList> p) {
   assert(p->isSublist("discretization"));
   assert(p->isSublist("physics"));
   assert(p->isSublist("linear algebra"));
   assert(p->isSublist("adaptation"));
   assert(p->isSublist("output"));
+  auto ap = rcpFromRef(p->sublist("adaptation"));
+  assert(ap->isType<int>("num cycles"));
+  assert(ap->isType<int>("initial target elems"));
   p->validateParameters(*get_valid_params(), 0);
+  ap->validateParameters(*get_valid_adapt_params(), 0);
 }
 
 class Solver {
@@ -50,12 +62,12 @@ class Solver {
   void estimate_error();
   void adapt_mesh();
   RCP<const ParameterList> params;
-  RCP<const ParameterList> adapt_params;
   RCP<goal::Discretization> disc;
   RCP<poisson::Physics> physics;
   RCP<goal::SolutionInfo> info;
   RCP<goal::Output> output;
   int num_adapt_cycles;
+  int target_init;
 };
 
 Solver::Solver(RCP<const ParameterList> p) {
@@ -64,10 +76,12 @@ Solver::Solver(RCP<const ParameterList> p) {
   auto dp = rcpFromRef(params->sublist("discretization"));
   auto pp = rcpFromRef(params->sublist("physics"));
   auto op = rcpFromRef(params->sublist("output"));
-  adapt_params = rcpFromRef(params->sublist("adaptation"));
+  auto ap = rcpFromRef(params->sublist("adaptation"));
   disc = rcp(new goal::Discretization(dp));
   physics = rcp(new poisson::Physics(pp, disc));
   output = rcp(new goal::Output(op, disc));
+  num_adapt_cycles = ap->get<int>("num cycles");
+  target_init = ap->get<int>("initial target elems");
 }
 
 static void zero_fields(std::vector<RCP<goal::Field> > u) {
@@ -134,14 +148,34 @@ void Solver::estimate_error() {
 }
 
 void Solver::adapt_mesh() {
+  static int scale = 1;
+  static int ctr = 0;
+  if (ctr == num_adapt_cycles) {
+    output->write(ctr);
+    return;
+  }
   goal::print("*** mesh adaptation");
+  auto m = disc->get_apf_mesh();
+  auto e = physics->get_e()[0]->get_apf_field();
+  auto s = goal::get_iso_target_size(e, scale * target_init, 1);
+  output->write(ctr);
+  physics->destroy_enriched_data();
+  auto in = ma::configure(m, s);
+  in->shouldRunPostParma = true;
+  ma::adapt(in);
+  apf::destroyField(s);
+  disc->update();
+  scale *= 2;
+  ctr++;
 }
 
 void Solver::solve() {
-  solve_primal();
-  solve_dual();
-  estimate_error();
-  output->write(0);
+  for (int i = 0; i <= num_adapt_cycles; ++i) {
+    solve_primal();
+    solve_dual();
+    estimate_error();
+    adapt_mesh();
+  }
 }
 
 } /* namespace poisson */
