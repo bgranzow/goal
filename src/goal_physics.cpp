@@ -16,6 +16,8 @@ void Physics::build_coarse_indexer() { indexer = rcp(new Indexer(disc, u)); }
 
 void Physics::build_fine_indexer() { indexer = rcp(new Indexer(disc, u_fine)); }
 
+void Physics::build_error_indexer() { indexer = rcp(new Indexer(disc, e)); }
+
 void Physics::destroy_indexer() { indexer = Teuchos::null; }
 
 void Physics::build_primal_model() {

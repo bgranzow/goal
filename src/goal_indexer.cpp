@@ -38,7 +38,6 @@ Indexer::Indexer(RCP<Discretization> d, std::vector<RCP<Field> > f) {
   assert(fields.size() > 0);
   for (size_t i = 0; i < fields.size(); ++i) {
     assert(fields[i]->get_associated_dof_idx() == int(i));
-    assert(fields[i]->is_dof());
     apf_fields.push_back(fields[i]->get_apf_field());
   }
   comm = Tpetra::DefaultPlatform::getDefaultPlatform().getComm();
