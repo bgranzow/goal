@@ -21,6 +21,9 @@ QoIVectorPoint<EVALT, TRAITS>::QoIVectorPoint(
       J(0.0),
       u(f->get_name(), f->get_dl()), 
       pw_u("Point-Wise " + f->get_name(), f->get_elem_scalar_dl()) {
+  /* make sure we're doing some sane stuff */
+  assert(field->get_value_type() == VECTOR);
+
   /* grab the owned mesh vertex associated with the point x_0 */
   mesh = field->get_apf_mesh();
   auto idx = field->get_associated_dof_idx();

@@ -24,14 +24,15 @@ class Field;
 class Indexer;
 /** \endcond */
 
-/** \brief Compute a point-wise functional for a scalar DOF field.
-  * \details This evaluator will compute the value of a scalar DOF field
-  * at a given point as \f$ u(x_0) \f$ and appropriately modify the
-  * functional derivative vector dJdu with a delta function corresponding
-  * to this functional quantity. The functional is given as:
+/** \brief Compute a point-wise functional for a vector DOF field.
+  * \details This evaluator will compute the value of a component \f$ i \f$
+  * of a vector DOF \ref goal::Field at a given point as \f$ u_i(x_0) \f$
+  * and appropriately modify the functional derivative vector dJdu with a
+  * delta function corresponding to this functional quantity.
+  * The functional is given as:
   *
   * \f[
-  * J(u) = \int_{\Omega} u \delta(x - x_0) \, \text{d} \Omega.
+  * J(u) = \int_{\Omega} u_i \delta(x - x_0) \, \text{d} \Omega.
   * \f]
   *
   * Here \f$ x_0 \f$ is represented by a geometric vertex, such that the
@@ -40,7 +41,7 @@ class Indexer;
   *
   * dependent fields  | data layout
   * ----------------  | -----------
-  * u                 | (Elem, Node)
+  * u                 | (Elem, Node, Dim)
   *
   * evaluated fields  | data layout
   * ----------------  | -----------
@@ -83,7 +84,7 @@ class QoIVectorPoint : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   apf::Mesh* mesh;
   apf::MeshEntity* vtx;
   double J;
-  PHX::MDField<const ScalarT, Elem, Node> u;
+  PHX::MDField<const ScalarT, Elem, Node, Dim> u;
   PHX::MDField<ScalarT, Elem> pw_u;
 };
 

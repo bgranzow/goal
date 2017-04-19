@@ -140,6 +140,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_ev_qoi_ks.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_qoi_pnorm.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_qoi_scalar_point.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_ev_qoi_vector_point.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_utils.hpp \
 \
 @PROJECT_SOURCE_DIR@/test/steps/steps.dox \
