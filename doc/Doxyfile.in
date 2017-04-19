@@ -122,6 +122,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_assembly.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_output.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_linear_solvers.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_size_field.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_gather_scalar.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_scalar_shape.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_ev_interpolate_scalar.hpp \
