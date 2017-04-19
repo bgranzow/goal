@@ -1,0 +1,72 @@
+#include <PCU.h>
+#include <apf.h>
+#include <apfNumbering.h>
+
+#include "goal_ev_qoi_vector_point.hpp"
+#include "goal_control.hpp"
+#include "goal_field.hpp"
+#include "goal_traits.hpp"
+#include "goal_indexer.hpp"
+#include "goal_solution_info.hpp"
+#include "goal_workset.hpp"
+
+namespace goal {
+
+template <typename EVALT, typename TRAITS>
+QoIVectorPoint<EVALT, TRAITS>::QoIVectorPoint(
+    RCP<Field> f, RCP<Indexer> i, std::string const& s)
+    : field(f),
+      indexer(i),
+      set(s),
+      J(0.0),
+      u(f->get_name(), f->get_dl()), 
+      pw_u("Point-Wise " + f->get_name(), f->get_elem_scalar_dl()) {
+  /* grab the owned mesh vertex associated with the point x_0 */
+  mesh = field->get_apf_mesh();
+  auto idx = field->get_associated_dof_idx();
+  auto nodes = indexer->get_node_set_nodes(set, idx);
+  vtx = 0;
+  if (nodes.size() > 0) {
+    assert(nodes.size() == 1);
+    vtx = nodes[0].entity;
+  }
+
+  /* set the dependency structure of this evaluator. */
+  this->addDependentField(u);
+  this->addEvaluatedField(pw_u);
+  this->setName("Vector Point Functional");
+}
+
+template <typename EVALT, typename TRAITS>
+void QoIVectorPoint<EVALT, TRAITS>::postRegistrationSetup(
+    SetupData d, PHX::FieldManager<TRAITS>& fm) {
+  this->utils.setFieldData(u, fm);
+  this->utils.setFieldData(pw_u, fm);
+  (void)d;
+}
+
+template <typename EVALT, typename TRAITS>
+void QoIVectorPoint<EVALT, TRAITS>::evaluateFields(EvalData workset) {
+  for (int elem = 0; elem < workset.size; ++elem)
+    pw_u(elem) = 0.0;
+}
+
+template <typename EVALT, typename TRAITS>
+void QoIVectorPoint<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
+  auto dJdu = info.ghost->dJdu->get1dViewNonConst();
+  auto idx = field->get_associated_dof_idx();
+  auto apf_field = field->get_apf_field();
+  if (vtx && mesh->isOwned(vtx)) {
+    LO row = indexer->get_ghost_lid(idx, vtx, 0, 0);
+    dJdu[row] = 1.0;
+    apf::Vector3 Jvec;
+    apf::getVector(apf_field, vtx, 0, Jvec);
+    J=Jvec[1]; // y?
+  }
+  PCU_Add_Doubles(&J, 1);
+  print(" > J(u) ~ %.15f", J);
+}
+
+template class QoIVectorPoint<goal::Traits::Jacobian, goal::Traits>;
+
+}  /* namespace goal */
