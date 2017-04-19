@@ -120,6 +120,16 @@ void require_qoi(RCP<const ParameterList> p, RCP<Field> u, RCP<Indexer> i,
 void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
     std::string const& set, FieldManager fm);
 
+/** \brief Require the scatter of a point-wise QoI for a vector DOF field.
+  * \param u The relevant DOF \ref goal::Field.
+  * \param i The relevant \ref goal::Indexer.
+  * \param c The component of the DOF \ref goal::Field.
+  * \param set The node-set that defines the evaluation point.
+  * \param fm The field manager that constructs the physics evalautions.
+  * \details See \ref goal::QoIVectorPoint. */
+void require_qoi_vector_point(RCP<Field> u, RCP<Indexer> i, int c,
+    std::string const& set, FieldManager fm);
+
 /** \brief Require the fill of the error field via dual weighted residual.
   * \param u The relevant DOF \ref goal::Field.
   * \param e The relevant error \ref goal::Field to fill.

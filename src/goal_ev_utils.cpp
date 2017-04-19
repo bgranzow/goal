@@ -12,6 +12,7 @@
 #include "goal_ev_qoi_ks.hpp"
 #include "goal_ev_qoi_pnorm.hpp"
 #include "goal_ev_qoi_scalar_point.hpp"
+#include "goal_ev_qoi_vector_point.hpp"
 #include "goal_ev_scatter_functional.hpp"
 #include "goal_ev_dual_scalar_weight.hpp"
 #include "goal_ev_dual_vector_weight.hpp"
@@ -151,6 +152,20 @@ void require_qoi_scalar_point(RCP<Field> u, RCP<Indexer> i,
   fm->registerEvaluator<J>(qoi);
   fm->registerEvaluator<J>(scatter);
   fm->requireField<J>(*op);
+}
+
+void require_qoi_vector_point(RCP<Field> u, RCP<Indexer> i, int c,
+    std::string const& set, FieldManager fm) {
+  using T = goal::Traits;
+  using J = goal::Traits::Jacobian;
+  auto qoi = rcp(new QoIVectorPoint<J, T>(u, i, set));
+  auto scatter =
+    rcp(new ScatterFunctional<J, T>(u, i, "Point-Wise " + u->get_name()));
+  auto op = scatter->evaluatedFields()[0];
+  fm->registerEvaluator<J>(qoi);
+  fm->registerEvaluator<J>(scatter);
+  fm->requireField<J>(*op);
+  (void)c;
 }
 
 void require_qoi(RCP<const ParameterList> p, RCP<Field> u,
