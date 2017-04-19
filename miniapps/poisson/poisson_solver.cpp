@@ -22,10 +22,10 @@ namespace poisson {
 
 static RCP<ParameterList> get_valid_params() {
   auto p = rcp(new ParameterList);
-  p->set<int>("num adapt cycles", 1);
   p->sublist("discretization");
   p->sublist("physics");
   p->sublist("linear algebra");
+  p->sublist("adaptation");
   p->sublist("output");
   return p;
 }
@@ -34,6 +34,7 @@ static void validate_params(RCP<const ParameterList> p) {
   assert(p->isSublist("discretization"));
   assert(p->isSublist("physics"));
   assert(p->isSublist("linear algebra"));
+  assert(p->isSublist("adaptation"));
   assert(p->isSublist("output"));
   p->validateParameters(*get_valid_params(), 0);
 }
@@ -49,6 +50,7 @@ class Solver {
   void estimate_error();
   void adapt_mesh();
   RCP<const ParameterList> params;
+  RCP<const ParameterList> adapt_params;
   RCP<goal::Discretization> disc;
   RCP<poisson::Physics> physics;
   RCP<goal::SolutionInfo> info;
@@ -62,6 +64,7 @@ Solver::Solver(RCP<const ParameterList> p) {
   auto dp = rcpFromRef(params->sublist("discretization"));
   auto pp = rcpFromRef(params->sublist("physics"));
   auto op = rcpFromRef(params->sublist("output"));
+  adapt_params = rcpFromRef(params->sublist("adaptation"));
   disc = rcp(new goal::Discretization(dp));
   physics = rcp(new poisson::Physics(pp, disc));
   output = rcp(new goal::Output(op, disc));
@@ -109,13 +112,25 @@ void Solver::solve_dual() {
   auto z = info->owned->z;
   auto lp = rcpFromRef(params->sublist("linear algebra"));
   goal::solve_linear_system(lp, dRduT, z, dJdu);
-  goal::add_to_fields(physics->get_z_fine(), indexer, z);
+  goal::set_to_fields(physics->get_z_fine(), indexer, z);
   physics->destroy_model();
   physics->destroy_indexer();
 }
 
 void Solver::estimate_error() {
   goal::print("*** error estimation");
+  auto R = info->owned->R;
+  auto z = info->owned->z;
+  auto e = std::abs(R->dot(*z));
+  goal::print(" > |J(u) - J(uH)| ~ %.15f", e);
+  physics->restrict_z_fine();
+  physics->build_error_indexer();
+  physics->build_error_model();
+  goal::compute_error_residual(physics, info, disc, 0, 0);
+  auto indexer = physics->get_indexer();
+  goal::set_to_fields(physics->get_e(), indexer, R);
+  physics->destroy_model();
+  physics->destroy_indexer();
 }
 
 void Solver::adapt_mesh() {
@@ -125,6 +140,7 @@ void Solver::adapt_mesh() {
 void Solver::solve() {
   solve_primal();
   solve_dual();
+  estimate_error();
   output->write(0);
 }
 
