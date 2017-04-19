@@ -16,8 +16,8 @@ poisson example:
     krylov size: 300
     maximum iterations: 300
   adaptation:
-    method: adjoint
     num cycles: 1
+    initial target elems: 1000
   output:
     out file: out_poisson
     interpolate: [u_dual_fine]
