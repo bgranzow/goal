@@ -1,5 +1,4 @@
 poisson example:
-  num adapt cycles: 5
   discretization:
     geom file: ${Goal_DATA}/meshes/lshape/lshape.dmg
     mesh file: ${Goal_DATA}/meshes/lshape/lshape-serial.smb
@@ -16,6 +15,9 @@ poisson example:
     tolerance: 1.0e-10
     krylov size: 300
     maximum iterations: 300
+  adaptation:
+    method: adjoint
+    num cycles: 1
   output:
     out file: out_poisson
     interpolate: [u_dual_fine]
