@@ -66,6 +66,7 @@ void Physics::build_primal_volumetric(FieldManager fm) {
   goal::set_extended_data_type_dims(indexer, fm);
   fm->postRegistrationSetupForType<R>(NULL);
   fm->postRegistrationSetupForType<J>(NULL);
+  fm->writeGraphvizFile<R>("primal_volumetric", true, true);
 }
 
 void Physics::build_primal_dirichlet(FieldManager fm) {
@@ -86,6 +87,7 @@ void Physics::build_dual_volumetric(FieldManager fm) {
   goal::require_qoi_scalar_point(uu, indexer, set, fm);
   goal::set_extended_data_type_dims(indexer, fm);
   fm->postRegistrationSetupForType<J>(NULL);
+  fm->writeGraphvizFile<J>("dual_volumetric", true, true);
 }
 
 void Physics::build_dual_dirichlet(FieldManager fm) {
@@ -96,7 +98,18 @@ void Physics::build_dual_dirichlet(FieldManager fm) {
 }
 
 void Physics::build_error_volumetric(FieldManager fm) {
-  (void)fm;
+  auto ee = e[0];
+  auto uu = u_fine[0];
+  auto zz = z_fine[0];
+  auto zz_coarse = z[0];
+  goal::register_dof<R>(uu, indexer, fm);
+  goal::register_dual<R>(zz_coarse, zz, fm);
+  auto resid = rcp(new poisson::Residual<R, T>(uu, zz, ff));
+  fm->registerEvaluator<R>(resid);
+  goal::require_error(uu, ee, indexer, fm);
+  goal::set_extended_data_type_dims(indexer, fm);
+  fm->postRegistrationSetupForType<R>(NULL);
+  fm->writeGraphvizFile<R>("error_volumetric", true, true);
 }
 
 }  /* namespace poisson */
