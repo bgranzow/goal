@@ -84,6 +84,7 @@ void Physics::build_primal_volumetric(FieldManager fm) {
   set_primal();
   register_volumetric<Residual>(fm);
   register_volumetric<Jacobian>(fm);
+  fm->writeGraphvizFile<Jacobian>("primal.dot", true, true);
 }
 
 void Physics::build_primal_neumann(FieldManager fm) {
@@ -101,6 +102,7 @@ void Physics::build_primal_dirichlet(FieldManager fm) {
 void Physics::build_dual_volumetric(FieldManager fm) {
   set_dual();
   register_volumetric<Jacobian>(fm);
+  fm->writeGraphvizFile<Jacobian>("dual.dot", true, true);
 }
 
 void Physics::build_dual_neumann(FieldManager fm) {
@@ -116,6 +118,7 @@ void Physics::build_dual_dirichlet(FieldManager fm) {
 void Physics::build_error_volumetric(FieldManager fm) {
   set_error();
   register_volumetric<Residual>(fm);
+  fm->writeGraphvizFile<Residual>("error.dot", true, true);
 }
 
 void Physics::build_error_neumann(FieldManager fm) {
