@@ -103,12 +103,19 @@ void Solver::solve_primal() {
 
 void Solver::solve_dual() {
   goal::print("*** dual problem");
+  physics->build_enriched_data();
   physics->build_dual_model();
   goal::compute_dual_jacobian(physics, info, disc, 0.0, 0.0);
-  auto dRdu = info->owned->dRdu;
+  auto dRduT = info->owned->dRdu;
   auto dJdu = info->owned->dJdu;
   auto z = info->owned->z;
   z->putScalar(0.0);
+  auto lp = rcpFromRef(params->sublist("linear algebra"));
+  goal::solve_linear_system(lp, dRduT, z, dJdu);
+  auto indexer = physics->get_indexer();
+  goal::set_to_fields(physics->get_z(), indexer, z);
+  physics->destroy_model();
+  physics->destroy_indexer();
 }
 
 void Solver::estimate_error() {
