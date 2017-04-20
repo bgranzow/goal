@@ -32,8 +32,8 @@ void VonMises<EVALT, TRAITS>::postRegistrationSetup(
 
 template <typename EVALT, typename TRAITS>
 void VonMises<EVALT, TRAITS>::evaluateFields(EvalData workset) {
-  minitensor::Tensor<ScalarT> sigma(num_dims);
-  sigma.fill(0.0);
+  using Tensor = minitensor::Tensor<ScalarT>;
+  Tensor sigma(3);
   for (int elem = 0; elem < workset.size; ++elem) {
     for (int ip = 0; ip < num_ips; ++ip) {
       for (int i = 0; i < num_dims; ++i)
@@ -42,13 +42,13 @@ void VonMises<EVALT, TRAITS>::evaluateFields(EvalData workset) {
       von_mises(elem, ip) =
         std::sqrt(
             0.5*(
+              std::pow(sigma(0,0) - sigma(1,1), 2) +
               std::pow(sigma(1,1) - sigma(2,2), 2) +
-              std::pow(sigma(2,2) - sigma(3,3), 2) +
-              std::pow(sigma(3,3) - sigma(1,1), 2) +
+              std::pow(sigma(2,2) - sigma(0,0), 2) +
               6.0*(
+                std::pow(sigma(0,1), 2) +
                 std::pow(sigma(1,2), 2) +
-                std::pow(sigma(2,3), 2) +
-                std::pow(sigma(3,1), 2))));
+                std::pow(sigma(2,0), 2))));
     }
   }
 }
