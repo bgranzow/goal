@@ -16,7 +16,7 @@ poisson example:
     krylov size: 300
     maximum iterations: 300
   adaptation:
-    num cycles: 1
+    num cycles: 5
     initial target elems: 1000
   output:
     out file: out_poisson
