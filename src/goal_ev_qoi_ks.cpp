@@ -1,5 +1,6 @@
 #include <PCU.h>
 
+#include "goal_control.hpp"
 #include "goal_ev_qoi_ks.hpp"
 #include "goal_field.hpp"
 #include "goal_traits.hpp"
@@ -55,6 +56,7 @@ void QoIKS<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
   double factor = 1.0/(p * qoi_tmp);
   dJdu->scale(factor);
   qoi_val = m + (1.0/p)*std::log(qoi_tmp);
+  print(" > J(u) ~ %.15f", qoi_val);
 }
 
 template class QoIKS<goal::Traits::Jacobian, goal::Traits>;
