@@ -34,21 +34,20 @@ template <typename EVALT, typename TRAITS>
 void VonMises<EVALT, TRAITS>::evaluateFields(EvalData workset) {
   using Tensor = minitensor::Tensor<ScalarT>;
   Tensor sigma(3);
+  sigma.fill(0.0);
   for (int elem = 0; elem < workset.size; ++elem) {
     for (int ip = 0; ip < num_ips; ++ip) {
       for (int i = 0; i < num_dims; ++i)
         for (int j = 0; j < num_dims; ++j)
           sigma(i, j) = cauchy(elem, ip, i, j);
-      von_mises(elem, ip) =
-        std::sqrt(
-            0.5*(
-              std::pow(sigma(0,0) - sigma(1,1), 2) +
-              std::pow(sigma(1,1) - sigma(2,2), 2) +
-              std::pow(sigma(2,2) - sigma(0,0), 2) +
-              6.0*(
-                std::pow(sigma(0,1), 2) +
-                std::pow(sigma(1,2), 2) +
-                std::pow(sigma(2,0), 2))));
+      ScalarT s1 = (sigma(0,0)-sigma(1,1))*(sigma(0,0)-sigma(1,1));
+      ScalarT s2 = (sigma(1,1)-sigma(2,2))*(sigma(1,1)-sigma(2,2));
+      ScalarT s3 = (sigma(2,2)-sigma(0,0))*(sigma(2,2)-sigma(0,0));
+      ScalarT s4 = sigma(0,1)*sigma(0,1);
+      ScalarT s5 = sigma(1,2)*sigma(1,2);
+      ScalarT s6 = sigma(2,0)*sigma(2,0);
+      ScalarT s7 = 0.5*(s1+s2+s3+6.0*(s4+s5+s6));
+      von_mises(elem, ip) = std::sqrt(s7);
     }
   }
 }
