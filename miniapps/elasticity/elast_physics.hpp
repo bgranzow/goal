@@ -69,6 +69,15 @@ class Physics : public goal::Physics {
   /** \brief Get the Dirichlet boundary condition parameters. */
   RCP<const ParameterList> get_dbc_params();
 
+  /** \brief Resize the state data for the fine discretization. */
+  void enrich_state();
+
+  /** \brief Resize the state data for the coarse discretization. */
+  void restrict_state();
+
+  /** \brief Restrict the fine dual solution. */
+  void restrict_z_fine();
+
  private:
   void set_primal();
   void set_dual();

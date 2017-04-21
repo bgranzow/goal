@@ -99,12 +99,17 @@ void Solver::solve_primal() {
   goal::add_to_fields(physics->get_u(), indexer, du);
   goal::compute_primal_residual(physics, info, disc, 0.0, 0.0);
   physics->destroy_model();
+  physics->destroy_indexer();
 }
 
 void Solver::solve_dual() {
   goal::print("*** dual problem");
   physics->build_enriched_data();
+  physics->build_fine_indexer();
   physics->build_dual_model();
+  physics->enrich_state();
+  auto indexer = physics->get_indexer();
+  info = rcp(new goal::SolutionInfo(indexer));
   goal::compute_dual_jacobian(physics, info, disc, 0.0, 0.0);
   auto dRduT = info->owned->dRdu;
   auto dJdu = info->owned->dJdu;
@@ -112,14 +117,14 @@ void Solver::solve_dual() {
   z->putScalar(0.0);
   auto lp = rcpFromRef(params->sublist("linear algebra"));
   goal::solve_linear_system(lp, dRduT, z, dJdu);
-  auto indexer = physics->get_indexer();
-  goal::set_to_fields(physics->get_z(), indexer, z);
+  goal::set_to_fields(physics->get_z_fine(), indexer, z);
   physics->destroy_model();
   physics->destroy_indexer();
 }
 
 void Solver::estimate_error() {
   goal::print("*** error estimation");
+  physics->restrict_z_fine();
 }
 
 void Solver::adapt_mesh() {
@@ -134,6 +139,7 @@ void Solver::solve_primal_only() {
 void Solver::solve_adaptively() {
   solve_primal();
   solve_dual();
+  estimate_error();
   output->write(0);
 }
 

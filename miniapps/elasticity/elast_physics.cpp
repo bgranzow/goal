@@ -62,6 +62,20 @@ RCP<const ParameterList> Physics::get_dbc_params() {
   return rcpFromRef(params->sublist("dirichlet bcs"));
 }
 
+void Physics::enrich_state() {
+  int q_degree = u_fine[0]->get_q_degree();
+  states->project(q_degree);
+}
+
+void Physics::restrict_state() {
+  int q_degree = u[0]->get_q_degree();
+  states->project(q_degree);
+}
+
+void Physics::restrict_z_fine() {
+  project_field(z[0], z_fine[0]);
+}
+
 void Physics::set_primal() {
   is_primal = true;
   is_dual = false;
@@ -145,7 +159,12 @@ template <typename EvalT>
 void elast::Physics::register_volumetric(goal::FieldManager fm) {
 
   /* register the displacements. */
-  RCP<goal::Field> disp = u[0];
+  RCP<goal::Field> disp;
+  if (is_primal)
+    disp = u[0];
+  else
+    disp = u_fine[0];
+
   goal::register_dof<EvalT>(disp, indexer, fm);
 
   /* get the material model parameters. */
