@@ -115,6 +115,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/src/goal_field_types.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_field.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_indexer.hpp \
+@PROJECT_SOURCE_DIR@/src/goal_strided_indexer.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_solution_info.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_state_fields.hpp \
 @PROJECT_SOURCE_DIR@/src/goal_traits.hpp \

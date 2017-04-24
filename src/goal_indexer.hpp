@@ -33,7 +33,9 @@ class Discretization;
   * in the linear algebra data structures. It does this by numbering the
   * DOFs associated with an input vector of DOF fields. This class is also
   * responsible for building node sets that are associated with the
-  * specification of Dirichlet boundary conditions. */
+  * specification of Dirichlet boundary conditions. This class is an abstract
+  * base class, from which specific DOF indexing strategies can be
+  * implemented. */
 class Indexer {
  public:
   /** \brief The indexer constructor.
@@ -42,7 +44,7 @@ class Indexer {
   Indexer(RCP<Discretization> d, std::vector<RCP<Field> > f);
 
   /** \brief Destroy the indexer.
-    * \details This destroys all DOF numberings, maps, and graphs that
+    * \details This destroys maps, graphs, and MultiVectors that
     * the indexer has constructed. */
   ~Indexer();
 
@@ -89,30 +91,6 @@ class Indexer {
   /** \brief Get the DOF index associated with \ref goal::Field::get_name. */
   int get_dof_idx(std::string const& name) const;
 
-  /** \brief Get the offset into the elemental DOFs.
-    * \param idx The \ref goal::Field DOF index.
-    * \param n The elemental node associated with the field.
-    * \param c The field component associated with the node. */
-  int get_elem_dof_offset(const int idx, const int n, const int c);
-
-  /** \brief Get the ghost local row ID.
-    * \param idx The \ref goal::Field DOF index.
-    * \param e The relevant mesh entity.
-    * \param n The local node associated with the mesh entity.
-    * \param c The field component associated with local node. */
-  LO get_ghost_lid(const int idx, apf::MeshEntity* e, const int n, const int c);
-
-  /** \brief Get the owned local row ID.
-    * \param idx The \ref goal::Field DOF index.
-    * \param n An APF node data strcture (a MeshEntity* + a local node).
-    * \param c The field component associated with the APF node. */
-  LO get_owned_lid(const int idx, apf::Node const& n, const int c);
-
-  /** \brief Get the elemental ghost local row IDs.
-    * \param e The relevant mesh entity.
-    * \param lids The returned local IDs. */
-  void get_ghost_lids(apf::MeshEntity* e, std::vector<LO>& lids);
-
   /** \brief Get the number of node sets. */
   int get_num_node_sets() const;
 
@@ -126,28 +104,52 @@ class Indexer {
     * \details This is mainly for convenience. */
   apf::Mesh* get_apf_mesh();
 
-  /** \brief Get the owned APF local numbering for a given DOF field.
-    * \param idx The relevant \ref goal::Field DOF index. */
-  apf::Numbering* get_apf_numbering(const int idx);
+  /** \brief Get the offset into the elemental DOFs.
+    * \param idx The \ref goal::Field DOF index.
+    * \param n The elemental node associated with the field.
+    * \param c The field component associated with the node. */
+  virtual int get_elem_dof_offset(
+      const int idx, const int n, const int c) = 0;
 
-  /** \brief Get the ghost APF local numbering for a given DOF field.
-    * \param idx The relevant \ref goal::Field DOF index. */
-  apf::Numbering* get_ghost_apf_numbering(const int idx);
+  /** \brief Get the ghost local row ID.
+    * \param idx The \ref goal::Field DOF index.
+    * \param e The relevant mesh entity.
+    * \param n The local node associated with the mesh entity.
+    * \param c The field component associated with local node. */
+  virtual LO get_ghost_lid(
+      const int idx, apf::MeshEntity* e, const int n, const int c) = 0;
+
+  /** \brief Get the owned local row ID.
+    * \param idx The \ref goal::Field DOF index.
+    * \param n An APF node data strcture (a MeshEntity* + a local node).
+    * \param c The field component associated with the APF node. */
+  virtual LO get_owned_lid(
+      const int idx, apf::Node const& n, const int c) = 0;
+
+  /** \brief Get the elemental ghost local row IDs.
+    * \param e The relevant mesh entity.
+    * \param lids The returned local IDs. */
+  virtual void get_ghost_lids(
+      apf::MeshEntity* e, std::vector<LO>& lids) = 0;
+
+  /** \brief Sum values from the vector du into the fields f.
+    * \param f The \ref goal::Field s to sum into.
+    * \param du The relevant increment vector. */
+  virtual void add_to_fields(
+      std::vector<RCP<Field> > const& f, RCP<Vector> du) = 0;
+
+  /** \brief Set values from the vector x to the fields f.
+    * \param f The \ref goal::Field s to fill in.
+    * \param x The relevant solution vector. */
+  virtual void set_to_fields(
+      std::vector<RCP<Field> > const& f, RCP<Vector> x) = 0;
 
  private:
-  void compute_owned_map();
-  void compute_ghost_map();
-  void compute_graphs();
-  void compute_node_map();
-  void compute_coords();
-  void compute_node_sets();
+
   RCP<Discretization> disc;
   std::vector<RCP<Field> > fields;
-  std::vector<apf::Field*> apf_fields;
-  std::vector<apf::Numbering*> owned_numberings;
-  std::vector<apf::Numbering*> ghost_numberings;
-  std::vector<apf::GlobalNumbering*> global_numberings;
   std::map<std::string, std::vector<std::vector<apf::Node> > > node_sets;
+
   RCP<const Comm> comm;
   RCP<const Map> owned_map;
   RCP<const Map> ghost_map;
@@ -155,6 +157,7 @@ class Indexer {
   RCP<Graph> ghost_graph;
   RCP<const Map> node_map;
   RCP<MultiVector> coords;
+
   int elem_block_idx;
 };
 

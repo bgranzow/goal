@@ -95,20 +95,6 @@ class SolutionInfo {
   RCP<Export> exporter;
 };
 
-/** \brief Add to fields from the global increment vector.
-  * \param f The fields to fill in.
-  * \param i The relevant DOF indexer.
-  * \param du The relevant solution increment vector. */
-void add_to_fields(
-    std::vector<RCP<Field> > const& f, RCP<Indexer> i, RCP<Vector> du);
-
-/** \brief Set values to a field from a global vector.
-  * \param f The \ref goal::Field s to fill in.
-  * \param i The relevant DOF \ref goal::Indexer.
-  * \param x The vector to pull data from. */
-void set_to_fields(
-    std::vector<RCP<Field> > const& f, RCP<Indexer> i, RCP<Vector> x);
-
 }  /* namespace goal */
 
 #endif
