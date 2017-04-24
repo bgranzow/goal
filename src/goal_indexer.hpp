@@ -64,6 +64,11 @@ class Indexer {
   /** \brief Get the ghost CRS element connectivity graph. */
   RCP<const Graph> get_ghost_graph() { return ghost_graph; }
 
+  /** \brief Get the coordinate multivector corresponding to owned nodes.
+    * \details This is only non-null if all DOF \ref goal::Field 's have the
+    * same basis type and the same order. */
+  RCP<MultiVector> get_coords() { return coords; }
+
   /** \brief Get the ith \ref goal::Field associated with this indexer. */
   RCP<Field> get_field(const int idx) { return fields[idx]; }
 
@@ -133,6 +138,8 @@ class Indexer {
   void compute_owned_map();
   void compute_ghost_map();
   void compute_graphs();
+  void compute_node_map();
+  void compute_coords();
   void compute_node_sets();
   RCP<Discretization> disc;
   std::vector<RCP<Field> > fields;
@@ -146,6 +153,8 @@ class Indexer {
   RCP<const Map> ghost_map;
   RCP<Graph> owned_graph;
   RCP<Graph> ghost_graph;
+  RCP<const Map> node_map;
+  RCP<MultiVector> coords;
   int elem_block_idx;
 };
 

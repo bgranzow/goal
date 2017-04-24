@@ -44,6 +44,8 @@ Indexer::Indexer(RCP<Discretization> d, std::vector<RCP<Field> > f) {
   compute_owned_map();
   compute_ghost_map();
   compute_graphs();
+  compute_node_map();
+  compute_coords();
   compute_node_sets();
   set_elem_block(0);
   auto t1 = time();
@@ -58,6 +60,8 @@ Indexer::~Indexer() {
   ghost_map = Teuchos::null;
   owned_graph = Teuchos::null;
   ghost_graph = Teuchos::null;
+  node_map = Teuchos::null;
+  coords = Teuchos::null;
 }
 
 void Indexer::set_elem_block(const int idx) {
@@ -212,7 +216,107 @@ void Indexer::compute_graphs() {
   auto exporter = rcp(new Export(ghost_map, owned_map));
   owned_graph->doExport(*ghost_graph, *exporter, Tpetra::INSERT);
   owned_graph->fillComplete();
+}
+
+static bool should_skip(std::vector<RCP<Field> > const& f) {
+  bool skip = false;
+  for (size_t i = 0; i < f.size()-1; ++i) {
+    if (f[i]->get_basis_type() != f[i+1]->get_basis_type()) skip = true;
+    if (f[i]->get_p_order() != f[i]->get_p_order()) skip = true;
+  }
+  return skip;
+}
+
+static int get_num_dofs(std::vector<RCP<Field> > const& f) {
+  int ndofs = 0;
+  for (size_t i = 0; i < f.size(); ++i)
+    ndofs += f[i]->get_num_components();
+  return ndofs;
+}
+
+static int get_num_owned_nodes(std::vector<apf::Numbering*> const& n) {
+  int owned = 0;
+  for (size_t i = 0; i < n.size(); ++i)
+    owned += apf::countNodes(n[i]);
+  return owned;
+}
+
+static int get_offset(std::vector<RCP<Field> > const& f, int idx) {
+  int offset = 0;
+  for (int i = 0; i < idx; ++i)
+    offset += f[i]->get_num_components();
+  return offset;
+}
+
+static LO map_dof_to_node(
+    apf::Numbering* on, apf::Node const& n, int c, int ndofs) {
+  return (apf::getNumber(on, n.entity, n.node, 0)-c)/ndofs;
+}
+
+static GO map_dof_to_node(
+    apf::GlobalNumbering* gn, apf::Node const& n, int c, int ndofs) {
+  return (apf::getNumber(gn, n.entity, n.node, 0)-c)/ndofs;
+}
+
+void Indexer::compute_node_map() {
+  if (should_skip(fields)) {
+    destroy_global_numberings(global_numberings);
+    return;
+  }
+  auto nf = get_num_dof_fields();
+  auto ndofs = get_num_dofs(fields);
+  auto non = get_num_owned_nodes(owned_numberings);
+  Teuchos::Array<GO> indices(non);
+  apf::DynamicArray<apf::Node> owned;
+  for (int f = 0; f < nf; ++f) {
+    auto on = owned_numberings[f];
+    auto gn = global_numberings[f];
+    auto c = get_offset(fields, f);
+    apf::getNodes(on, owned);
+    for (size_t n = 0; n < owned.size(); ++n) {
+      LO nlid = map_dof_to_node(on, owned[n], c, ndofs);
+      GO ngid = map_dof_to_node(gn, owned[n], c, ndofs);
+      indices[nlid] = ngid;
+    }
+  }
+  node_map = Tpetra::createNonContigMap<LO, GO>(indices, comm);
   destroy_global_numberings(global_numberings);
+}
+
+static void get_coord(apf::Field* f, apf::Node const& n, apf::Vector3& x) {
+  apf::Vector3 xi(0, 0, 0);
+  auto m = apf::getMesh(f);
+  auto me = apf::createMeshElement(m, n.entity);
+  auto e = apf::createElement(f, me);
+  auto type = m->getType(n.entity);
+  apf::getShape(f)->getNodeXi(type, n.node, xi);
+  apf::mapLocalToGlobal(me, xi, x);
+  apf::destroyElement(e);
+  apf::destroyMeshElement(me);
+}
+
+void Indexer::compute_coords() {
+  if (node_map == Teuchos::null) return;
+  auto dim = disc->get_num_dims();
+  auto nf = get_num_dof_fields();
+  auto ndofs = get_num_dofs(fields);
+  coords = rcp(new MultiVector(node_map, dim, false));
+  apf::Vector3 point(0, 0, 0);
+  apf::DynamicArray<apf::Node> owned;
+  for (int f = 0; f < nf; ++f) {
+    auto on = owned_numberings[f];
+    auto c = get_offset(fields, f);
+    apf::getNodes(on, owned);
+    for (size_t n = 0; n < owned.size(); ++n) {
+      auto node = owned[n];
+      get_coord(apf_fields[f], node, point);
+      LO nlid = map_dof_to_node(on, node, c, ndofs);
+      for (int d = 0; d < dim; ++d)
+        coords->replaceLocalValue(nlid, d, point[d]);
+    }
+  }
+
+  MM_Writer::writeDenseFile("COORDS", coords);
 }
 
 void Indexer::compute_node_sets() {
