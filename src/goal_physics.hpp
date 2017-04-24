@@ -94,16 +94,19 @@ class Physics {
   std::vector<RCP<Field> > get_z_fine() { return z_fine; }
 
   /** \brief Build the indexer corresponding to the coarse space V^H.
+    * \param type The \ref goal::IndexerType.
     * \details This is built using the fields u. */
-  void build_coarse_indexer();
+  void build_coarse_indexer(int type);
 
   /** \brief Build the indexer corresponding to the fine space V^h.
+    * \param type The \ref goal::IndexerType.
     * \details This is built using the fields u_fine. */
-  void build_fine_indexer();
+  void build_fine_indexer(int type);
 
   /** \brief Build the indexer corresponding to the partition of unity.
+    * \param type The \ref goal::IndexerType.
     * \details This is built using the fields e. */
-  void build_error_indexer();
+  void build_error_indexer(int type);
 
   /** \brief Destroy the current indexer. */
   void destroy_indexer();

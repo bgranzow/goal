@@ -3,6 +3,7 @@
 #include "goal_discretization.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
+#include "goal_strided_indexer.hpp"
 
 namespace goal {
 
@@ -12,11 +13,27 @@ Physics::Physics(RCP<Discretization> d) { disc = d; }
 
 Physics::~Physics() {}
 
-void Physics::build_coarse_indexer() { indexer = rcp(new Indexer(disc, u)); }
+static RCP<Indexer> build_indexer(
+    int type, RCP<Discretization> d, std::vector<RCP<Field> >& f) {
+  RCP<Indexer> indexer = Teuchos::null;
+  if (type == STRIDED)
+    indexer = rcp(new StridedIndexer(d, f));
+  else
+    fail("unkown indexer type");
+  return indexer;
+}
 
-void Physics::build_fine_indexer() { indexer = rcp(new Indexer(disc, u_fine)); }
+void Physics::build_coarse_indexer(int type) {
+  indexer = build_indexer(type, disc, u);
+}
 
-void Physics::build_error_indexer() { indexer = rcp(new Indexer(disc, e)); }
+void Physics::build_fine_indexer(int type) {
+  indexer = build_indexer(type, disc, u_fine);
+}
+
+void Physics::build_error_indexer(int type) {
+  indexer = build_indexer(type, disc, e);
+}
 
 void Physics::destroy_indexer() { indexer = Teuchos::null; }
 
