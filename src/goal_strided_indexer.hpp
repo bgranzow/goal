@@ -76,6 +76,6 @@ class StridedIndexer : public Indexer {
   apf::GlobalNumbering* global_numbering;
 };
 
-}
+} /* namespace goal */
 
 #endif
