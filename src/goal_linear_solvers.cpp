@@ -6,6 +6,7 @@
 
 #include "goal_config.hpp"
 #include "goal_control.hpp"
+#include "goal_indexer.hpp"
 #include "goal_linear_solvers.hpp"
 
 #ifdef Goal_MueLu
@@ -91,18 +92,20 @@ static RCP<Solver> build_ilu_solver(
     return Teuchos::null;
 }
 
-static RCP<Solver> build_multigrid_solver(
+#ifdef Goal_MueLu
+static RCP<Solver> build_multigrid_solver_impl(
     RCP<const ParameterList> in,
+    RCP<Indexer> i,
     RCP<Matrix> A,
     RCP<Vector> x,
     RCP<Vector> b,
     int type) {
-  RCP<Solver> solver = Teuchos::null;
-#ifdef Goal_MueLu
   Teuchos::ParameterList mg_params(in->sublist("multigrid"));
   auto belos_params = get_belos_params(in);
   auto AA = (RCP<OP>)A;
-  auto P = MueLu::CreateTpetraPreconditioner(AA, mg_params);
+  RCP<MultiVector> coords = Teuchos::null;
+  if (Teuchos::nonnull(i)) coords = i->get_coords();
+  auto P = MueLu::CreateTpetraPreconditioner(AA, coords, mg_params);
   auto problem = rcp(new LinearProblem(A, x, b));
   problem->setLeftPrec(P);
   problem->setProblem();
@@ -110,12 +113,22 @@ static RCP<Solver> build_multigrid_solver(
     solver = rcp(new CGSolver(problem, belos_params));
   else if (type == GMRES)
     solver = rcp(new GmresSolver(problem, belos_params));
+  return solver;
+}
+#endif
+
+static RCP<Solver> build_multigrid_solver(
+    RCP<const ParameterList> in,
+    RCP<Indexer> i,
+    RCP<Matrix> A,
+    RCP<Vector> x,
+    RCP<Vector> b,
+    int type) {
+  RCP<Solver> solver = Teuchos::null;
+#ifdef Goal_MueLu
+  solver = build_multigrid_solver_impl(in, i, A, x, b);
 #else
-  (void)in;
-  (void)A;
-  (void)x;
-  (void)b;
-  (void)type;
+  (void)in; (void)i; (void)A; (void)x; (void)b; (void)type;
   fail("calling multigrid preconditioner but Goal_MueLu=OFF!");
 #endif
   return solver;
@@ -160,9 +173,10 @@ void solve_multigrid_cg(
     RCP<const ParameterList> in,
     RCP<Matrix> A,
     RCP<Vector> x,
-    RCP<Vector> b) {
+    RCP<Vector> b,
+    RCP<Indexer> i) {
   in->validateParameters(*get_valid_params(), 0);
-  auto solver = build_multigrid_solver(in, A, x, b, CG);
+  auto solver = build_multigrid_solver(in, i, A, x, b, CG);
   run_solver(in, solver);
 }
 
@@ -170,9 +184,10 @@ void solve_multigrid_gmres(
     RCP<const ParameterList> in,
     RCP<Matrix> A,
     RCP<Vector> x,
-    RCP<Vector> b) {
+    RCP<Vector> b,
+    RCP<Indexer> i) {
   in->validateParameters(*get_valid_params(), 0);
-  auto solver = build_multigrid_solver(in, A, x, b, GMRES);
+  auto solver = build_multigrid_solver(in, i, A, x, b, GMRES);
   run_solver(in, solver);
 }
 
@@ -180,7 +195,8 @@ void solve_linear_system(
     RCP<const ParameterList> in,
     RCP<Matrix> A,
     RCP<Vector> x,
-    RCP<Vector> b) {
+    RCP<Vector> b,
+    RCP<Indexer> i) {
   assert(in->isType<std::string>("method"));
   auto method = in->get<std::string>("method");
   assert( (method == "CG") || (method == "GMRES"));
@@ -191,9 +207,9 @@ void solve_linear_system(
   else if ((method == "GMRES") && (! multigrid))
     solve_ilu_gmres(in, A, x, b);
   else if ((method == "CG") && (multigrid))
-    solve_multigrid_cg(in, A, x, b);
+    solve_multigrid_cg(in, A, x, b, i);
   else if ((method == "GMRES") && (multigrid))
-    solve_multigrid_gmres(in, A, x, b);
+    solve_multigrid_gmres(in, A, x, b, i);
   else
     fail("unkonwn linear solve combination");
 }
