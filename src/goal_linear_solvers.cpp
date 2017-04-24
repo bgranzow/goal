@@ -100,12 +100,13 @@ static RCP<Solver> build_multigrid_solver_impl(
     RCP<Vector> x,
     RCP<Vector> b,
     int type) {
+  RCP<Solver> solver = Teuchos::null;
   Teuchos::ParameterList mg_params(in->sublist("multigrid"));
   auto belos_params = get_belos_params(in);
   auto AA = (RCP<OP>)A;
   RCP<MultiVector> coords = Teuchos::null;
   if (Teuchos::nonnull(i)) coords = i->get_coords();
-  auto P = MueLu::CreateTpetraPreconditioner(AA, coords, mg_params);
+  auto P = MueLu::CreateTpetraPreconditioner(AA, mg_params, coords);
   auto problem = rcp(new LinearProblem(A, x, b));
   problem->setLeftPrec(P);
   problem->setProblem();
@@ -126,7 +127,7 @@ static RCP<Solver> build_multigrid_solver(
     int type) {
   RCP<Solver> solver = Teuchos::null;
 #ifdef Goal_MueLu
-  solver = build_multigrid_solver_impl(in, i, A, x, b);
+  solver = build_multigrid_solver_impl(in, i, A, x, b, type);
 #else
   (void)in; (void)i; (void)A; (void)x; (void)b; (void)type;
   fail("calling multigrid preconditioner but Goal_MueLu=OFF!");
