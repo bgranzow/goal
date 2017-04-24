@@ -1,4 +1,6 @@
 #include <apf.h>
+#include <apfMesh2.h>
+#include <apfNumbering.h>
 
 #include "goal_control.hpp"
 #include "goal_discretization.hpp"

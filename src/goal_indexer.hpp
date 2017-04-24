@@ -27,6 +27,12 @@ class Field;
 class Discretization;
 /** \endcond */
 
+/** \brief The type of indexer. */
+enum IndexerType {
+  /** \brief A strided indexer type. */
+  STRIDED = 0
+};
+
 /** \brief The DOF indexer interface.
   * \details The indexer structure is responsible for building the maps and
   * graphs that describe the parallel distrubution of local to global data
@@ -144,7 +150,7 @@ class Indexer {
   virtual void set_to_fields(
       std::vector<RCP<Field> > const& f, RCP<Vector> x) = 0;
 
- private:
+ protected:
 
   RCP<Discretization> disc;
   std::vector<RCP<Field> > fields;
@@ -161,6 +167,6 @@ class Indexer {
   int elem_block_idx;
 };
 
-}  // namesapce goal
+} /* namesapce goal */
 
 #endif
