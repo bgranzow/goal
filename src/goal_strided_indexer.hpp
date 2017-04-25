@@ -71,6 +71,8 @@ class StridedIndexer : public Indexer {
   void compute_graphs();
   void compute_coords();
   void compute_node_sets();
+  apf::Mesh* mesh;
+  apf::FieldShape* shape;
   apf::Numbering* owned_numbering;
   apf::Numbering* ghost_numbering;
   apf::GlobalNumbering* global_numbering;
