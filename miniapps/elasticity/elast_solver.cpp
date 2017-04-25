@@ -95,7 +95,7 @@ void Solver::solve_primal() {
   du->putScalar(0.0);
   R->scale(-1.0);
   auto lp = rcpFromRef(params->sublist("linear algebra"));
-  goal::solve_linear_system(lp, dRdu, du, R);
+  goal::solve_linear_system(lp, dRdu, du, R, indexer);
   indexer->add_to_fields(physics->get_u(), du);
   goal::compute_primal_residual(physics, info, disc, 0.0, 0.0);
   physics->destroy_model();
@@ -116,7 +116,7 @@ void Solver::solve_dual() {
   auto z = info->owned->z;
   z->putScalar(0.0);
   auto lp = rcpFromRef(params->sublist("linear algebra"));
-  goal::solve_linear_system(lp, dRduT, z, dJdu);
+  goal::solve_linear_system(lp, dRduT, z, dJdu, indexer);
   indexer->set_to_fields(physics->get_z_fine(), z);
   physics->destroy_model();
   physics->destroy_indexer();

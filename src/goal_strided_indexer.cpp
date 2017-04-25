@@ -1,6 +1,7 @@
 #include <apfAlbany.h>
 #include <apfMesh2.h>
 #include <apfNumbering.h>
+#include <apfShape.h>
 
 #include "goal_control.hpp"
 #include "goal_discretization.hpp"
@@ -176,7 +177,11 @@ void StridedIndexer::compute_owned_maps() {
   apf::DynamicArray<apf::Node> owned;
   apf::getNodes(global_numbering, owned);
   auto num_owned = owned.getSize();
-  Teuchos::Array<GO> indices(num_eqs * num_owned);
+  Teuchos::Array<GO> indices(num_owned);
+  for (size_t n = 0; n < num_owned; ++n)
+    indices[n] = apf::getNumber(global_numbering, owned[n]);
+  node_map = Tpetra::createNonContigMap<LO, GO>(indices, comm);
+  indices.resize(num_eqs * num_owned);
   for (size_t n = 0; n < num_owned; ++n) {
     GO gid = apf::getNumber(global_numbering, owned[n]);
     for (int eq = 0; eq < num_eqs; ++eq)
@@ -225,10 +230,33 @@ void StridedIndexer::compute_graphs() {
   auto exporter = rcp(new Export(ghost_map, owned_map));
   owned_graph->doExport(*ghost_graph, *exporter, Tpetra::INSERT);
   owned_graph->fillComplete();
+  destroy_global(&global_numbering);
+}
+
+static void get_coord(apf::Field* f, apf::Node const& n, apf::Vector3& x) {
+  apf::Vector3 xi(0,0,0);
+  auto m = apf::getMesh(f);
+  auto me = apf::createMeshElement(m, n.entity);
+  auto e = apf::createElement(f, me);
+  auto type = m->getType(n.entity);
+  apf::getShape(f)->getNodeXi(type, n.node, xi);
+  apf::mapLocalToGlobal(me, xi, x);
+  apf::destroyElement(e);
+  apf::destroyMeshElement(me);
 }
 
 void StridedIndexer::compute_coords() {
-  destroy_global(&global_numbering);
+  int dim = disc->get_num_dims();
+  coords = rcp(new MultiVector(node_map, dim, false));
+  apf::Vector3 point(0, 0, 0);
+  apf::DynamicArray<apf::Node> owned;
+  apf::getNodes(owned_numbering, owned);
+  auto apf_f = fields[0]->get_apf_field();
+  for (size_t n = 0; n < owned.size(); ++n) {
+    get_coord(apf_f, owned[n], point);
+    for (int d = 0; d < dim; ++d)
+      coords->replaceLocalValue(n, d, point[d]);
+  }
 }
 
 void StridedIndexer::compute_node_sets() {
