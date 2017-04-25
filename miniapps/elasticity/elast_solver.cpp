@@ -83,7 +83,7 @@ static void zero_fields(RCP<Physics> p) {
 void Solver::solve_primal() {
   goal::print("*** primal problem");
   zero_fields(physics);
-  physics->build_coarse_indexer();
+  physics->build_coarse_indexer(goal::STRIDED);
   physics->build_primal_model();
   goal::set_dbc_values(physics, 0.0);
   auto indexer = physics->get_indexer();
@@ -96,7 +96,7 @@ void Solver::solve_primal() {
   R->scale(-1.0);
   auto lp = rcpFromRef(params->sublist("linear algebra"));
   goal::solve_linear_system(lp, dRdu, du, R);
-  goal::add_to_fields(physics->get_u(), indexer, du);
+  indexer->add_to_fields(physics->get_u(), du);
   goal::compute_primal_residual(physics, info, disc, 0.0, 0.0);
   physics->destroy_model();
   physics->destroy_indexer();
@@ -105,7 +105,7 @@ void Solver::solve_primal() {
 void Solver::solve_dual() {
   goal::print("*** dual problem");
   physics->build_enriched_data();
-  physics->build_fine_indexer();
+  physics->build_fine_indexer(goal::STRIDED);
   physics->build_dual_model();
   physics->enrich_state();
   auto indexer = physics->get_indexer();
@@ -117,7 +117,7 @@ void Solver::solve_dual() {
   z->putScalar(0.0);
   auto lp = rcpFromRef(params->sublist("linear algebra"));
   goal::solve_linear_system(lp, dRduT, z, dJdu);
-  goal::set_to_fields(physics->get_z_fine(), indexer, z);
+  indexer->set_to_fields(physics->get_z_fine(), z);
   physics->destroy_model();
   physics->destroy_indexer();
 }

@@ -36,6 +36,7 @@ TractionBCs<EVALT, TRAITS>::TractionBCs(
     RCP<goal::Indexer> i, RCP<const ParameterList> p) {
   params = p;
   indexer = i;
+  assert(indexer->get_num_dof_fields() == 1);
   disc = indexer->get_discretization();
   num_dims = indexer->get_field(0)->get_num_dims();
   validate_params();
@@ -70,17 +71,16 @@ void TractionBCs<EVALT, TRAITS>::apply_bc(
   auto q_degree = u->get_q_degree();
   auto basis = u->get_apf_basis();
   auto mesh = indexer->get_apf_mesh();
-  auto numbering = indexer->get_ghost_apf_numbering(idx);
   apf::Vector3 xi(0, 0, 0);
   apf::Vector3 x(0, 0, 0);
   apf::Vector3 traction(0, 0, 0);
-  apf::NewArray<int> numbers;
   apf::NewArray<double> BF;
+  std::vector<goal::LO> numbers;
 
   for (size_t i = 0; i < sides.size(); ++i) {
     auto f = sides[i];
     auto me = apf::createMeshElement(mesh, f);
-    apf::getElementNumbers(numbering, f, numbers);
+    indexer->get_ghost_lids(f, numbers);
     int num_ips = apf::countIntPoints(me, q_degree);
     auto es = basis->getEntityShape(mesh->getType(f));
     int num_nodes = es->countNodes();
