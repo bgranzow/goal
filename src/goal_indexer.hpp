@@ -10,6 +10,7 @@ namespace apf {
 struct Node;
 class Mesh;
 class Field;
+class FieldShape;
 class MeshEntity;
 template <class T>
 class NumberingOf;
