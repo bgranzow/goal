@@ -22,5 +22,6 @@ elasticity cube example:
     tolerance: 1.0e-10
     multigrid:
       verbosity: none
+      number of equations: 3
   output:
     out file: out_elasticity_cube
