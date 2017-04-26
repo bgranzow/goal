@@ -16,6 +16,7 @@ goal_assembly.cpp
 goal_output.cpp
 goal_linear_solvers.cpp
 goal_size_field.cpp
+goal_error.cpp
 goal_ev_gather_scalar.cpp
 goal_ev_scalar_shape.cpp
 goal_ev_interpolate_scalar.cpp
@@ -55,6 +56,7 @@ goal_assembly.hpp
 goal_output.hpp
 goal_linear_solvers.hpp
 goal_size_field.hpp
+goal_error.hpp
 goal_ev_gather_scalar.hpp
 goal_ev_scalar_shape.hpp
 goal_ev_interpolate_scalar.hpp
