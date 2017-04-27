@@ -10,6 +10,7 @@ namespace goal {
 using Teuchos::RCP;
 
 /** \cond */
+struct Log;
 class Field;
 class Indexer;
 class Discretization;
@@ -41,8 +42,9 @@ struct LinearObj {
 class SolutionInfo {
  public:
   /** \brief Construct the solution info container.
-    * \param indexer The relevant \ref goal::Indexer. */
-  SolutionInfo(RCP<Indexer> indexer);
+    * \param indexer The relevant \ref goal::Indexer.
+    * \param log An optional log structure to store solution stats. */
+  SolutionInfo(RCP<Indexer> indexer, RCP<Log> log = Teuchos::null);
 
   /** \brief Transfer data from ghost->du to owned->du.
     * \details This is called with the Tpetra::INSERT directive. */
@@ -89,6 +91,9 @@ class SolutionInfo {
 
   /** \brief The ghost linear algebra data. */
   RCP<LinearObj> ghost;
+
+  /** \brief The optional \ref goal::Log object. */
+  RCP<Log> log;
 
  private:
   RCP<Import> importer;

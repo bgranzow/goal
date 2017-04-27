@@ -4,13 +4,15 @@
 #include "goal_discretization.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
+#include "goal_log.hpp"
 #include "goal_solution_info.hpp"
 
 namespace goal {
 
 using Teuchos::rcp;
 
-SolutionInfo::SolutionInfo(RCP<Indexer> indexer) {
+SolutionInfo::SolutionInfo(RCP<Indexer> indexer, RCP<Log> l) {
+  log = l;
   owned = rcp(new LinearObj);
   ghost = rcp(new LinearObj);
   auto om = indexer->get_owned_map();
