@@ -278,12 +278,11 @@ void StridedIndexer::compute_node_sets() {
     apf::collectEntityModels(
         mesh, sets->invMaps[0], mesh->toModel(ent), mset);
     if (mset.empty()) continue;
-    for (int f = 0; f < nf; ++f) {
-      APF_ITERATE(std::set<apf::StkModel*>, mset, mit) {
+    APF_ITERATE(std::set<apf::StkModel*>, mset, mit) {
         auto ns = *mit;
         auto nsn = ns->stkName;
-        node_sets[nsn][f].push_back(node);
-      }
+        for (int f = 0; f < nf; ++f)
+          node_sets[nsn][f].push_back(node);
     }
   }
 }
