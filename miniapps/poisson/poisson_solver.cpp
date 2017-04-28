@@ -3,7 +3,9 @@
 #include <goal_assembly.hpp>
 #include <goal_control.hpp>
 #include <goal_discretization.hpp>
+#include <goal_error.hpp>
 #include <goal_ev_dirichlet_bcs.hpp>
+#include <goal_log.hpp>
 #include <goal_field.hpp>
 #include <goal_indexer.hpp>
 #include <goal_output.hpp>
@@ -36,6 +38,7 @@ static RCP<ParameterList> get_valid_adapt_params() {
   auto p = rcp(new ParameterList);
   p->set<int>("num cycles", 0);
   p->set<int>("initial target elems", 0);
+  p->set<double>("J exact", 0.0);
   return p;
 }
 
@@ -48,8 +51,14 @@ static void validate_params(RCP<const ParameterList> p) {
   auto ap = rcpFromRef(p->sublist("adaptation"));
   assert(ap->isType<int>("num cycles"));
   assert(ap->isType<int>("initial target elems"));
+  assert(ap->isType<double>("J exact"));
   p->validateParameters(*get_valid_params(), 0);
   ap->validateParameters(*get_valid_adapt_params(), 0);
+}
+
+static RCP<goal::Log> create_log(RCP<const ParameterList> p) {
+  auto J = p->get<double>("J exact");
+  return rcp(new goal::Log(true, true, J));
 }
 
 class Solver {
@@ -67,6 +76,7 @@ class Solver {
   RCP<poisson::Physics> physics;
   RCP<goal::SolutionInfo> info;
   RCP<goal::Output> output;
+  RCP<goal::Log> log;
   int num_adapt_cycles;
   int target_init;
 };
@@ -81,6 +91,7 @@ Solver::Solver(RCP<const ParameterList> p) {
   disc = rcp(new goal::Discretization(dp));
   physics = rcp(new poisson::Physics(pp, disc));
   output = rcp(new goal::Output(op, disc));
+  log = create_log(ap);
   num_adapt_cycles = ap->get<int>("num cycles");
   target_init = ap->get<int>("initial target elems");
 }
@@ -110,6 +121,7 @@ void Solver::solve_primal() {
   auto lp = rcpFromRef(params->sublist("linear algebra"));
   goal::solve_linear_system(lp, dRdu, du, R);
   indexer->add_to_fields(physics->get_u(), du);
+  log->pDOFs.push_back(du->getGlobalLength());
   physics->destroy_model();
   physics->destroy_indexer();
 }
@@ -120,7 +132,7 @@ void Solver::solve_dual() {
   physics->build_fine_indexer(goal::STRIDED);
   physics->build_dual_model();
   auto indexer = physics->get_indexer();
-  info = rcp(new goal::SolutionInfo(indexer));
+  info = rcp(new goal::SolutionInfo(indexer, log));
   goal::compute_dual_jacobian(physics, info, disc, 0, 0);
   auto dRduT = info->owned->dRdu;
   auto dJdu = info->owned->dJdu;
@@ -128,6 +140,7 @@ void Solver::solve_dual() {
   auto lp = rcpFromRef(params->sublist("linear algebra"));
   goal::solve_linear_system(lp, dRduT, z, dJdu);
   indexer->set_to_fields(physics->get_z_fine(), z);
+  log->dDOFs.push_back(z->getGlobalLength());
   physics->destroy_model();
   physics->destroy_indexer();
 }
@@ -144,22 +157,21 @@ void Solver::estimate_error() {
   goal::compute_error_residual(physics, info, disc, 0, 0);
   auto indexer = physics->get_indexer();
   indexer->set_to_fields(physics->get_e(), R);
+  auto efields = physics->get_e();
+  auto E_h = goal::sum_contributions(efields);
+  auto B_h = goal::approx_upper_bound(efields);
+  log->E_h.push_back(E_h);
+  log->B_h.push_back(B_h);
   physics->destroy_model();
   physics->destroy_indexer();
 }
 
 void Solver::adapt_mesh() {
-  static int scale = 1;
-  static int ctr = 0;
-  if (ctr == num_adapt_cycles) {
-    output->write(ctr);
-    return;
-  }
   goal::print("*** mesh adaptation");
+  static int scale = 1;
   auto m = disc->get_apf_mesh();
   auto e = physics->get_e()[0]->get_apf_field();
   auto s = goal::get_iso_target_size(e, scale * target_init, 1);
-  output->write(ctr);
   physics->destroy_enriched_data();
   auto in = ma::configure(m, s);
   in->shouldRunPostParma = true;
@@ -167,16 +179,19 @@ void Solver::adapt_mesh() {
   apf::destroyField(s);
   disc->update();
   scale *= 2;
-  ctr++;
 }
 
 void Solver::solve() {
   for (int i = 0; i <= num_adapt_cycles; ++i) {
+    log->time.push_back(0.0);
+    log->iter.push_back(i);
     solve_primal();
     solve_dual();
     estimate_error();
+    output->write(i);
     adapt_mesh();
   }
+  log->print_summary();
 }
 
 } /* namespace poisson */
