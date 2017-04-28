@@ -105,6 +105,7 @@ INPUT                  = \
 @PROJECT_SOURCE_DIR@/doc/goal.dox \
 @PROJECT_SOURCE_DIR@/doc/disc.dox \
 @PROJECT_SOURCE_DIR@/doc/bcs.dox \
+@PROJECT_SOURCE_DIR@/doc/workflows.dox \
 @CMAKE_BINARY_DIR@/doc/meshgen.dox \
 \
 @PROJECT_SOURCE_DIR@/src/goal_data_types.hpp \
