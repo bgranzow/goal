@@ -66,6 +66,9 @@ class Physics {
     * [ dof field idx, dof field component, node set name, bc value]. */
   virtual RCP<const ParameterList> get_dbc_params() = 0;
 
+  /** \brief Return the discretization associated with this physics. */
+  RCP<Discretization> get_discretization() { return disc; }
+
   /** \brief Returns the current indexer. */
   RCP<Indexer> get_indexer() { return indexer; }
 
