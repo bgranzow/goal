@@ -72,6 +72,7 @@ void QoIScalarPoint<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
   log->Ju_h.push_back(J);
 }
 
+template class QoIScalarPoint<goal::Traits::Residual, goal::Traits>;
 template class QoIScalarPoint<goal::Traits::Jacobian, goal::Traits>;
 
 }  /* namespace goal */
