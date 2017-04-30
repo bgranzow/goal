@@ -160,8 +160,9 @@ void Solver::estimate_error() {
   auto efields = physics->get_e();
   auto E_h = goal::sum_contributions(efields);
   auto B_h = goal::approx_upper_bound(efields);
-  log->E_h.push_back(E_h);
+  log->E_h.push_back(std::abs(E_h));
   log->B_h.push_back(B_h);
+  assert(std::abs(e - std::abs(E_h)) < 1.0e-8);
   physics->destroy_model();
   physics->destroy_indexer();
 }
