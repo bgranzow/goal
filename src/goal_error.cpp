@@ -1,6 +1,7 @@
 #include <apf.h>
 #include <apfMesh2.h>
 #include <apfShape.h>
+#include <PCU.h>
 
 #include "goal_error.hpp"
 #include "goal_field.hpp"
@@ -25,6 +26,7 @@ class Iterator {
   void apply() {
     apf::MeshIterator* vertices = m->begin(0);
     while ((vtx = m->iterate(vertices))) {
+      if (! m->isOwned(vtx)) continue;
       for (size_t f = 0; f < e.size(); ++f) {
         auto apf_f = e[f]->get_apf_field();
         int nc = apf::countComponents(apf_f);
@@ -36,10 +38,12 @@ class Iterator {
       }
     }
     m->end(vertices);
+    synchronize();
   }
   virtual void pre_component_op() = 0;
   virtual void component_op(int c) = 0;
   virtual void post_component_op() = 0;
+  virtual void synchronize() = 0;
 
  protected:
   apf::Mesh* m;
@@ -56,6 +60,7 @@ class Adder : public Iterator {
   void pre_component_op() {}
   void component_op(int c) { sum += vals[c]; }
   void post_component_op() {}
+  void synchronize() { PCU_Add_Doubles(&sum, 1); }
   double sum;
 };
 
@@ -67,6 +72,7 @@ class Bounder : public Iterator {
   void pre_component_op() { tmp = 0.0; }
   void component_op(int c) { tmp += vals[c]; }
   void post_component_op() { bound += std::abs(tmp); }
+  void synchronize() { PCU_Add_Doubles(&bound, 1); }
   double bound;
 
  private:
@@ -82,6 +88,7 @@ class Indicator : public Iterator {
   void pre_component_op() { tmp = 0.0; }
   void component_op(int c) { tmp += vals[c]; }
   void post_component_op() { apf::setScalar(ind, vtx, 0, std::abs(tmp)); }
+  void synchronize() { apf::synchronize(ind); }
   apf::Field* ind;
 
  private:
