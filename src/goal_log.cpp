@@ -1,6 +1,9 @@
+#include <PCU.h>
 #include <sstream>
 #include <cassert>
 #include <iomanip>
+#include <cmath>
+#include <fstream>
 
 #include "goal_control.hpp"
 #include "goal_log.hpp"
@@ -13,7 +16,7 @@ Log::Log(bool dual, bool exact, double J_exact) {
   have_exact_J = exact;
 }
 
-void Log::print_banner() {
+std::string Log::get_banner() {
   std::ostringstream oss;
   oss << "time  iter  pDOFs  Ju_h";
   if (have_exact_J)
@@ -23,7 +26,7 @@ void Log::print_banner() {
   if (have_dual && have_exact_J)
     oss << "  I  IB";
   std::string banner = oss.str();
-  print("%s", banner.c_str());
+  return banner;
 }
 
 void Log::pre_validate() {
@@ -49,7 +52,7 @@ void Log::compute_effectivities(const int i) {
   IB = B_h[i] / E;
 }
 
-void Log::print_index(const int i) {
+std::string Log::get_index(const int i) {
   pre_validate();
   compute_error(i);
   compute_effectivities(i);
@@ -61,31 +64,46 @@ void Log::print_index(const int i) {
   oss << Ju_h[i] << "  ";
   if (have_exact_J) {
     oss << J << "  ";
-    oss << E << "  ";
+    oss << std::abs(E) << "  ";
   }
   if (have_dual) {
     oss << dDOFs[i] << "  ";
-    oss << E_h[i] << "  ";
-    oss << B_h[i] << "  ";
+    oss << std::abs(E_h[i]) << "  ";
+    oss << std::abs(B_h[i]) << "  ";
   }
   if (have_dual && have_exact_J) {
-    oss << I << "  ";
-    oss << IB << "  ";
+    oss << std::abs(I) << "  ";
+    oss << std::abs(IB) << "  ";
   }
   std::string line = oss.str();
-  print("%s", line.c_str());
+  return line;
+}
+
+void Log::print_index(const int i) {
+  pre_validate();
+  print("%s", get_index(i).c_str());
 }
 
 void Log::print_current() {
   auto i = time.size()-1;
-  print_banner();
+  print("%s", get_banner().c_str());
   print_index(i);
 }
 
 void Log::print_summary() {
-  print_banner();
+  print("%s", get_banner().c_str());
   for (size_t i = 0; i < time.size(); ++i)
     print_index(i);
+}
+
+void Log::print_summary(std::string const& n) {
+  if (PCU_Comm_Self()) return;
+  std::fstream fs;
+  fs.open(n.c_str(), std::ios::out);
+  fs << get_banner() << std::endl;
+  for (size_t i = 0; i < time.size(); ++i)
+    fs << get_index(i) << std::endl;
+  fs.close();
 }
 
 } /* namespace goal */

@@ -57,6 +57,10 @@ class Log {
     * history that has been provided to the log class. */
   void print_summary();
 
+  /** \brief Print a full summary of solution information to file.
+    * \param n The name of the output data file. */
+  void print_summary(std::string const& n);
+
   /** \brief The evaluation time. */
   std::vector<double> time;
 
@@ -88,7 +92,9 @@ class Log {
   double I;
   double IB;
 
-  void print_banner();
+  std::string get_banner();
+  std::string get_index(const int i);
+
   void pre_validate();
   void compute_error(const int i);
   void compute_effectivities(const int i);
