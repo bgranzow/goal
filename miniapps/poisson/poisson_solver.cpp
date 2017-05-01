@@ -238,7 +238,8 @@ void Solver::solve() {
     output->write(i);
     adapt_mesh();
   }
-  log->print_summary();
+  auto dat = method + ".dat";
+  log->print_summary(dat);
 }
 
 } /* namespace poisson */
