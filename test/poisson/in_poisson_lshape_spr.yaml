@@ -16,8 +16,8 @@ poisson spr example:
     krylov size: 300
     maximum iterations: 300
   adaptation:
-    J exact: 0.102361111692325
-    num cycles: 5
+    J exact: 0.131047991727889
+    num cycles: 3
     initial target elems: 1000
     method: spr
   output:
