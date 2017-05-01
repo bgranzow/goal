@@ -30,7 +30,7 @@ static void setup_specification(
   s->error = 0;
   s->polynomial_order = p;
   s->target_number = t;
-  s->alpha = 0.25;
+  s->alpha = 0.5;
   s->beta = 2.0;
   s->size_factor = 0.0;
   s->elem_size = 0;
