@@ -176,7 +176,7 @@ void Solver::estimate_error() {
   auto B_h = goal::approx_upper_bound(efields);
   log->E_h.push_back(std::abs(E_h));
   log->B_h.push_back(B_h);
-  std::cout << e - std::abs(E_h) << std::endl;
+  assert(std::abs(e - std::abs(E_h)) < 1.0e-8);
   physics->destroy_model();
   physics->destroy_indexer();
 }
