@@ -1,0 +1,25 @@
+poisson unif example:
+  discretization:
+    geom file: ${Goal_DATA}/meshes/lshape/lshape.dmg
+    mesh file: ${Goal_DATA}/meshes/lshape/lshape.smb
+    assoc file: ${Goal_DATA}/meshes/lshape/assoc.txt
+    reorder mesh: true
+    workset size: 1000
+  physics:
+    forcing function: 1.0 + 0.0
+    point set: point
+    dirichlet bcs:
+      bc 1: [0,0,all,0.0]
+  linear algebra:
+    method: CG
+    tolerance: 1.0e-10
+    krylov size: 300
+    maximum iterations: 300
+  adaptation:
+    J exact: 0.102361111692325
+    num cycles: 3
+    initial target elems: 1000
+    method: unif
+  output:
+    out file: out_poisson
+    interpolate: [u_dual_fine]

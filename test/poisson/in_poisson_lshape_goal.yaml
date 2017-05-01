@@ -1,7 +1,7 @@
-poisson example:
+poisson goal example:
   discretization:
     geom file: ${Goal_DATA}/meshes/lshape/lshape.dmg
-    mesh file: ${Goal_DATA}/meshes/lshape/lshape-serial.smb
+    mesh file: ${Goal_DATA}/meshes/lshape/lshape.smb
     assoc file: ${Goal_DATA}/meshes/lshape/assoc.txt
     reorder mesh: true
     workset size: 1000
@@ -19,6 +19,7 @@ poisson example:
     J exact: 0.102361111692325
     num cycles: 5
     initial target elems: 1000
+    method: goal
   output:
     out file: out_poisson
     interpolate: [u_dual_fine]

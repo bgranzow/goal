@@ -11,6 +11,8 @@ endif()
 
 message(STATUS "Setting up poisson mini-app tests")
 set(POISSON_EXE ${CMAKE_BINARY_DIR}/miniapps/poisson/GoalPoissonSolver)
-add_serial_test(${POISSON_EXE} poisson_lshape_serial)
+add_parallel_test(${POISSON_EXE} poisson_lshape_spr)
+add_parallel_test(${POISSON_EXE} poisson_lshape_unif)
+add_parallel_test(${POISSON_EXE} poisson_lshape_goal)
 
 bob_end_subdir()

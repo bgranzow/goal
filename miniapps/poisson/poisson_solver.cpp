@@ -13,6 +13,7 @@
 #include <goal_linear_solvers.hpp>
 #include <goal_size_field.hpp>
 #include <ma.h>
+#include <spr.h>
 #include <Teuchos_YamlParameterListHelpers.hpp>
 
 #include "poisson_physics.hpp"
@@ -39,7 +40,15 @@ static RCP<ParameterList> get_valid_adapt_params() {
   p->set<int>("num cycles", 0);
   p->set<int>("initial target elems", 0);
   p->set<double>("J exact", 0.0);
+  p->set<std::string>("method", "");
   return p;
+}
+
+static void validate_adapt_method(std::string const& m) {
+  if (m == "goal") return;
+  else if (m == "spr") return;
+  else if (m == "unif") return;
+  else goal::fail("unknown method %s", m.c_str());
 }
 
 static void validate_params(RCP<const ParameterList> p) {
@@ -52,8 +61,11 @@ static void validate_params(RCP<const ParameterList> p) {
   assert(ap->isType<int>("num cycles"));
   assert(ap->isType<int>("initial target elems"));
   assert(ap->isType<double>("J exact"));
+  assert(ap->isType<std::string>("method"));
   p->validateParameters(*get_valid_params(), 0);
   ap->validateParameters(*get_valid_adapt_params(), 0);
+  auto m = ap->get<std::string>("method");
+  validate_adapt_method(m);
 }
 
 static RCP<goal::Log> create_log(RCP<const ParameterList> p) {
@@ -79,6 +91,7 @@ class Solver {
   RCP<goal::Log> log;
   int num_adapt_cycles;
   int target_init;
+  std::string method;
 };
 
 Solver::Solver(RCP<const ParameterList> p) {
@@ -94,6 +107,7 @@ Solver::Solver(RCP<const ParameterList> p) {
   log = create_log(ap);
   num_adapt_cycles = ap->get<int>("num cycles");
   target_init = ap->get<int>("initial target elems");
+  method = ap->get<std::string>("method");
 }
 
 static void zero_fields(std::vector<RCP<goal::Field> > u) {
@@ -162,24 +176,56 @@ void Solver::estimate_error() {
   auto B_h = goal::approx_upper_bound(efields);
   log->E_h.push_back(std::abs(E_h));
   log->B_h.push_back(B_h);
-  assert(std::abs(e - std::abs(E_h)) < 1.0e-8);
+  std::cout << e - std::abs(E_h) << std::endl;
   physics->destroy_model();
   physics->destroy_indexer();
 }
 
-void Solver::adapt_mesh() {
-  goal::print("*** mesh adaptation");
+static void adapt_unif(RCP<Physics> p) {
+  p->destroy_enriched_data();
+  auto d = p->get_discretization();
+  auto m = d->get_apf_mesh();
+  auto in = ma::configureUniformRefine(m);
+  in->shouldRunPostParma = true;
+  ma::adapt(in);
+}
+
+static void adapt_spr(RCP<Physics> p, const int t) {
   static int scale = 1;
-  auto m = disc->get_apf_mesh();
-  auto e = physics->get_e()[0]->get_apf_field();
-  auto s = goal::get_iso_target_size(e, scale * target_init, 1);
-  physics->destroy_enriched_data();
+  p->destroy_enriched_data();
+  auto d = p->get_discretization();
+  auto m = d->get_apf_mesh();
+  auto u = p->get_u()[0]->get_apf_field();
+  auto uip = spr::getGradIPField(u, "grad_u", 1);
+  auto s = spr::getTargetSPRSizeField(uip, scale * t);
+  apf::destroyField(uip);
   auto in = ma::configure(m, s);
   in->shouldRunPostParma = true;
   ma::adapt(in);
   apf::destroyField(s);
-  disc->update();
   scale *= 2;
+}
+
+static void adapt_goal(RCP<Physics> p, const int t) {
+  static int scale = 1;
+  auto d = p->get_discretization();
+  auto m = d->get_apf_mesh();
+  auto e = p->get_e()[0]->get_apf_field();
+  auto s = goal::get_iso_target_size(e, scale * t, 1);
+  p->destroy_enriched_data();
+  auto in = ma::configure(m, s);
+  in->shouldRunPostParma = true;
+  ma::adapt(in);
+  apf::destroyField(s);
+  scale *= 2;
+}
+
+void Solver::adapt_mesh() {
+  goal::print("*** mesh adaptation");
+  if (method == "unif") adapt_unif(physics);
+  else if (method == "spr") adapt_spr(physics, target_init);
+  else if (method == "goal") adapt_goal(physics, target_init);
+  disc->update();
 }
 
 void Solver::solve() {
