@@ -59,11 +59,13 @@ class VectorError : public PHX::EvaluatorWithBaseImpl<TRAITS>,
   void evaluateFields(EvalData workset);
  
  private:
+  int num_vtx;
+  int num_dims;
   RCP<Field> u;
   RCP<Field> e;
   RCP<Indexer> indexer;
   RCP<SolutionInfo> info;
-  PHX::MDField<const ScalarT, Elem, Node> resid;
+  PHX::MDField<const ScalarT, Elem, Node, Dim> resid;
 };
 
 } /* namepsace goal */

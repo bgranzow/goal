@@ -5,6 +5,7 @@
 
 #include "goal_ev_vector_error.hpp"
 #include "goal_field.hpp"
+#include "goal_indexer.hpp"
 #include "goal_solution_info.hpp"
 #include "goal_traits.hpp"
 #include "goal_workset.hpp"
@@ -24,6 +25,10 @@ VectorError<EVALT, TRAITS>::VectorError(
   /* make sure we're doing sane stuff. */
   assert(e->get_value_type() == SCALAR);
   assert(u->get_value_type() == SCALAR);
+
+  /* populate the index dimensions. */
+  num_vtx = u->get_num_elem_vtx();
+  num_dims = u->get_num_dims();
 
   /* populate the dependency structure for this evaluator. */
   auto name = "Error: " + u->get_name();
@@ -48,7 +53,17 @@ void VectorError<EVALT, TRAITS>::preEvaluate(PreEvalData i) {
 
 template <typename EVALT, typename TRAITS>
 void VectorError<EVALT, TRAITS>::evaluateFields(EvalData workset) {
-  (void)workset;
+  auto R = info->ghost->R;
+  auto field_idx = u->get_associated_dof_idx();
+  for (int elem = 0; elem < workset.size; ++elem) {
+    auto e = workset.entities[elem];
+    for (int vtx = 0; vtx < num_vtx; ++vtx) {
+      for (int d = 0; d < num_dims; ++d) {
+        LO row = indexer->get_ghost_lid(field_idx, e, vtx, d);
+        R->sumIntoLocalValue(row, resid(elem, vtx, d));
+      }
+    }
+  }
 }
 
 template class VectorError<goal::Traits::Residual, goal::Traits>;
