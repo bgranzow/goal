@@ -67,6 +67,11 @@ class Residual : public PHX::EvaluatorWithBaseImpl<TRAITS>,
     * \param u The displacement \ref goal::Field. */
   Residual(RCP<goal::Field> u);
 
+  /** \brief Construct the evalautor for the error model.
+    * \param u The displacement \ref goal::Field.
+    * \param z The fine-grid dual solution \ref goal::Field. */
+  Residual(RCP<goal::Field> u, RCP<goal::Field> z);
+
   /** \brief Finalize the field manager registration. */
   void postRegistrationSetup(SetupData d, PHX::FieldManager<TRAITS>& fm);
 

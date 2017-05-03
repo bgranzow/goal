@@ -28,6 +28,26 @@ Residual<EVALT, TRAITS>::Residual(RCP<goal::Field> u)
 }
 
 template <typename EVALT, typename TRAITS>
+Residual<EVALT, TRAITS>::Residual(RCP<goal::Field> u, RCP<goal::Field> z)
+    : wdv(u->get_wdv_name(), u->get_scalar_ip_dl()),
+      grad_w(z->get_grad_name(), z->get_grad_PU_dl()),
+      cauchy("Cauchy", u->get_tensor_ip_dl()),
+      resid(u->get_residual_name(), z->get_residual_PU_dl()) {
+  /* populate index dimensions */
+  num_nodes = u->get_num_elem_nodes();
+  num_ips = u->get_num_elem_ips();
+  num_dims = u->get_num_dims();
+
+  /* populate the dependency structure for this evaluator */
+  this->addDependentField(wdv);
+  this->addDependentField(grad_w);
+  this->addDependentField(cauchy);
+  this->addEvaluatedField(resid);
+  this->setName("Elastic Residual");
+}
+
+
+template <typename EVALT, typename TRAITS>
 void Residual<EVALT, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   this->utils.setFieldData(wdv, fm);
