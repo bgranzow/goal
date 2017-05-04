@@ -137,7 +137,7 @@ void Physics::build_error_volumetric(FieldManager fm) {
 
 void Physics::build_error_neumann(FieldManager fm) {
   set_error();
-  register_neumann<Residual>(fm);
+  (void)fm;
 }
 
 void Physics::build_error_dirichlet(FieldManager fm) {

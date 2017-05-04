@@ -124,10 +124,18 @@ void Solver::solve_dual() {
 
 void Solver::estimate_error() {
   goal::print("*** error estimation");
+  auto R = info->owned->R;
+  auto z = info->owned->z;
+  auto e = std::abs(R->dot(*z));
+  goal::print(" > |J(u) - J(uH)| ~ %.15f", e);
   physics->restrict_z_fine();
+  physics->build_error_indexer(goal::STRIDED);
+  physics->build_error_model();
 }
 
 void Solver::adapt_mesh() {
+  physics->destroy_enriched_data();
+  physics->restrict_state();
   goal::print("*** mesh adaptation");
 }
 
@@ -140,6 +148,7 @@ void Solver::solve_adaptively() {
   solve_primal();
   solve_dual();
   estimate_error();
+  adapt_mesh();
   output->write(0);
 }
 
