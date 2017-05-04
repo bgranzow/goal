@@ -158,14 +158,32 @@ void Physics::build_error_dirichlet(FieldManager fm) {
 template <typename EvalT>
 void elast::Physics::register_volumetric(goal::FieldManager fm) {
 
-  /* register the displacements. */
+  /* for convenience. */
+  using R = goal::Traits::Residual;
+
+  /* field containers. */
   RCP<goal::Field> disp;
+  RCP<goal::Field> dual;
+  RCP<goal::Field> dual_coarse;
+  RCP<goal::Field> err;
+
+  /* register required fields. */
   if (is_primal)
     disp = u[0];
   else
     disp = u_fine[0];
+  if (is_error) {
+    dual = z_fine[0];
+    dual_coarse = z[0];
+    err = e[0];
+  }
 
+  /* register the primal dof. */
   goal::register_dof<EvalT>(disp, indexer, fm);
+
+  /* register the dual weight. */
+  if (is_error)
+    goal::register_dual<R>(dual_coarse, dual, fm);
 
   /* get the material model parameters. */
   auto eb_idx = indexer->get_elem_block_idx();
@@ -182,6 +200,10 @@ void elast::Physics::register_volumetric(goal::FieldManager fm) {
     auto residual = rcp(new elast::Residual<EvalT, goal::Traits>(disp));
     fm->registerEvaluator<EvalT>(residual);
   }
+  if (is_error) {
+    auto residual = rcp(new elast::Residual<EvalT, goal::Traits>(disp, dual));
+    fm->registerEvaluator<EvalT>(residual);
+  }
 
   /* require the primal scatter. */
   if (is_primal)
@@ -195,6 +217,10 @@ void elast::Physics::register_volumetric(goal::FieldManager fm) {
     auto qoip = rcpFromRef(params->sublist("qoi"));
     goal::require_qoi(qoip, disp, indexer, fm);
   }
+
+  /* require the error scatter. */
+  if (is_error)
+    goal::require_error(disp, err, indexer, fm);
 
   /* finalize the field manager registration. */
   goal::set_extended_data_type_dims(indexer, fm);
