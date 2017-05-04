@@ -23,8 +23,8 @@ VectorError<EVALT, TRAITS>::VectorError(
       indexer(i),
       resid(u->get_residual_name(), u->get_residual_PU_dl()) {
   /* make sure we're doing sane stuff. */
-  assert(e->get_value_type() == SCALAR);
-  assert(u->get_value_type() == SCALAR);
+  assert(e->get_value_type() == VECTOR);
+  assert(u->get_value_type() == VECTOR);
 
   /* populate the index dimensions. */
   num_vtx = u->get_num_elem_vtx();
