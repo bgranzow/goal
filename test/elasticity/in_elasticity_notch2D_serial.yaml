@@ -10,7 +10,7 @@ elasticity notch2D example:
     qoi:
       name: ks
       scalar name: Von Mises
-      m: 1000.0
+      m: 20.0
       p: 2.0
     body:
       E: 1000.0
