@@ -186,6 +186,7 @@ static void adapt_unif(RCP<Physics> p) {
   auto d = p->get_discretization();
   auto m = d->get_apf_mesh();
   auto in = ma::configureUniformRefine(m);
+  in->shouldRunPreParma = true;
   in->shouldRunPostParma = true;
   ma::adapt(in);
 }
@@ -200,6 +201,7 @@ static void adapt_spr(RCP<Physics> p, const int t) {
   auto s = spr::getTargetSPRSizeField(uip, scale * t);
   apf::destroyField(uip);
   auto in = ma::configure(m, s);
+  in->shouldRunPreParma = true;
   in->shouldRunPostParma = true;
   ma::adapt(in);
   apf::destroyField(s);
@@ -214,7 +216,7 @@ static void adapt_goal(RCP<Physics> p, const int t) {
   auto s = goal::get_iso_target_size(e, scale * t, 1);
   p->destroy_enriched_data();
   auto in = ma::configure(m, s);
-  in->shouldRunPostParma = true;
+  in->shouldRunPreParma = true;
   ma::adapt(in);
   apf::destroyField(s);
   scale *= 2;
@@ -240,6 +242,7 @@ void Solver::solve() {
   }
   auto dat = method + ".dat";
   log->print_summary(dat);
+  log->print_summary();
 }
 
 } /* namespace poisson */
