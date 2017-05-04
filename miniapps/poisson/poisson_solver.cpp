@@ -170,6 +170,7 @@ void Solver::estimate_error() {
   physics->build_error_model();
   goal::compute_error_residual(physics, info, disc, 0, 0);
   auto indexer = physics->get_indexer();
+  info = rcp(new goal::SolutionInfo(indexer, log));
   indexer->set_to_fields(physics->get_e(), R);
   auto efields = physics->get_e();
   auto E_h = goal::sum_contributions(efields);
@@ -217,6 +218,7 @@ static void adapt_goal(RCP<Physics> p, const int t) {
   p->destroy_enriched_data();
   auto in = ma::configure(m, s);
   in->shouldRunPreParma = true;
+  in->shouldRunPostParma = true;
   ma::adapt(in);
   apf::destroyField(s);
   scale *= 2;
