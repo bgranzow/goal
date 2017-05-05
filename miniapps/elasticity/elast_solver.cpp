@@ -4,8 +4,9 @@
 #include <goal_control.hpp>
 #include <goal_discretization.hpp>
 #include <goal_ev_dirichlet_bcs.hpp>
-#include <goal_indexer.hpp>
+#include <goal_error.hpp>
 #include <goal_field.hpp>
+#include <goal_indexer.hpp>
 #include <goal_output.hpp>
 #include <goal_solution_info.hpp>
 #include <goal_linear_solvers.hpp>
@@ -122,15 +123,33 @@ void Solver::solve_dual() {
   physics->destroy_indexer();
 }
 
-void Solver::estimate_error() {
-  goal::print("*** error estimation");
-  auto R = info->owned->R;
-  auto z = info->owned->z;
+static double dot_error(RCP<goal::SolutionInfo> i) {
+  auto R = i->owned->R;
+  auto z = i->owned->z;
   auto e = std::abs(R->dot(*z));
   goal::print(" > |J(u) - J(uH)| ~ %.15f", e);
+  return e;
+}
+
+void Solver::estimate_error() {
+  goal::print("*** error estimation");
+  auto e = dot_error(info);
   physics->restrict_z_fine();
   physics->build_error_indexer(goal::STRIDED);
   physics->build_error_model();
+  auto indexer = physics->get_indexer();
+  info = rcp(new goal::SolutionInfo(indexer));
+  goal::compute_error_residual(physics, info, disc, 0, 0);
+  auto R = info->owned->R;
+  indexer->set_to_fields(physics->get_e(), R);
+  auto efields = physics->get_e();
+  auto E_h = goal::sum_contributions(efields);
+
+  std::cout << e << std::endl;
+  std::cout << E_h << std::endl;
+
+  physics->destroy_model();
+  physics->destroy_indexer();
 }
 
 void Solver::adapt_mesh() {
