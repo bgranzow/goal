@@ -69,7 +69,7 @@ void DualVectorWeight<EVALT, TRAITS>::evaluateFields(EvalData workset) {
       apf::getVector(z_fine_elem, p, z_fine_val);
       apf::getVectorGrad(z_elem, p, grad_z_val);
       apf::getVectorGrad(z_fine_elem, p, grad_z_fine_val);
-      z_fine_min_z_val = z_val - z_fine_val;
+      z_fine_min_z_val = z_fine_val - z_val;
       grad_z_fine_min_z_val = grad_z_fine_val - grad_z_val;
       for (int vtx = 0; vtx < num_vtx; ++vtx) {
         for (int i = 0; i < num_dims; ++i) {
