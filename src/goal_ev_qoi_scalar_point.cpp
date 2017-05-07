@@ -57,11 +57,9 @@ void QoIScalarPoint<EVALT, TRAITS>::evaluateFields(EvalData workset) {
 
 template <typename EVALT, typename TRAITS>
 void QoIScalarPoint<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
-  assert(Teuchos::nonnull(info.log));
   auto dJdu = info.ghost->dJdu->get1dViewNonConst();
   auto idx = field->get_associated_dof_idx();
   auto apf_field = field->get_apf_field();
-  auto log = info.log;
   if (vtx && mesh->isOwned(vtx)) {
     LO row = indexer->get_ghost_lid(idx, vtx, 0, 0);
     dJdu[row] = 1.0;
@@ -69,7 +67,8 @@ void QoIScalarPoint<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
   }
   PCU_Add_Doubles(&J, 1);
   print(" > J(u) ~ %.15f", J);
-  log->Ju_h.push_back(J);
+  if (Teuchos::nonnull(info.log))
+    info.log->Ju_h.push_back(J);
 }
 
 template class QoIScalarPoint<goal::Traits::Residual, goal::Traits>;

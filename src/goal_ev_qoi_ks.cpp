@@ -3,6 +3,7 @@
 #include "goal_control.hpp"
 #include "goal_ev_qoi_ks.hpp"
 #include "goal_field.hpp"
+#include "goal_log.hpp"
 #include "goal_traits.hpp"
 #include "goal_solution_info.hpp"
 #include "goal_workset.hpp"
@@ -57,6 +58,8 @@ void QoIKS<EVALT, TRAITS>::postEvaluate(PostEvalData info) {
   dJdu->scale(factor);
   qoi_val = m + (1.0/p)*std::log(qoi_tmp);
   print(" > J(u) ~ %.15f", qoi_val);
+  if (Teuchos::nonnull(info.log))
+    info.log->Ju_h.push_back(qoi_val);
 }
 
 template class QoIKS<goal::Traits::Jacobian, goal::Traits>;
