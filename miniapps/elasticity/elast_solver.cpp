@@ -7,9 +7,12 @@
 #include <goal_error.hpp>
 #include <goal_field.hpp>
 #include <goal_indexer.hpp>
+#include <goal_log.hpp>
 #include <goal_output.hpp>
+#include <goal_size_field.hpp>
 #include <goal_solution_info.hpp>
 #include <goal_linear_solvers.hpp>
+#include <ma.h>
 #include <Teuchos_YamlParameterListHelpers.hpp>
 
 #include "elast_physics.hpp"
@@ -57,6 +60,7 @@ class Solver {
   RCP<elast::Physics> physics;
   RCP<goal::SolutionInfo> info;
   RCP<goal::Output> output;
+  RCP<goal::Log> log;
   bool should_adapt;
 };
 
@@ -69,6 +73,7 @@ Solver::Solver(RCP<const ParameterList> p) {
   disc = rcp(new goal::Discretization(dp));
   physics = rcp(new elast::Physics(pp, disc));
   output = rcp(new goal::Output(op, disc));
+  log = rcp(new goal::Log(true, false));
   if (params->isSublist("adaptation")) should_adapt = true;
   else should_adapt = false;
 }
@@ -99,6 +104,7 @@ void Solver::solve_primal() {
   goal::solve_linear_system(lp, dRdu, du, R, indexer);
   indexer->add_to_fields(physics->get_u(), du);
   goal::compute_primal_residual(physics, info, disc, 0.0, 0.0);
+  log->pDOFs.push_back(du->getGlobalLength());
   physics->destroy_model();
   physics->destroy_indexer();
 }
@@ -110,7 +116,7 @@ void Solver::solve_dual() {
   physics->build_dual_model();
   physics->enrich_state();
   auto indexer = physics->get_indexer();
-  info = rcp(new goal::SolutionInfo(indexer));
+  info = rcp(new goal::SolutionInfo(indexer, log));
   goal::compute_dual_jacobian(physics, info, disc, 0.0, 0.0);
   auto dRduT = info->owned->dRdu;
   auto dJdu = info->owned->dJdu;
@@ -119,6 +125,7 @@ void Solver::solve_dual() {
   auto lp = rcpFromRef(params->sublist("linear algebra"));
   goal::solve_linear_system(lp, dRduT, z, dJdu, indexer);
   indexer->set_to_fields(physics->get_z_fine(), z);
+  log->dDOFs.push_back(z->getGlobalLength());
   physics->destroy_model();
   physics->destroy_indexer();
 }
@@ -138,24 +145,37 @@ void Solver::estimate_error() {
   physics->build_error_indexer(goal::STRIDED);
   physics->build_error_model();
   auto indexer = physics->get_indexer();
-  info = rcp(new goal::SolutionInfo(indexer));
+  info = rcp(new goal::SolutionInfo(indexer, log));
   goal::compute_error_residual(physics, info, disc, 0, 0);
   auto R = info->owned->R;
   indexer->set_to_fields(physics->get_e(), R);
   auto efields = physics->get_e();
   auto E_h = goal::sum_contributions(efields);
-
-  std::cout << e << std::endl;
-  std::cout << E_h << std::endl;
-
+  auto B_h = goal::approx_upper_bound(efields);
+  log->E_h.push_back(std::abs(E_h));
+  log->B_h.push_back(B_h);
+  std::cout << std::abs(e - std::abs(E_h)) << std::endl;
   physics->destroy_model();
   physics->destroy_indexer();
 }
 
 void Solver::adapt_mesh() {
+  goal::print("*** mesh adaptation");
+  static int scale = 1;
+  auto m = disc->get_apf_mesh();
+  auto efields = physics->get_e();
+  auto i = goal::compute_indicators(efields);
   physics->destroy_enriched_data();
   physics->restrict_state();
-  goal::print("*** mesh adaptation");
+  auto dofs = log->pDOFs.back();
+  auto s = goal::get_iso_target_size(i, dofs * scale,  2);
+  apf::destroyField(i);
+  auto in = ma::configure(m, s);
+  in->shouldRunPreParma = true;
+  in->shouldRunPostParma = true;
+  ma::adapt(in);
+  apf::destroyField(s);
+  scale *= 2;
 }
 
 void Solver::solve_primal_only() {
@@ -164,11 +184,14 @@ void Solver::solve_primal_only() {
 }
 
 void Solver::solve_adaptively() {
+  log->time.push_back(0.0);
+  log->iter.push_back(0);
   solve_primal();
   solve_dual();
   estimate_error();
   adapt_mesh();
   output->write(0);
+  log->print_summary();
 }
 
 void Solver::solve() {
