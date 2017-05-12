@@ -46,6 +46,7 @@ double time();
 
 } // end namespace goal
 
+/// @brief Always assert a conditional
 #define GOAL_ALWAYS_ASSERT(cond)                  \
   do {                                            \
     if (! (cond)) {                               \
@@ -56,6 +57,7 @@ double time();
     }                                             \
   } while (0)
 
+/// @brief Always assert a conditional with a message
 #define GOAL_ALWAYS_ASSERT_VERBOSE(cond, msg)     \
   do {                                            \
     if (! (cond)) {                               \
@@ -67,11 +69,15 @@ double time();
   } while(0)
 
 #ifdef NDEBUG
+/// @brief Do nothing - optimized out
 #define GOAL_DEBUG_ASSERT(cond)
+/// @brief Do nothing - optimized out
 #define GOAL_DEBUG_ASSERT_VERBOSE(cond, msg)
 #else
+/// @brief Assert a conditional
 #define GOAL_DEBUG_ASSERT(cond) \
   GOAL_ALWAYS_ASSERT(cond)
+/// @brief Assert a conditional
 #define GOAL_DEBUG_ASSERT_VERBOSE(cond, msg) \
   GOAL_ALWAYS_ASSERT_VERBOSE(cond, msg)
 #endif
