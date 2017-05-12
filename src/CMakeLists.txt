@@ -7,6 +7,8 @@ set(Goal_HEADERS
 goal_data_types.hpp
 goal_control.hpp
 goal_dimension.hpp
+goal_workset.hpp
+goal_traits.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
