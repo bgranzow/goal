@@ -1,10 +1,12 @@
 set(Goal_SOURCES
 goal_control.cpp
+goal_dimension.cpp
 )
 
 set(Goal_HEADERS
 goal_data_types.hpp
 goal_control.hpp
+goal_dimension.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
