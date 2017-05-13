@@ -47,25 +47,25 @@ double time();
 } // end namespace goal
 
 /// @brief Always assert a conditional
-#define GOAL_ALWAYS_ASSERT(cond)                  \
-  do {                                            \
-    if (! (cond)) {                               \
-      char omsg[2048];                            \
-      sprintf(omsg, "%s failed at %s + %d \n",    \
-        #cond, __FILE__, __LINE__);               \
-      goal::assert_fail(omsg);                    \
-    }                                             \
+#define GOAL_ALWAYS_ASSERT(cond)                      \
+  do {                                                \
+    if (! (cond)) {                                   \
+      char omsg[2048];                                \
+      sprintf(omsg, "%s failed at %s + %d \n",        \
+        #cond, __FILE__, __LINE__);                   \
+      goal::assert_fail(omsg);                        \
+    }                                                 \
   } while (0)
 
 /// @brief Always assert a conditional with a message
-#define GOAL_ALWAYS_ASSERT_VERBOSE(cond, msg)     \
-  do {                                            \
-    if (! (cond)) {                               \
-      char omsg[2048];                            \
-      sprintf(omsg, "%s failed at %s + %d \n %s", \
-        #cond, __FILE__, __LINE__, msg);          \
-      goal::assert_fail(omsg);                    \
-    }                                             \
+#define GOAL_ALWAYS_ASSERT_VERBOSE(cond, msg)         \
+  do {                                                \
+    if (! (cond)) {                                   \
+      char omsg[2048];                                \
+      sprintf(omsg, "%s failed at %s + %d \n %s \n",  \
+        #cond, __FILE__, __LINE__, msg);              \
+      goal::assert_fail(omsg);                        \
+    }                                                 \
   } while(0)
 
 #ifdef NDEBUG
