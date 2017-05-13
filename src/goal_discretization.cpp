@@ -277,4 +277,12 @@ void Discretization::compute_side_sets() {
   }
 }
 
+Discretization* create_disc(const ParameterList* p) {
+  return new Discretization(p);
+}
+
+void destroy_disc(Discretization* d) {
+  delete d;
+}
+
 } // end namespace goal

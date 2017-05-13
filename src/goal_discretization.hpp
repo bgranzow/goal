@@ -13,7 +13,6 @@ class ParameterList;
 namespace apf {
 struct Node;
 struct StkModels;
-class Mesh;
 class Mesh2;
 class MeshEntity;
 }
@@ -70,7 +69,7 @@ class Discretization {
     void update();
 
     /// @brief Returns the underlying APF mesh.
-    apf::Mesh* get_apf_mesh() { return mesh; }
+    apf::Mesh2* get_apf_mesh() { return mesh; }
 
     /// @brief Returns the set definitions.
     /// @details These sets are responsible for associating groups of
@@ -149,6 +148,15 @@ class Discretization {
     std::map<std::string,
       std::vector<std::vector<apf::MeshEntity*> > > side_sets;
 };
+
+
+/// @brief Create a discretization.
+/// @param p The discretization input parameters.
+Discretization* create_disc(const ParameterList* p);
+
+/// @brief Destroy a discretization.
+/// @param d The discretization to destroy.
+void destroy_disc(Discretization* d);
 
 } // end namespace goal
 
