@@ -22,11 +22,12 @@ namespace goal {
 ///
 /// For more information, see the Phalanx User's Guide \cite PhxUserGuide.
 struct Workset {
+
   /// @brief The number of mesh entities in this workset.
   int size;
 
-  /// @brief The element block name that this workset is associated with.
-  std::string block;
+  /// @brief The set name that this workset is associated with.
+  std::string set;
 
   /// @brief The current evaluation time.
   double t_now;
