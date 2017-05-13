@@ -18,6 +18,7 @@ static ParameterList get_valid_params() {
   p.set<std::string>("assoc file", "");
   p.set<bool>("reorder mesh", "");
   p.set<bool>("make quadratic", "");
+  p.set<int>("workset size", 0);
   p.set<apf::Mesh2*>("mesh", 0);
   p.set<apf::StkModels*>("associations", 0);
   return p;
@@ -153,9 +154,9 @@ Discretization::~Discretization() {
 
 void Discretization::update() {
   double t0 = time();
-  double t1 = time();
   compute_elem_sets();
   compute_side_sets();
+  double t1 = time();
   print("discretization updated in %f seconds", t1 - t0);
 }
 
@@ -188,12 +189,16 @@ std::string Discretization::get_node_set_name(const int i) const {
 
 int Discretization::get_elem_type(const int i) {
   auto name = get_elem_set_name(i);
+  if (elem_sets[name].size() == 0)
+    return -1;
   auto e = elem_sets[name][0][0];
   return mesh->getType(e);
 }
 
 int Discretization::get_side_type(const int i) {
   auto name = get_side_set_name(i);
+  if (side_sets[name].size() == 0)
+    return -1;
   auto s = side_sets[name][0][0];
   return mesh->getType(s);
 }
@@ -242,7 +247,8 @@ void Discretization::compute_elem_sets() {
   mesh->end(it);
   for (int i = 0; i < neb; ++i) {
     auto name = get_elem_set_name(i);
-    elem_sets[name].push_back(map[name]);
+    if (map[name].size() > 0)
+      elem_sets[name].push_back(map[name]);
   }
 }
 
@@ -273,7 +279,8 @@ void Discretization::compute_side_sets() {
   mesh->end(it);
   for (int i = 0; i < nss; ++i) {
     auto name = get_side_set_name(i);
-    side_sets[name].push_back(map[name]);
+    if (map[name].size() > 0)
+      side_sets[name].push_back(map[name]);
   }
 }
 
