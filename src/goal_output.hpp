@@ -62,8 +62,8 @@ class Output {
 /// @param d The relevant \ref goal::Discretization.
 Output* create_output(ParameterList const& p, Discretization* d);
 
-/// @param Destroy an output object.
-/// @param d The \ref goal::Output object to destroy.
+/// @brief Destroy an output object.
+/// @param o The \ref goal::Output object to destroy.
 void destroy_output(Output* o);
 
 } // end namespace goal
