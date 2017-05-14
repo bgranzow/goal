@@ -4,6 +4,7 @@ goal_dimension.cpp
 goal_discretization.cpp
 goal_field.cpp
 goal_output.cpp
+goal_indexer.cpp
 )
 
 set(Goal_HEADERS
@@ -14,6 +15,7 @@ goal_workset.hpp
 goal_discretization.hpp
 goal_field.hpp
 goal_output.hpp
+goal_indexer.hpp
 goal_traits.hpp
 )
 
