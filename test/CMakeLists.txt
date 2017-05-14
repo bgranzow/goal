@@ -26,5 +26,5 @@ test_exe(disc disc.cpp)
 mpi_test(disc2D_1p disc 1 "box2D.dmg" "box2D_1p.smb" "box2D.txt")
 mpi_test(disc2D_4p disc 4 "box2D.dmg" "box2D_4p.smb" "box2D.txt")
 
-add_custom_target(goaltest COMMAND ctest)
-add_dependencies(goaltest meshgen)
+add_custom_target(pretest COMMAND)
+add_dependencies(pretest meshgen)
