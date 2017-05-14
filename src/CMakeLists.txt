@@ -2,6 +2,7 @@ set(Goal_SOURCES
 goal_control.cpp
 goal_dimension.cpp
 goal_discretization.cpp
+goal_field.cpp
 )
 
 set(Goal_HEADERS
@@ -10,6 +11,7 @@ goal_control.hpp
 goal_dimension.hpp
 goal_workset.hpp
 goal_discretization.hpp
+goal_field.hpp
 goal_traits.hpp
 )
 
