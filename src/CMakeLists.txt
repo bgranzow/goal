@@ -3,6 +3,7 @@ goal_control.cpp
 goal_dimension.cpp
 goal_discretization.cpp
 goal_field.cpp
+goal_output.cpp
 )
 
 set(Goal_HEADERS
@@ -12,6 +13,7 @@ goal_dimension.hpp
 goal_workset.hpp
 goal_discretization.hpp
 goal_field.hpp
+goal_output.hpp
 goal_traits.hpp
 )
 
