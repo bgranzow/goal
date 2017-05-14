@@ -24,12 +24,12 @@ static apf::FieldShape* get_basis(int basis, int p) {
   return shape;
 }
 
-Field::Field(FieldInfo* info) {
-  disc = info->disc;
-  myname = info->name;
-  p_order = info->p_order;
-  q_degree = info->q_degree;
-  basis_type = info->basis_type;
+Field::Field(FieldInfo const& info) {
+  disc = info.disc;
+  myname = info.name;
+  p_order = info.p_order;
+  q_degree = info.q_degree;
+  basis_type = info.basis_type;
   apf_mesh = disc->get_apf_mesh();
   apf_basis = get_basis(basis_type, p_order);
   auto n = myname.c_str();
@@ -165,6 +165,14 @@ RCP<PHX::DataLayout> Field::ip2_dl(const int t) {
   int ip = get_num_ips(t);
   int d = get_num_dims();
   return rcp(new PHX::MDALayout<Ent, IP, Dim, Dim>(ws, ip, d, d));
+}
+
+Field* create_field(FieldInfo const& i) {
+  return new Field(i);
+}
+
+void destroy_field(Field* f) {
+  delete f;
 }
 
 } // end namespace goal

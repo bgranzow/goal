@@ -59,7 +59,7 @@ class Field {
 
     /// @brief Construct a field.
     /// @param i The \ref goal::FieldInfo that defines the field.
-    Field(FieldInfo* i);
+    Field(FieldInfo const& i);
 
     /// @brief Destroy the field.
     /// @details This will destroy the underlying APF field.
@@ -200,6 +200,14 @@ class Field {
     int idx;
     double seed;
 };
+
+/// @brief Create a field.
+/// @param i The relevant \ref goal::FieldInfo data.
+Field* create_field(FieldInfo const& i);
+
+/// @brief Destroy a field.
+/// @param f The field to destroy.
+void destroy_field(Field* f);
 
 } // end namespace goal
 
