@@ -215,13 +215,15 @@ int Discretization::get_num_side_worksets(const int i) {
 
 std::vector<apf::MeshEntity*> const& Discretization::get_elems(
     std::string const& elem_set, const int ws_idx) {
-  GOAL_DEBUG_ASSERT(elem_sets.count(elem_set));
+  if (! elem_sets.count(elem_set))
+    fail("element set %s not found", elem_set.c_str());
   return elem_sets[elem_set][ws_idx];
 }
 
 std::vector<apf::MeshEntity*> const& Discretization::get_sides(
     std::string const& side_set, const int ws_idx) {
-  GOAL_DEBUG_ASSERT(side_sets.count(side_set));
+  if (! side_sets.count(side_set))
+    fail("side set %s not found", side_set.c_str());
   return side_sets[side_set][ws_idx];
 }
 
