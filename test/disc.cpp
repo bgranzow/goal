@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
   p.set<std::string>("assoc file", argv[3]);
   p.set<bool>("reorder mesh", true);
   p.set<int>("workset size", 25);
-  auto d = goal::create_disc(&p);
+  auto d = goal::create_disc(p);
   goal::print("num dims: %d", d->get_num_dims());
   goal::print("ws size: %d", d->get_ws_size());
   goal::print("num elem sets: %d", d->get_num_elem_sets());

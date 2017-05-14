@@ -4,12 +4,9 @@
 /// @file goal_discretization.hpp
 
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_ParameterList.hpp>
 
 /// @cond
-namespace Teuchos {
-class ParameterList;
-}
-
 namespace apf {
 struct Node;
 struct StkModels;
@@ -54,7 +51,7 @@ class Discretization {
     /// 'make quadratic' is set to true, then the discretization will attempt
     /// to modify the APF mesh's underlying geometry representation to a
     /// quadratic representation.
-    Discretization(const ParameterList* p);
+    Discretization(ParameterList const& p);
 
     /// @brief Discretization destructor.
     /// @details This will destroy the APF mesh if it was loaded from file
@@ -132,7 +129,7 @@ class Discretization {
     void compute_elem_sets();
     void compute_side_sets();
 
-    const ParameterList* params;
+    ParameterList params;
 
     bool owns_mesh;
     bool owns_sets;
@@ -152,7 +149,7 @@ class Discretization {
 
 /// @brief Create a discretization.
 /// @param p The discretization input parameters.
-Discretization* create_disc(const ParameterList* p);
+Discretization* create_disc(ParameterList const& p);
 
 /// @brief Destroy a discretization.
 /// @param d The discretization to destroy.

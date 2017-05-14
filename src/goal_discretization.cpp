@@ -24,51 +24,51 @@ static ParameterList get_valid_params() {
   return p;
 }
 
-static void validate_params(const ParameterList* p) {
-  GOAL_ALWAYS_ASSERT_VERBOSE(p->isType<bool>("reorder mesh"),
+static void validate_params(ParameterList const& p) {
+  GOAL_ALWAYS_ASSERT_VERBOSE(p.isType<bool>("reorder mesh"),
       "'reorder mesh' is not a discretization parameter");
-  GOAL_ALWAYS_ASSERT_VERBOSE(p->isType<int>("workset size"),
+  GOAL_ALWAYS_ASSERT_VERBOSE(p.isType<int>("workset size"),
       "'workset size' is not a discretization parameter");
-  p->validateParameters(get_valid_params(), 0);
+  p.validateParameters(get_valid_params(), 0);
 }
 
-static void load_mesh_from_file(apf::Mesh2** mesh, const ParameterList* p) {
+static void load_mesh_from_file(apf::Mesh2** mesh, ParameterList const& p) {
   gmi_register_mesh();
-  auto geom_file = p->get<std::string>("geom file");
-  auto mesh_file = p->get<std::string>("mesh file");
+  auto geom_file = p.get<std::string>("geom file");
+  auto mesh_file = p.get<std::string>("mesh file");
   auto g = geom_file.c_str();
   auto m = mesh_file.c_str();
   *mesh = apf::loadMdsMesh(g, m);
 }
 
-static bool set_mesh(apf::Mesh2** mesh, const ParameterList* p) {
+static bool set_mesh(apf::Mesh2** mesh, ParameterList const& p) {
   bool owns = true;
-  if (p->isType<std::string>("geom file") &&
-      p->isType<std::string>("mesh file"))
+  if (p.isType<std::string>("geom file") &&
+      p.isType<std::string>("mesh file"))
     load_mesh_from_file(mesh, p);
-  else if (p->isType<apf::Mesh2*>("mesh")) {
-    *mesh = p->get<apf::Mesh2*>("mesh");
+  else if (p.isType<apf::Mesh2*>("mesh")) {
+    *mesh = p.get<apf::Mesh2*>("mesh");
     owns = false;
   } else
     fail("unable to set apf mesh");
   return owns;
 }
 
-static void make_quadratic(apf::Mesh2* mesh, const ParameterList* p) {
-  if (! p->isType<bool>("make quadratic")) return;
-  if (! p->get<bool>("make quadratic")) return;
+static void make_quadratic(apf::Mesh2* mesh, ParameterList const& p) {
+  if (! p.isType<bool>("make quadratic")) return;
+  if (! p.get<bool>("make quadratic")) return;
   if (mesh->getShape()->getOrder() == 2) return;
   apf::changeMeshShape(mesh, apf::getSerendipity());
 }
 
-static void reorder_mesh(apf::Mesh2* mesh, const ParameterList* p) {
-  if (p->get<bool>("reorder mesh"))
+static void reorder_mesh(apf::Mesh2* mesh, ParameterList const& p) {
+  if (p.get<bool>("reorder mesh"))
     apf::reorderMdsMesh(mesh);
 }
 
-static apf::StkModels* read_sets(apf::Mesh* m, const ParameterList* p) {
+static apf::StkModels* read_sets(apf::Mesh* m, ParameterList const& p) {
   auto sets = new apf::StkModels;
-  auto fn = p->get<std::string>("assoc file");
+  auto fn = p.get<std::string>("assoc file");
   auto filename = fn.c_str();
   print("reading association file: %s", filename);
   static std::string const setNames[3] = {
@@ -115,19 +115,19 @@ static apf::StkModels* read_sets(apf::Mesh* m, const ParameterList* p) {
 }
 
 static bool set_associations(
-    apf::StkModels** sets, apf::Mesh2* m, const ParameterList* p) {
+    apf::StkModels** sets, apf::Mesh2* m, ParameterList const& p) {
   bool owns = true;
-  if (p->isType<std::string>("assoc file"))
+  if (p.isType<std::string>("assoc file"))
     *sets = read_sets(m, p);
-  else if (p->isType<apf::StkModels*>("associations")) {
-    *sets = p->get<apf::StkModels*>("associations");
+  else if (p.isType<apf::StkModels*>("associations")) {
+    *sets = p.get<apf::StkModels*>("associations");
     owns = false;
   } else
     fail("unable to set apf associations");
   return owns;
 }
 
-Discretization::Discretization(const ParameterList* p) {
+Discretization::Discretization(ParameterList const& p) {
   params = p;
   validate_params(p);
   owns_mesh = set_mesh(&mesh, params);
@@ -136,8 +136,8 @@ Discretization::Discretization(const ParameterList* p) {
   mesh->verify();
   owns_sets = set_associations(&sets, mesh, params);
   num_dims = mesh->getDimension();
-  ws_size = params->get<int>("workset size");
-  print(" num element sets: %d", get_num_elem_sets());
+  ws_size = params.get<int>("workset size");
+  print(" num element sets:   %d", get_num_elem_sets());
   print(" num side sets:      %d", get_num_side_sets());
   print(" num node sets:      %d", get_num_node_sets());
   update();
@@ -284,7 +284,7 @@ void Discretization::compute_side_sets() {
   }
 }
 
-Discretization* create_disc(const ParameterList* p) {
+Discretization* create_disc(ParameterList const& p) {
   return new Discretization(p);
 }
 
