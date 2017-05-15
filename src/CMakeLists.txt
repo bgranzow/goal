@@ -5,6 +5,7 @@ goal_discretization.cpp
 goal_field.cpp
 goal_output.cpp
 goal_indexer.cpp
+goal_strided_indexer.cpp
 )
 
 set(Goal_HEADERS
@@ -16,6 +17,7 @@ goal_discretization.hpp
 goal_field.hpp
 goal_output.hpp
 goal_indexer.hpp
+goal_strided_indexer.cpp
 goal_traits.hpp
 )
 
