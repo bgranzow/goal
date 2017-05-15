@@ -13,7 +13,7 @@ namespace goal {
 
 /// @cond
 struct Workset;
-class SolutionInfo;
+class SolInfo;
 /// @endcond
 
 /// @brief The goal evaluation traits structure.
@@ -33,9 +33,9 @@ class SolutionInfo;
 /// data type     | defined as
 /// ---------     | ----------
 /// SetupData     | void*
-/// PreEvalData   | \ref goal::SolutionInfo&
+/// PreEvalData   | \ref goal::SolInfo&
 /// EvalData      | \ref goal::Workset&
-/// PostEvalData  | \ref goal::SolutionInfo&
+/// PostEvalData  | \ref goal::SolInfo&
 ///
 /// For more information, see the Phalanx User's Guide \cite PhxUserGuide.
 struct Traits : public PHX::TraitsBase {
@@ -44,7 +44,7 @@ struct Traits : public PHX::TraitsBase {
   using RealType = double;
 
   /// @brief Forward automatic differentiaton type.
-  using FadType = Sacado::Fad::SLFad<RealType, Goal_FAD_SIZE> FadType;
+  using FadType = Sacado::Fad::SLFad<RealType, Goal_FAD_SIZE>;
 
   /// @brief Residual evaluation type.
   struct Residual{
@@ -65,10 +65,13 @@ struct Traits : public PHX::TraitsBase {
   using SetupData = void*;
 
   /// @brief Data passed to PHX::FieldManager::preEvalaute.
-  using PreEvalData = SolutionInfo&;
+  using PreEvalData = SolInfo&;
+
+  /// @brief Data passed to PHX::FieldManager::evaluateFields.
+  using EvalData = Workset&;
 
   /// @brief Data passed to PHX::FieldManager::postEvaluate.
-  using PostEvalData = SolutionInfo&;
+  using PostEvalData = SolInfo&;
 };
 
 } // end namespace goal
