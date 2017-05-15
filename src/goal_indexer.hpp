@@ -155,7 +155,7 @@ Indexer* create_indexer(
     int type, Discretization* d, std::vector<Field*> const& f);
 
 /// @brief Destroy an indexer.
-/// @param d The \ref goal::Indexer to destroy.
+/// @param i The \ref goal::Indexer to destroy.
 void destroy_indexer(Indexer* i);
 
 } // end namespace goal
