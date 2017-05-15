@@ -25,12 +25,6 @@ class Field;
 class Discretization;
 /// @endcond
 
-/// @brief The type of indexer.
-enum IndexerType {
-  /// @brief A strided indexer type.
-  STRIDED = 0
-};
-
 /// @brief The DOF indexer interface.
 /// @details The indexer structure is responsible for building the maps and
 /// graphs that describe the parallel distribution of local to global data
@@ -94,49 +88,50 @@ class Indexer {
     /// @param set The relevant node set name.
     /// @param i The relevant \ref goal::Field index.
     std::vector<apf::Node> const& get_node_set_nodes(
-        std::string const& set, const int i);
+        std::string const& set);
 
     /// @brief Get the offset into elemental DOFs.
     /// @param i The \ref goal::Field index.
     /// @param n The elemental node associated with the field.
-    virtual int get_elem_dof_offset(const int i, const int n) = 0;
+    int get_elem_dof_offset(const int i, const int n);
 
     /// @brief Get the ghost local row ID.
     /// @param i The \ref goal::Field index.
     /// @param e The relevant mesh entity.
     /// @param n The local node associated with the mesh entity.
-    virtual LO get_ghost_lid(
-        const int i, apf::MeshEntity* e, const int n) = 0;
+    LO get_ghost_lid(const int i, apf::MeshEntity* e, const int n);
 
     /// @brief Get the owned local row ID.
     /// @param i The \ref goal::Field index.
     /// @param n An APF node data structure.
-    virtual LO get_owned_lid(const int i, apf::Node const& n) = 0;
+    LO get_owned_lid(const int i, apf::Node const& n);
 
     /// @brief Get entity ghost local row IDs.
     /// @param e The relevant mesh entity.
     /// @param lids The returned local IDs.
-    virtual void get_ghost_lids(
-        apf::MeshEntity* e, std::vector<LO>& lids) = 0;
+    void get_ghost_lids(apf::MeshEntity* e, std::vector<LO>& lids);
 
     /// @brief Sum values from the vector du into the fields f.
     /// @param f The \ref goal::Field s to sum into.
     /// @param du The relevant increment vector.
-    virtual void add_to_fields(
-        std::vector<Field*> const& f, RCP<Vector> du) = 0;
+    void add_to_fields(std::vector<Field*> const& f, RCP<Vector> du);
 
     /// @brief Set values from the vector x to the fields f.
     /// @param f The \ref goal::Field s to fill in.
     /// @param x The relevant vector to grab data from.
-    virtual void set_to_fields(
-        std::vector<Field*> const& f, RCP<Vector> x) = 0;
+    void set_to_fields(std::vector<Field*> const& f, RCP<Vector> x);
 
   protected:
 
+    void compute_owned_maps();
+    void compute_ghost_map();
+    void compute_graphs();
+    void compute_coords();
+    void compute_node_sets();
+
     Discretization* disc;
     std::vector<Field*> fields;
-    std::map<std::string,
-      std::vector<std::vector<apf::Node> > > node_sets;
+    std::map<std::string, std::vector<apf::Node> > node_sets;
 
     RCP<const Comm> comm;
     RCP<const Map> owned_map;
@@ -145,14 +140,20 @@ class Indexer {
     RCP<MultiVector> coords;
     RCP<Graph> owned_graph;
     RCP<Graph> ghost_graph;
+
+    int num_eqs;
+    apf::Mesh* mesh;
+    apf::FieldShape* shape;
+    apf::Numbering* owned_nmbr;
+    apf::Numbering* ghost_nmbr;
+    apf::GlobalNumbering* global_nmbr;
 };
 
 /// @brief Create an indexer object.
 /// @param type The \ref goal::IndexerType.
 /// @param d The relevant \ref goal::Discretization.
 /// @param f The \ref goal::Field s to index.
-Indexer* create_indexer(
-    int type, Discretization* d, std::vector<Field*> const& f);
+Indexer* create_indexer(Discretization* d, std::vector<Field*> const& f);
 
 /// @brief Destroy an indexer.
 /// @param i The \ref goal::Indexer to destroy.

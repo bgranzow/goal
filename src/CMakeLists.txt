@@ -5,7 +5,6 @@ goal_discretization.cpp
 goal_field.cpp
 goal_output.cpp
 goal_indexer.cpp
-goal_strided_indexer.cpp
 goal_sol_info.cpp
 )
 
@@ -18,7 +17,6 @@ goal_discretization.hpp
 goal_field.hpp
 goal_output.hpp
 goal_indexer.hpp
-goal_strided_indexer.cpp
 goal_sol_info.hpp
 goal_traits.hpp
 )
