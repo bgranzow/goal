@@ -39,6 +39,7 @@ static goal::Output* make_output(goal::Discretization* d) {
 
 int main(int argc, char** argv) {
   goal::initialize();
+  goal::print("unit test: output");
   GOAL_ALWAYS_ASSERT(argc == 4);
   Teuchos::ParameterList p;
   p.set<std::string>("geom file", argv[1]);

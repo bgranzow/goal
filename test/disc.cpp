@@ -4,6 +4,7 @@
 
 int main(int argc, char** argv) {
   goal::initialize();
+  goal::print("unit test: disc");
   GOAL_ALWAYS_ASSERT(argc == 4);
   Teuchos::ParameterList p;
   p.set<std::string>("geom file", argv[1]);

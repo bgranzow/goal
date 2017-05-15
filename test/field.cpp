@@ -162,6 +162,7 @@ static void check_field(goal::Discretization* d, goal::Field* f) {
 
 int main(int argc, char** argv) {
   goal::initialize();
+  goal::print("unit test: field");
   GOAL_ALWAYS_ASSERT(argc == 4);
   auto d = test::load_disc(argv);
   auto f = test::make_field(d);
