@@ -27,6 +27,7 @@ test_exe(control control.cpp)
 test_exe(disc disc.cpp)
 test_exe(field field.cpp)
 test_exe(output output.cpp)
+test_exe(strided_indexer strided_indexer.cpp)
 
 mpi_test(control_1p control 1)
 mpi_test(control_4p control 4)
