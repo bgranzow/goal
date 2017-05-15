@@ -86,7 +86,6 @@ class Indexer {
 
     /// @brief Get the nodes in a given node set.
     /// @param set The relevant node set name.
-    /// @param i The relevant \ref goal::Field index.
     std::vector<apf::Node> const& get_node_set_nodes(
         std::string const& set);
 
@@ -150,7 +149,6 @@ class Indexer {
 };
 
 /// @brief Create an indexer object.
-/// @param type The \ref goal::IndexerType.
 /// @param d The relevant \ref goal::Discretization.
 /// @param f The \ref goal::Field s to index.
 Indexer* create_indexer(Discretization* d, std::vector<Field*> const& f);
