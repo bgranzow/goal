@@ -108,7 +108,8 @@ FILE_PATTERNS          =
 RECURSIVE              = NO
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = \
+@PROJECT_SOURCE_DIR@/src/*.cpp
 EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           =
 EXAMPLE_PATTERNS       =
