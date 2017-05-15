@@ -6,6 +6,7 @@
 #include "goal_discretization.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
+#include "goal_strided_indexer.hpp"
 
 namespace goal {
 
@@ -54,6 +55,20 @@ std::vector<apf::Node> const& Indexer::get_node_set_nodes(
   if (! node_sets.count(set))
     fail("node set %s not found", set.c_str());
   return node_sets[set][i];
+}
+
+Indexer* create_indexer(
+    int type, Discretization* d, std::vector<Field*> const& f) {
+  Indexer* indexer = 0;
+  if (type == STRIDED)
+    indexer = new StridedIndexer(d, f);
+  else
+    fail("unknown indexer type");
+  return indexer;
+}
+
+void destroy_indexer(Indexer* i) {
+  delete i;
 }
 
 } // end namespace goal

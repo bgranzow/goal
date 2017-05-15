@@ -54,7 +54,7 @@ class Indexer {
     /// @brief Destroy the indexer.
     /// @details This destroys maps, graphs, and multi-vectors that the
     /// indexer has constructed.
-    ~Indexer();
+    virtual ~Indexer();
 
     /// @brief Get the owned DOF map.
     RCP<const Map> get_owned_map() { return owned_map; }
@@ -131,7 +131,7 @@ class Indexer {
     virtual void set_to_fields(
         std::vector<Field*> const& f, RCP<Vector> x) = 0;
 
-  private:
+  protected:
 
     Discretization* disc;
     std::vector<Field*> fields;
@@ -146,6 +146,17 @@ class Indexer {
     RCP<Graph> owned_graph;
     RCP<Graph> ghost_graph;
 };
+
+/// @brief Create an indexer object.
+/// @param type The \ref goal::IndexerType.
+/// @param d The relevant \ref goal::Discretization.
+/// @param f The \ref goal::Field s to index.
+Indexer* create_indexer(
+    int type, Discretization* d, std::vector<Field*> const& f);
+
+/// @brief Destroy an indexer.
+/// @param d The \ref goal::Indexer to destroy.
+void destroy_indexer(Indexer* i);
 
 } // end namespace goal
 
