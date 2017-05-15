@@ -105,11 +105,10 @@ static void check_side_ids(goal::Discretization* d, goal::Indexer* i) {
 
 static void check_node_ids(goal::Discretization* d, goal::Indexer* i) {
   goal::print("checking node ids");
-  std::vector<apf::Node> nodes;
   for (int ns = 0; ns < d->get_num_node_sets(); ++ns) {
     auto name = d->get_node_set_name(ns);
+    auto nodes = i->get_node_set_nodes(name);
     for (int f = 0; f < i->get_num_fields(); ++f) {
-      i->get_node_set_nodes(name, f);
       for (size_t n = 0; n < nodes.size(); ++n)
         GOAL_ALWAYS_ASSERT(i->get_owned_lid(f, nodes[n]) >= 0);
     }
@@ -118,7 +117,7 @@ static void check_node_ids(goal::Discretization* d, goal::Indexer* i) {
 
 void check_indexer(
     goal::Discretization* d, std::vector<goal::Field*> const& u) {
-  goal::Indexer* i = goal::create_indexer(goal::STRIDED, d, u);
+  goal::Indexer* i = goal::create_indexer(d, u);
   check_tpetra_objs(i);
   check_elem_ids(d, i);
   check_side_ids(d, i);
