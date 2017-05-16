@@ -18,6 +18,7 @@ GatherFields<goal::Traits::Residual, TRAITS>::GatherFields(
   u.resize(num_fields);
   for (int i = 0; i < num_fields; ++i) {
     u[i] = PHX::MDField<ScalarT, Ent, Node>(f[i]->name(), f[i]->dl(type));
+    this->addEvaluatedField(u[i]);
   }
   this->setName("Gather Fields");
 }
@@ -58,6 +59,7 @@ GatherFields<goal::Traits::Jacobian, TRAITS>::GatherFields(
   u.resize(num_fields);
   for (int i = 0; i < num_fields; ++i) {
     u[i] = PHX::MDField<ScalarT, Ent, Node>(f[i]->name(), f[i]->dl(type));
+    this->addEvaluatedField(u[i]);
   }
   this->setName("Gather Fields");
 }

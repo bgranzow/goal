@@ -36,6 +36,7 @@ class GatherFields<goal::Traits::Residual, TRAITS>
     /// @brief Construct the evaluator.
     /// @param i The relevant \ref goal::Indexer.
     /// @param f The \ref goal::Field s to gather data from.
+    /// @param t The entity type to operate on.
     GatherFields(Indexer* i, std::vector<Field*> const& f, int type);
 
     /// @brief Finalize the field manager registration.
