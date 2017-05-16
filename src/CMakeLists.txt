@@ -6,6 +6,7 @@ goal_field.cpp
 goal_output.cpp
 goal_indexer.cpp
 goal_sol_info.cpp
+goal_states.cpp
 )
 
 set(Goal_HEADERS
@@ -19,6 +20,7 @@ goal_output.hpp
 goal_indexer.hpp
 goal_sol_info.hpp
 goal_traits.hpp
+goal_states.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
