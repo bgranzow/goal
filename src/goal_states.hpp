@@ -1,7 +1,7 @@
 #ifndef goal_states_hpp
 #define goal_states_hpp
 
-/// @brief goal_states.hpp
+/// @file goal_states.hpp
 
 #include <MiniTensor.h>
 
