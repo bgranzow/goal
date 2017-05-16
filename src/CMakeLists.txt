@@ -9,7 +9,7 @@ goal_sol_info.cpp
 goal_states.cpp
 goal_physics.cpp
 goal_ev_basis.cpp
-goal_ev_gather_fields.cpp
+goal_ev_gather.cpp
 goal_ev_interpolate.cpp
 )
 
@@ -27,7 +27,7 @@ goal_states.hpp
 goal_traits.hpp
 goal_physics.hpp
 goal_ev_basis.hpp
-goal_ev_gather_fields.hpp
+goal_ev_gather.hpp
 goal_ev_interpolate.hpp
 )
 

@@ -1,7 +1,7 @@
 #include <apf.h>
 
 #include "goal_control.hpp"
-#include "goal_ev_gather_fields.hpp"
+#include "goal_ev_gather.hpp"
 #include "goal_field.hpp"
 #include "goal_indexer.hpp"
 #include "goal_workset.hpp"
@@ -9,7 +9,7 @@
 namespace goal {
 
 template <typename TRAITS>
-GatherFields<goal::Traits::Residual, TRAITS>::GatherFields(
+Gather<goal::Traits::Residual, TRAITS>::Gather(
     Indexer* i, std::vector<Field*> const& f, int type)
     : indexer(i),
       fields(f) {
@@ -24,7 +24,7 @@ GatherFields<goal::Traits::Residual, TRAITS>::GatherFields(
 }
 
 template <typename TRAITS>
-void GatherFields<goal::Traits::Residual, TRAITS>::postRegistrationSetup(
+void Gather<goal::Traits::Residual, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   for (int i = 0; i < num_fields; ++i)
     this->utils.setFieldData(u[i], fm);
@@ -32,7 +32,7 @@ void GatherFields<goal::Traits::Residual, TRAITS>::postRegistrationSetup(
 }
 
 template <typename TRAITS>
-void GatherFields<goal::Traits::Residual, TRAITS>::evaluateFields(
+void Gather<goal::Traits::Residual, TRAITS>::evaluateFields(
     EvalData workset) {
   apf::NewArray<double> values;
   for (int elem = 0; elem < workset.size; ++elem) {
@@ -50,7 +50,7 @@ void GatherFields<goal::Traits::Residual, TRAITS>::evaluateFields(
 }
 
 template <typename TRAITS>
-GatherFields<goal::Traits::Jacobian, TRAITS>::GatherFields(
+Gather<goal::Traits::Jacobian, TRAITS>::Gather(
     Indexer* i, std::vector<Field*> const& f, int type)
     : indexer(i),
       fields(f) {
@@ -65,7 +65,7 @@ GatherFields<goal::Traits::Jacobian, TRAITS>::GatherFields(
 }
 
 template <typename TRAITS>
-void GatherFields<goal::Traits::Jacobian, TRAITS>::postRegistrationSetup(
+void Gather<goal::Traits::Jacobian, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
   for (int i = 0; i < num_fields; ++i)
     this->utils.setFieldData(u[i], fm);
@@ -73,7 +73,7 @@ void GatherFields<goal::Traits::Jacobian, TRAITS>::postRegistrationSetup(
 }
 
 template <typename TRAITS>
-void GatherFields<goal::Traits::Jacobian, TRAITS>::evaluateFields(
+void Gather<goal::Traits::Jacobian, TRAITS>::evaluateFields(
     EvalData workset) {
   apf::NewArray<double> values;
   for (int elem = 0; elem < workset.size; ++elem) {
@@ -95,7 +95,7 @@ void GatherFields<goal::Traits::Jacobian, TRAITS>::evaluateFields(
   }
 }
 
-template class GatherFields<goal::Traits::Residual, goal::Traits>;
-template class GatherFields<goal::Traits::Jacobian, goal::Traits>;
+template class Gather<goal::Traits::Residual, goal::Traits>;
+template class Gather<goal::Traits::Jacobian, goal::Traits>;
 
 } // end namespace goal

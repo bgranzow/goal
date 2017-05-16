@@ -1,7 +1,7 @@
-#ifndef goal_ev_gather_fields_hpp
-#define goal_ev_gather_fields_hpp
+#ifndef goal_ev_gather_hpp
+#define goal_ev_gather_hpp
 
-/// @file goal_ev_gather_fields_hpp
+/// @file goal_ev_gather.hpp
 
 #include <Phalanx_Evaluator_Derived.hpp>
 #include <Phalanx_Evaluator_WithBaseImpl.hpp>
@@ -14,12 +14,12 @@ namespace goal {
 /// @cond
 class Field;
 class Indexer;
-template <typename EVALT, typename TRAITS> class GatherFields;
+template <typename EVALT, typename TRAITS> class Gather;
 /// @endcond
 
 /// @brief Gather from APF fields, Residual specialization.
 template <typename TRAITS>
-class GatherFields<goal::Traits::Residual, TRAITS>
+class Gather<goal::Traits::Residual, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Residual, TRAITS> {
 
@@ -37,7 +37,7 @@ class GatherFields<goal::Traits::Residual, TRAITS>
     /// @param i The relevant \ref goal::Indexer.
     /// @param f The \ref goal::Field s to gather data from.
     /// @param t The entity type to operate on.
-    GatherFields(Indexer* i, std::vector<Field*> const& f, int type);
+    Gather(Indexer* i, std::vector<Field*> const& f, int type);
 
     /// @brief Finalize the field manager registration.
     /// @param d The setup data (void*).
@@ -59,7 +59,7 @@ class GatherFields<goal::Traits::Residual, TRAITS>
 
 /// @brief Gather from APF fields, Jacobian specialization.
 template <typename TRAITS>
-class GatherFields<goal::Traits::Jacobian, TRAITS>
+class Gather<goal::Traits::Jacobian, TRAITS>
     : public PHX::EvaluatorWithBaseImpl<TRAITS>,
       public PHX::EvaluatorDerived<goal::Traits::Jacobian, TRAITS> {
 
@@ -76,7 +76,7 @@ class GatherFields<goal::Traits::Jacobian, TRAITS>
     /// @brief Construct the evaluator.
     /// @param i The relevant \ref goal::Indexer.
     /// @param f The \ref goal::Field s to gather data from.
-    GatherFields(Indexer* i, std::vector<Field*> const& f, int type);
+    Gather(Indexer* i, std::vector<Field*> const& f, int type);
 
     /// @brief Finalize the field manager registration.
     /// @param d The setup data (void*).
