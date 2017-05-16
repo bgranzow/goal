@@ -84,6 +84,14 @@ int Indexer::get_num_fields() const {
   return fields.size();
 }
 
+int Indexer::get_field_idx(std::string const& n) const {
+  int idx = -1;
+  for (int f = 0; f < get_num_fields(); ++f)
+    if (n == fields[f]->name())
+      idx = f;
+  return idx;
+}
+
 int Indexer::get_num_total_dofs(const int t) const {
   int dofs = 0;
   for (int f = 0; f < get_num_fields(); ++f)

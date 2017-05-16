@@ -78,7 +78,12 @@ class Indexer {
     /// @brief Get the total number of fields.
     int get_num_fields() const;
 
+    /// @brief Get the index of the field given a name.
+    /// @param n The name of the field of interest.
+    int get_field_idx(std::string const& n) const;
+
     /// @brief Get the total number of DOFs on this entity type.
+    /// @param t The type of entity of interest.
     int get_num_total_dofs(const int t) const;
 
     /// @brief Get the number of node sets.
