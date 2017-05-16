@@ -54,6 +54,15 @@ static void check_tpetra_objs(goal::Indexer* i) {
   goal::print("coords: num rows: %lu", c->getGlobalLength());
 }
 
+static void check_fields(goal::Indexer* i) {
+  for (int f = 0; f < i->get_num_fields(); ++f) {
+    auto field = i->get_field(f);
+    auto n = field->name();
+    auto idx = i->get_field_idx(n);
+    GOAL_ALWAYS_ASSERT(idx == f);
+  }
+}
+
 static void check_ids_by_type(goal::Indexer* i, apf::MeshEntity* e) {
   auto type = i->get_apf_mesh()->getType(e);
   static std::vector<goal::LO> lids;
@@ -108,6 +117,7 @@ static void check_node_ids(goal::Discretization* d, goal::Indexer* i) {
 void check_indexer(
     goal::Discretization* d, std::vector<goal::Field*> const& u) {
   goal::Indexer* i = goal::create_indexer(d, u);
+  check_fields(i);
   check_tpetra_objs(i);
   check_elem_ids(d, i);
   check_side_ids(d, i);
