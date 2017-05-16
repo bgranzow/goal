@@ -57,7 +57,7 @@ Indexer::Indexer(Discretization* d, std::vector<Field*> const& f)
   compute_coords();
   compute_node_sets();
   double t1 = time();
-  int dofs = num_eqs * owned_map->getGlobalNumElements();
+  int dofs = owned_map->getGlobalNumElements();
   print(" > indexer: pde equations: %d", num_eqs);
   print(" > indexer: dofs %d", dofs);
   print(" > indexer: built in %f seconds", t1 - t0);

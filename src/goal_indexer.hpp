@@ -48,7 +48,7 @@ class Indexer {
     /// @brief Destroy the indexer.
     /// @details This destroys maps, graphs, and multi-vectors that the
     /// indexer has constructed.
-    virtual ~Indexer();
+    ~Indexer();
 
     /// @brief Get the owned DOF map.
     RCP<const Map> get_owned_map() { return owned_map; }
