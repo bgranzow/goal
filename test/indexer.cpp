@@ -21,24 +21,14 @@ static goal::Discretization* load_disc(char** argv) {
 static std::vector<goal::Field*> make_fields(goal::Discretization* d) {
   int dim = d->get_num_dims();
   std::vector<goal::Field*> u;
-  if (dim > 0) {
-    goal::FieldInfo i = {d, "ux", 1, 1, goal::LAGRANGE};
-    auto ux = goal::create_field(i);
-    ux->set_associated_dof_idx(0);
-    u.push_back(ux);
-  }
-  if (dim > 1) {
-    goal::FieldInfo i = {d, "uy", 1, 1, goal::LAGRANGE};
-    auto uy = goal::create_field(i);
-    uy->set_associated_dof_idx(1);
-    u.push_back(uy);
-  }
-  if (dim > 2) {
-    goal::FieldInfo i = {d, "uz", 1, 1, goal::LAGRANGE};
-    auto uz = goal::create_field(i);
-    uz->set_associated_dof_idx(2);
-    u.push_back(uz);
-  }
+  if (dim > 0)
+    u.push_back(goal::create_field({d, "ux", 1, 1, goal::LAGRANGE}));
+  if (dim > 1)
+    u.push_back(goal::create_field({d, "uy", 1, 1, goal::LAGRANGE}));
+  if (dim > 2)
+    u.push_back(goal::create_field({d, "uz", 1, 1, goal::LAGRANGE}));
+  for (int i = 0; i < dim; ++i)
+    u[i]->set_associated_dof_idx(i);
   return u;
 }
 
