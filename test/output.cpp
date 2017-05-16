@@ -41,12 +41,6 @@ int main(int argc, char** argv) {
   goal::initialize();
   goal::print("unit test: output");
   GOAL_ALWAYS_ASSERT(argc == 4);
-  Teuchos::ParameterList p;
-  p.set<std::string>("geom file", argv[1]);
-  p.set<std::string>("mesh file", argv[2]);
-  p.set<std::string>("assoc file", argv[3]);
-  p.set<bool>("reorder mesh", true);
-  p.set<int>("workset size", 1000);
   auto d = test::load_disc(argv);
   auto f = test::make_field(d);
   auto o = test::make_output(d);
