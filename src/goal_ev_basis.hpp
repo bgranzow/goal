@@ -30,6 +30,7 @@ PHX_EVALUATOR_CLASS(Basis)
     int num_ips;
     int num_dims;
 
+    // output
     PHX::MDField<double, Ent, IP> wdv;
     PHX::MDField<double, Ent, Node, IP> bf;
     PHX::MDField<double, Ent, Node, IP, Dim> gbf;
