@@ -83,6 +83,15 @@ class SolInfo {
     RCP<Export> exporter;
 };
 
+/// @brief Create a solution information object.
+/// @param i The relevant \ref goal::Indexer.
+/// @param nqoi The number of quantities of interest.
+SolInfo* create_sol_info(Indexer* i, int nqoi);
+
+/// @brief Destroy a solution information object.
+/// @param s The \ref goal::SolInfo object to destroy.
+void destroy_sol_info(SolInfo* s);
+
 } // namespace goal
 
 #endif

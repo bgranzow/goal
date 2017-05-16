@@ -64,4 +64,12 @@ void SolInfo::scatter_dJdu() {
   ghost->dJdu->doImport(*(owned->dJdu), *importer, Tpetra::INSERT);
 }
 
+SolInfo* create_sol_info(Indexer* i, int nqoi) {
+  return new SolInfo(i, nqoi);
+}
+
+void destroy_sol_info(SolInfo* s) {
+  delete s;
+}
+
 } // end namespace goal
