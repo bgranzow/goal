@@ -2,14 +2,16 @@
 
 #include <cstdarg>
 #include <cstdlib>
+#include <Kokkos_Core.hpp>
 #include <PCU.h>
 #include <RTC_FunctionRTC.hh>
 
 namespace goal {
 
 static bool is_goal_initd = false;
-static bool is_pcu_initd = false;
 static bool is_mpi_initd = false;
+static bool is_kokkos_initd = false;
+static bool is_pcu_initd = false;
 
 static PG_RuntimeCompiler::Function evaluator(5);
 
@@ -31,9 +33,15 @@ static void call_pcu_init() {
   is_pcu_initd = true;
 }
 
-void initialize(bool init_mpi, bool init_pcu) {
+static void call_kokkos_init() {
+  Kokkos::initialize();
+  is_kokkos_initd = true;
+}
+
+void initialize(bool init_mpi, bool init_kokkos, bool init_pcu) {
   if (is_goal_initd) return;
   if (init_mpi) call_mpi_init();
+  if (init_kokkos) call_kokkos_init();
   if (init_pcu) call_pcu_init();
   call_expr_init();
   is_goal_initd = true;
@@ -42,6 +50,11 @@ void initialize(bool init_mpi, bool init_pcu) {
 static void call_mpi_free() {
   MPI_Finalize();
   is_mpi_initd = false;
+}
+
+static void call_kokkos_free() {
+  Kokkos::finalize();
+  is_kokkos_initd = false;
 }
 
 static void call_pcu_free() {
@@ -58,6 +71,7 @@ static void assert_initd() {
 void finalize() {
   assert_initd();
   if (is_pcu_initd) call_pcu_free();
+  if (is_kokkos_initd) call_kokkos_free();
   if (is_mpi_initd) call_mpi_free();
   is_goal_initd = false;
 }

@@ -9,10 +9,14 @@ namespace goal {
 
 /// @brief Initialize parallel and expression parsing services.
 /// @param init_mpi Should a call be made to initialize MPI?
+/// @param init_kokkos Should a call be made to initialize Kokkos?
 /// @param init_pcu Should a call be made to initialize PCU?
 /// @details This method calls initialize routines for MPI and PCU,
 /// as well as initializing a real-time string expression parser.
-void initialize(bool init_mpi = true, bool init_pcu = true);
+void initialize(
+    bool init_mpi = true,
+    bool init_kokkos = true,
+    bool init_pcu = true);
 
 /// @brief Finalize the parallel services.
 /// @details This method calls finalize routines for MPI and PCU
