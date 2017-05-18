@@ -50,4 +50,6 @@ if(SCOREC_FOUND)
 endif()
 bob_export_target(Goal)
 
+install(FILES ${Goal_HEADERS} DESTINATION include)
+
 bob_end_subdir()
