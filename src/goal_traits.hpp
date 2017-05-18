@@ -65,13 +65,13 @@ struct Traits : public PHX::TraitsBase {
   using SetupData = void*;
 
   /// @brief Data passed to PHX::FieldManager::preEvalaute.
-  using PreEvalData = SolInfo&;
+  using PreEvalData = SolInfo*;
 
   /// @brief Data passed to PHX::FieldManager::evaluateFields.
   using EvalData = Workset&;
 
   /// @brief Data passed to PHX::FieldManager::postEvaluate.
-  using PostEvalData = SolInfo&;
+  using PostEvalData = SolInfo*;
 };
 
 } // end namespace goal
