@@ -37,7 +37,7 @@ class Gather<goal::Traits::Residual, TRAITS>
     /// @param i The relevant \ref goal::Indexer.
     /// @param f The \ref goal::Field s to gather data from.
     /// @param t The entity type to operate on.
-    Gather(Indexer* i, std::vector<Field*> const& f, int type);
+    Gather(Indexer* i, std::vector<Field*> const& f, int t);
 
     /// @brief Finalize the field manager registration.
     /// @param d The setup data (void*).
@@ -76,7 +76,8 @@ class Gather<goal::Traits::Jacobian, TRAITS>
     /// @brief Construct the evaluator.
     /// @param i The relevant \ref goal::Indexer.
     /// @param f The \ref goal::Field s to gather data from.
-    Gather(Indexer* i, std::vector<Field*> const& f, int type);
+    /// @param t The entity type to operate on.
+    Gather(Indexer* i, std::vector<Field*> const& f, int t);
 
     /// @brief Finalize the field manager registration.
     /// @param d The setup data (void*).
