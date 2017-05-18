@@ -12,6 +12,9 @@ Physics::Physics(Discretization* d) {
   disc = d;
 }
 
+Physics::~Physics() {
+}
+
 void Physics::build_coarse_indexer() {
   indexer = create_indexer(disc, u);
 }
