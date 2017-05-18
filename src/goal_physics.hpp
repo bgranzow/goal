@@ -96,6 +96,21 @@ class Physics {
     /// @brief Returns the dirichlet field manager.
     FieldManager get_dirichlet() { return dfm; }
 
+    /// @brief Returns the primal solution on the coarse space V^H.
+    std::vector<Field*> const& get_u() { return u; }
+
+    /// @brief Returns the dual solution on the coarse space V^H.
+    std::vector<Field*> const& get_z() { return z; }
+
+    /// @brief Returns the error field on the partition of unity.
+    std::vector<Field*> const& get_e() { return e; }
+
+    /// @brief Returns the primal solution on the fine space V^h.
+    std::vector<Field*> const& get_u_fine() { return u_fine; }
+
+    /// @brief Returns the dual solution on the fine space V^h.
+    std::vector<Field*> const& get_z_fine() { return z_fine; }
+
   protected:
 
     virtual void build_primal_volumetric(FieldManager) {}
