@@ -8,6 +8,8 @@ goal_indexer.cpp
 goal_sol_info.cpp
 goal_states.cpp
 goal_physics.cpp
+goal_dbcs.cpp
+goal_assembly.cpp
 goal_ev_basis.cpp
 goal_ev_gather.cpp
 goal_ev_interpolate.cpp
@@ -27,6 +29,8 @@ goal_sol_info.hpp
 goal_states.hpp
 goal_traits.hpp
 goal_physics.hpp
+goal_dbcs.hpp
+goal_assembly.hpp
 goal_ev_basis.hpp
 goal_ev_gather.hpp
 goal_ev_interpolate.hpp
