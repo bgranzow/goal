@@ -1,7 +1,7 @@
 function(find_scorec_exe exename)
   find_program(${exename}_exe ${exename}
     PATHS "${SCOREC_PREFIX}/bin" NO_DEFAULT_PATH)
-  if(NOT ${exename_exe})
+  if(NOT EXISTS "${${exename}_exe}")
     message(FATAL_ERROR "scorec utility: ${exename} not found")
   endif()
 endfunction()
