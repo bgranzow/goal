@@ -23,7 +23,7 @@ Interpolate<EVALT, TRAITS>::Interpolate(
     auto dl = f[i]->dl(type);
     auto ip_dl = f[i]->ip_dl(type);
     auto g_ip_dl = f[i]->g_ip_dl(type);
-    nodal[i] = PHX::MDField<ScalarT, Ent, Node>(name, dl);
+    nodal[i] = PHX::MDField<const ScalarT, Ent, Node>(name, dl);
     u[i] = PHX::MDField<ScalarT, Ent, Node>(name, ip_dl);
     gu[i] = PHX::MDField<ScalarT, Ent, Node, Dim>(gname, g_ip_dl);
     this->addDependentField(nodal[i]);

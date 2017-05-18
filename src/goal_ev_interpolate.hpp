@@ -20,7 +20,7 @@ PHX_EVALUATOR_CLASS(Interpolate)
     /// @brief Construct the interpolation evaluator.
     /// @param f The \ref goal::Field s to interpolate.
     /// @param t The entity type to interpolate onto ips.
-    Interpolate(std::vector<Field*> const& f, int type);
+    Interpolate(std::vector<Field*> const& f, int t);
 
   private:
 
@@ -30,9 +30,9 @@ PHX_EVALUATOR_CLASS(Interpolate)
     int num_dims;
     
     // input
-    PHX::MDField<double, Ent, Node, IP> bf;
-    PHX::MDField<double, Ent, Node, IP, Dim> gbf;
-    std::vector<PHX::MDField<ScalarT, Ent, Node> > nodal;
+    PHX::MDField<const double, Ent, Node, IP> bf;
+    PHX::MDField<const double, Ent, Node, IP, Dim> gbf;
+    std::vector<PHX::MDField<const ScalarT, Ent, Node> > nodal;
 
     // output
     std::vector<PHX::MDField<ScalarT, Ent, IP> > u;
