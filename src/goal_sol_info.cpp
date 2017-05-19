@@ -23,8 +23,10 @@ SolInfo::SolInfo(Indexer* i, int nqoi) {
   ghost->R = rcp(new Vector(gm));
   owned->dRdu = rcp(new Matrix(og));
   ghost->dRdu = rcp(new Matrix(gg));
-  owned->dJdu = rcp(new MultiVector(om, nqoi));
-  ghost->dJdu = rcp(new MultiVector(gm, nqoi));
+  if (nqoi > 0) {
+    owned->dJdu = rcp(new MultiVector(om, nqoi));
+    ghost->dJdu = rcp(new MultiVector(gm, nqoi));
+  }
 }
 
 SolInfo::~SolInfo() {
@@ -45,6 +47,8 @@ void SolInfo::gather_dRdu() {
 }
 
 void SolInfo::gather_dJdu() {
+  GOAL_DEBUG_ASSERT( Teuchos::nonnull(owned->dJdu) );
+  GOAL_DEBUG_ASSERT( Teuchos::nonnull(ghost->dJdu) );
   owned->dJdu->doExport(*(ghost->dJdu), *exporter, Tpetra::ADD);
 }
 
@@ -61,6 +65,8 @@ void SolInfo::scatter_dRdu() {
 }
 
 void SolInfo::scatter_dJdu() {
+  GOAL_DEBUG_ASSERT( Teuchos::nonnull(owned->dJdu) );
+  GOAL_DEBUG_ASSERT( Teuchos::nonnull(ghost->dJdu) );
   ghost->dJdu->doImport(*(owned->dJdu), *importer, Tpetra::INSERT);
 }
 
