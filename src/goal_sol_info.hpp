@@ -7,6 +7,8 @@
 
 namespace goal {
 
+using Teuchos::RCP;
+
 /// @cond
 class Field;
 class Indexer;
