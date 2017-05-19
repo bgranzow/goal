@@ -105,4 +105,10 @@ void Physics::destroy_model() {
   dfm = Teuchos::null;
 }
 
+void set_extended_data_type_dims(Indexer* indexer, FieldManager fm, int t) {
+  std::vector<PHX::index_size_type> dd;
+  dd.push_back(indexer->get_num_total_dofs(t));
+  fm->setKokkosExtendedDataTypeDimensions<goal::Traits::Jacobian>(dd);
+}
+
 } // end namespace goal

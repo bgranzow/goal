@@ -143,6 +143,12 @@ class Physics {
     int side_set;
 };
 
+/// @brief Set the derivative information for a field manager.
+/// @param indexer The relevant \ref goal::Indexer.
+/// @param The relevant \ref goal::FieldManager.
+/// @param The entity type to operate on.
+void set_extended_data_type_dims(Indexer* i, FieldManager fm, int type);
+
 } // end namespace goal
 
 #endif
