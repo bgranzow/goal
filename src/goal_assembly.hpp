@@ -54,7 +54,7 @@ void compute_primal_residual(Physics* p, SolInfo* i, Discretization* d,
 /// @param d The \ref goal::Discretization to operate on.
 /// @param t_now The current evaluation time.
 /// @param t_old The previous evaluation time.
-void compute_primal_residual(Physics* p, SolInfo* i, Discretization* d,
+void compute_primal_jacobian(Physics* p, SolInfo* i, Discretization* d,
     const double t_now, const double t_old);
 
 /// @brief Compute the Jacobian of the dual model.
