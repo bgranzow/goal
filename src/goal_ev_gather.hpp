@@ -27,8 +27,6 @@ class Gather<goal::Traits::Residual, TRAITS>
 
     /// @cond
     using SetupData = typename TRAITS::SetupData;
-    using PreEvalData = typename TRAITS::PreEvalData;
-    using PostEvalData = typename TRAITS::PostEvalData;
     using EvalData = typename TRAITS::EvalData;
     using ScalarT = typename goal::Traits::Residual::ScalarT;
     /// @endcond
@@ -67,8 +65,6 @@ class Gather<goal::Traits::Jacobian, TRAITS>
 
     /// @cond
     using SetupData = typename TRAITS::SetupData;
-    using PreEvalData = typename TRAITS::PreEvalData;
-    using PostEvalData = typename TRAITS::PostEvalData;
     using EvalData = typename TRAITS::EvalData;
     using ScalarT = typename goal::Traits::Jacobian::ScalarT;
     /// @endcond
