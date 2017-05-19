@@ -24,8 +24,8 @@ Interpolate<EVALT, TRAITS>::Interpolate(
     auto ip_dl = f[i]->ip_dl(type);
     auto g_ip_dl = f[i]->g_ip_dl(type);
     nodal[i] = PHX::MDField<const ScalarT, Ent, Node>(name, dl);
-    u[i] = PHX::MDField<ScalarT, Ent, Node>(name, ip_dl);
-    gu[i] = PHX::MDField<ScalarT, Ent, Node, Dim>(gname, g_ip_dl);
+    u[i] = PHX::MDField<ScalarT, Ent, IP>(name, ip_dl);
+    gu[i] = PHX::MDField<ScalarT, Ent, IP, Dim>(gname, g_ip_dl);
     this->addDependentField(nodal[i]);
     this->addEvaluatedField(u[i]);
     this->addEvaluatedField(gu[i]);
@@ -50,14 +50,17 @@ PHX_EVALUATE_FIELDS(Interpolate, workset) {
   for (int elem = 0; elem < workset.size; ++elem) {
     for (int ip = 0; ip < num_ips; ++ip) {
       for (int f = 0; f < num_fields; ++f) {
-        u(elem, ip) = nodal(elem, 0) * bf(elem, 0, ip);
+        u[f](elem, ip) = nodal[f](elem, 0) * bf(elem, 0, ip);
         for (int n = 1; n < num_nodes; ++n)
-          u(elem, ip) += nodal(elem, n) * bf(elem, n, ip);
+          u[f](elem, ip) += nodal[f](elem, n) * bf(elem, n, ip);
         for (int i = 0; i < num_dims; ++i) {
-          gu(elem, ip, i) = nodal(elem, 0) * gbf(elem, 0, ip, i);
+          gu[f](elem, ip, i) = nodal[f](elem, 0) * gbf(elem, 0, ip, i);
           for (int n = 1; n < num_nodes; ++n)
-            gu(elem, n, i) += nodal(elem, n) * gbf(elem, n, ip, i);
+            gu[f](elem, n, i) += nodal[f](elem, n) * gbf(elem, n, ip, i);
   }}}}
 }
+
+template class Interpolate<goal::Traits::Residual, goal::Traits>;
+template class Interpolate<goal::Traits::Jacobian, goal::Traits>;
 
 } // end namespace goal
