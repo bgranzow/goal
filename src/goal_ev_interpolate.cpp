@@ -56,7 +56,7 @@ PHX_EVALUATE_FIELDS(Interpolate, workset) {
         for (int i = 0; i < num_dims; ++i) {
           gu[f](elem, ip, i) = nodal[f](elem, 0) * gbf(elem, 0, ip, i);
           for (int n = 1; n < num_nodes; ++n)
-            gu[f](elem, n, i) += nodal[f](elem, n) * gbf(elem, n, ip, i);
+            gu[f](elem, ip, i) += nodal[f](elem, n) * gbf(elem, n, ip, i);
   }}}}
 }
 
