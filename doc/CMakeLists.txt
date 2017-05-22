@@ -12,3 +12,5 @@ add_custom_target(doc
   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   COMMENT "Generating documentation with Doxygen" VERBATIM)
+
+bob_end_subdir()
