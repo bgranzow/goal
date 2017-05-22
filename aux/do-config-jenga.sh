@@ -11,5 +11,5 @@ cmake $GOAL_SRC_DIR \
 -DBUILD_TESTING=ON \
 -DSCOREC_PREFIX=$TRILINOS_DIR \
 -DTrilinos_PREFIX=$TRILINOS_DIR \
--DGoal_FAD_SIZE=40 \
+-DGoal_FAD_SIZE=70 \
 2>&1 | tee config_log
