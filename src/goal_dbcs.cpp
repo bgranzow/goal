@@ -197,6 +197,7 @@ void set_dbc_values(Physics* p, const double t) {
       auto n = node.node;
       apf::setScalar(apf_f, e, n, v);
     }
+    apf::synchronize(apf_f);
   }
 }
 
