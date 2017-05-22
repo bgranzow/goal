@@ -154,15 +154,6 @@ available options is provided below:
   * set `-DGoal_EXTRA_CXX_FLAGS` to specify CXX flags in addition
   to the above flags.
   * (For advanced usage) set `-DGoal_CXX_FLAGS` to override all CXX flags.
-* OPTIONAL: set `-DGoal_ENABLE_POISSON=ON` to enable the poisson's equation
-adaptive mini-application (default=`OFF`).
-* OPTIONAL: set `-DGoal_ENABLE_ELASTICITY=ON` to enable the elasticity
-mini-application (default=`OFF`).
-* OPTIONAL: set `-DGoal_ENABLE_ALL_APPS=ON` to enable all mini-application
-codes (default=`OFF`).
-* OPTIONAL: set `-DGoal_DATA` to point to the [goal-data][19] repository.
-This finds input data files (e.g. meshes and geometry files) for the
-goal steps and mini-application examples (default=`""`)
 * OPTIONAL: set `-DGoal_FAD_SIZE` to an integer value that denotes the
 maximum derivative array size for static forward automatic differentiation
 variables.
