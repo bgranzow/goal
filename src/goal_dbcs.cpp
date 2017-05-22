@@ -185,7 +185,7 @@ void set_dbc_values(Physics* p, const double t) {
     auto a = getValue<Array<std::string> >(entry);
     auto fld = a[0];
     auto set = a[1];
-    auto val = a[3];
+    auto val = a[2];
     auto idx = indexer->get_field_idx(fld);
     auto f = indexer->get_field(idx);
     auto apf_f = f->get_apf_field();
