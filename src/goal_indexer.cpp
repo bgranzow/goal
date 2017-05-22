@@ -148,14 +148,46 @@ void Indexer::get_ghost_lids(
 
 void Indexer::add_to_fields(
     std::vector<Field*> const& flds, RCP<Vector> du) {
-  (void)flds;
-  (void)du;
+  GOAL_DEBUG_ASSERT(get_num_fields() == (int)flds.size());
+  auto data = du->get1dView();
+  apf::DynamicArray<apf::Node> owned;
+  apf::getNodes(owned_nmbr, owned);
+  for (size_t n = 0; n < owned.size(); ++n) {
+    auto node = owned[n];
+    auto ent = node.entity;
+    auto lnode = node.node;
+    for (size_t f = 0; f < flds.size(); ++f) {
+      auto fld = flds[f];
+      auto apf_fld = fld->get_apf_field();
+      double v = apf::getScalar(apf_fld, ent, lnode);
+      LO row = get_owned_lid(f, node);
+      v += data[row];
+      apf::setScalar(apf_fld, ent, lnode, v);
+    }
+  }
+  for (size_t f = 0; f < flds.size(); ++f)
+    apf::synchronize(flds[f]->get_apf_field());
 }
 
 void Indexer::set_to_fields(
     std::vector<Field*> const& flds, RCP<Vector> x) {
-  (void)flds;
-  (void)x;
+  GOAL_DEBUG_ASSERT(get_num_fields() == (int)flds.size());
+  auto data = x->get1dView();
+  apf::DynamicArray<apf::Node> owned;
+  apf::getNodes(owned_nmbr, owned);
+  for (size_t n = 0; n < owned.size(); ++n) {
+    auto node = owned[n];
+    auto ent = node.entity;
+    auto lnode = node.node;
+    for (size_t f = 0; f < flds.size(); ++f) {
+      auto fld = flds[f];
+      auto apf_fld = fld->get_apf_field();
+      LO row = get_owned_lid(f, node);
+      apf::setScalar(apf_fld, ent, lnode, data[row]);
+    }
+  }
+  for (size_t f = 0; f < flds.size(); ++f)
+    apf::synchronize(flds[f]->get_apf_field());
 }
 
 void Indexer::compute_owned_maps() {
