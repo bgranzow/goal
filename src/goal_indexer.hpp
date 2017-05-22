@@ -20,6 +20,8 @@ typedef NumberingOf<long> GlobalNumbering;
 
 namespace goal {
 
+using Teuchos::RCP;
+
 /// @cond
 class Field;
 class Discretization;
