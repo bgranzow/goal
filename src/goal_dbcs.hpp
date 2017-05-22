@@ -18,14 +18,14 @@ void set_dbc_values(Physics* p, const double t);
 /// @brief Apply primal Dirichlet boundary conditions.
 /// @param p The relevant \ref goal::Physics structure.
 /// @param i The linear algebra data to apply the boundary conditions.
-/// @param t The current evaluation time.
+/// @param c True if columns should be zeroed.
 template <typename EvalT>
 void apply_primal_dbcs(Physics* p, SolInfo* i, bool c = false);
 
 /// @brief Apply dual Dirihclet boundary conditions.
 /// @param p The relevant \ref goal::Physics structure.
 /// @param i The linear algebra data to apply the boundary conditions.
-/// @param t The current evaluation time.
+/// @param c True if columns should be zeroed.
 template <typename EvalT>
 void apply_dual_dbcs(Physics* p, SolInfo* i, bool c = false);
 
