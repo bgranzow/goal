@@ -1,21 +1,20 @@
 #!/bin/bash -ex
 
 # Modify these paths for your system.
-TPLS=
-TRILINOS_SRC_DIR=
-TRILINOS_INSTALL_DIR=
-MPI_DIR=
-PARMETIS_DIR=
-BOOST_DIR=
-YAML_DIR=
-HAVE_LL=
+TRILINOS_SRC_DIR=/home/bng/codes/trilinos/src
+TRILINOS_INSTALL_DIR=/home/bng/codes/trilinos/install
+MPI_DIR=/home/bng/codes/mpich/install/bin
+PARMETIS_DIR=/home/bng/codes/parmetis/install
+BOOST_DIR=/home/bng/codes/boost/install
+YAML_DIR=/home/bng/codes/yaml-cpp/install
+HAVE_LL=ON
 
 cmake $TRILINOS_SRC_DIR \
 \
 -DCMAKE_INSTALL_PREFIX:PATH=$TRILINOS_INSTALL_DIR \
 -DCMAKE_BUILD_TYPE:STRING=NONE \
--DCMAKE_C_FLAGS:STRING="-g -O2" \
--DCMAKE_CXX_FLAGS:STRING="-g -O2 -Wno-deprecated-declarations -Wno-sign-compare" \
+-DCMAKE_C_FLAGS:STRING="-g -O2 -fno-omit-frame-pointer" \
+-DCMAKE_CXX_FLAGS:STRING="-g -O2 -Wno-deprecated-declarations -Wno-sign-compare -fno-omit-frame-pointer" \
 -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF \
 \
 -DBUILD_SHARED_LIBS:BOOL=ON \
@@ -26,6 +25,7 @@ cmake $TRILINOS_SRC_DIR \
 -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=OFF \
 -DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING="" \
 \
+-DTrilinos_ENABLE_Pamgen:BOOL=ON \
 -DTrilinos_ENABLE_Teuchos:BOOL=ON \
 -DTrilinos_ENABLE_Shards:BOOL=ON \
 -DTrilinos_ENABLE_Sacado:BOOL=ON \
@@ -46,14 +46,14 @@ cmake $TRILINOS_SRC_DIR \
 -DPhalanx_KOKKOS_DEVICE_TYPE:STRING="SERIAL" \
 \
 -DTrilinos_ENABLE_Zoltan:BOOL=ON \
--DZoltan_ENABLE_ULLONG_IDS:BOOL=ON \
+-DZoltan_ENABLE_ULLONG_IDS:BOOL=OFF \
 \
 -DTrilinos_ENABLE_Xpetra:BOOL=OFF \
+-DTrilinos_ENABLE_MueLu:BOOL=OFF \
+-DTrilinos_ENABLE_Amesos2:BOOL=OFF \
 -DTrilinos_ENABLE_NOX:BOOL=OFF \
 -DTrilinos_ENABLE_Thyra:BOOL=OFF \
 -DTrilinos_ENABLE_Zoltan2:BOOL=OFF \
--DTrilinos_ENABLE_MueLu:BOOL=OFF \
--DTrilinos_ENABLE_Amesos2:BOOL=OFF \
 -DTrilinos_ENABLE_Stratimikos:BOOL=OFF \
 -DTrilinos_ENABLE_Rythmos:BOOL=OFF \
 -DTrilinos_ENABLE_Stokhos:BOOL=OFF \
@@ -70,6 +70,7 @@ cmake $TRILINOS_SRC_DIR \
 -DTrilinos_ENABLE_Anasazi:BOOL=OFF \
 -DTrilinos_ENABLE_ML:BOOL=OFF \
 -DTrilinos_ENABLE_Intrepid:BOOL=OFF \
+-DTrilinos_ENABLE_Intrepid2:BOOL=OFF \
 \
 -DTPL_ENABLE_MPI:BOOL=ON \
 -DMPI_BASE_DIR:PATH=$MPI_DIR \
