@@ -94,7 +94,7 @@ static RCP<Solver> build_ilu_solver(
 #ifdef Goal_MueLu
 static RCP<Solver> build_multigrid_solver_impl(
     ParameterList const& in,
-    RCP<Indexer> i,
+    Indexer* i,
     RCP<Matrix> A,
     RCP<Vector> x,
     RCP<Vector> b,
@@ -119,7 +119,7 @@ static RCP<Solver> build_multigrid_solver_impl(
 
 static RCP<Solver> build_multigrid_solver(
     ParameterList const& in,
-    RCP<Indexer> i,
+    Indexer* i,
     RCP<Matrix> A,
     RCP<Vector> x,
     RCP<Vector> b,
@@ -174,7 +174,7 @@ void solve_multigrid_cg(
     RCP<Matrix> A,
     RCP<Vector> x,
     RCP<Vector> b,
-    RCP<Indexer> i) {
+    Indexer* i) {
   in.validateParameters(get_valid_params(), 0);
   auto solver = build_multigrid_solver(in, i, A, x, b, CG);
   run_solver(in, solver);
@@ -185,7 +185,7 @@ void solve_multigrid_gmres(
     RCP<Matrix> A,
     RCP<Vector> x,
     RCP<Vector> b,
-    RCP<Indexer> i) {
+    Indexer* i) {
   in.validateParameters(get_valid_params(), 0);
   auto solver = build_multigrid_solver(in, i, A, x, b, GMRES);
   run_solver(in, solver);
@@ -196,7 +196,7 @@ void solve_linear_system(
     RCP<Matrix> A,
     RCP<Vector> x,
     RCP<Vector> b,
-    RCP<Indexer> i) {
+    Indexer* i) {
   GOAL_ALWAYS_ASSERT(in.isType<std::string>("method"));
   auto method = in.get<std::string>("method");
   GOAL_ALWAYS_ASSERT( (method == "CG") || (method == "GMRES"));
