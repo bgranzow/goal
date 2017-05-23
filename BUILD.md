@@ -136,6 +136,14 @@ make -j 4
 make install
 ```
 
+To prepare and run the goal tests:
+```bash
+cd goal
+cd build
+make pretest
+ctest
+```
+
 #### Configure options
 
 For more advanced configuration, a description of
@@ -158,8 +166,7 @@ available options is provided below:
 maximum derivative array size for static forward automatic differentiation
 variables.
 * OPTIONAL: set `-DBUILD_TESTING=ON` to enable running regression tests.
-(defalut=`OFF`). This option requires that the `-DGoal_DATA` option point
-to a valid [goal-data][19] directory.
+(defalut=`OFF`).
 
 [0]:https://git-scm.com
 [1]:https://cmake.org
