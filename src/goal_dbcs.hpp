@@ -1,6 +1,8 @@
 #ifndef goal_dbcs_hpp
 #define goal_dbcs_hpp
 
+/// @file goal_dbcs.hpp
+
 namespace goal {
 
 /// @cond
