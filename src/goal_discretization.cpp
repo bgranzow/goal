@@ -187,6 +187,30 @@ std::string Discretization::get_node_set_name(const int i) const {
   return sets->models[0][i]->stkName;
 }
 
+int Discretization::get_elem_set_idx(std::string const& n) const {
+  int idx = -1;
+  for (int i = 0; i < get_num_elem_sets(); ++i)
+    if (n == get_elem_set_name(i))
+      idx = i;
+  return idx;
+}
+
+int Discretization::get_side_set_idx(std::string const& n) const {
+  int idx = -1;
+  for (int i = 0; i < get_num_side_sets(); ++i)
+    if (n == get_side_set_name(i))
+      idx = i;
+  return idx;
+}
+
+int Discretization::get_node_set_idx(std::string const& n) const {
+  int idx = -1;
+  for (int i = 0; i < get_num_node_sets(); ++i)
+    if (n == get_node_set_name(i))
+      idx = i;
+  return idx;
+}
+
 int Discretization::get_elem_type(const int i) {
   auto name = get_elem_set_name(i);
   if (elem_sets[name].size() == 0)

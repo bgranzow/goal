@@ -82,13 +82,13 @@ class Discretization {
     /// consumption and improve cache performance.
     int get_ws_size() const { return ws_size; }
 
-    /// @brief Return the number of element sets.
+    /// @brief Returns the number of element sets.
     int get_num_elem_sets() const;
 
-    /// @brief Return the number of side sets.
+    /// @brief Returns the number of side sets.
     int get_num_side_sets() const;
 
-    /// @brief Return the number of node sets.
+    /// @brief Returns the number of node sets.
     int get_num_node_sets() const;
 
     /// @brief Returns the ith element set name.
@@ -99,6 +99,15 @@ class Discretization {
 
     /// @brief Returns the ith node set name.
     std::string get_node_set_name(const int i) const;
+
+    /// @brief Returns the index of the element set of name n.
+    int get_elem_set_idx(std::string const& n) const;
+
+    /// @brief Returns the index of the side set of name n.
+    int get_side_set_idx(std::string const& n) const;
+
+    /// @brief Returns the index of the node set of name n.
+    int get_node_set_idx(std::string const& n) const;
 
     /// @brief Returns the element entity type of the ith element set.
     int get_elem_type(const int i);
