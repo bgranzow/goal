@@ -14,22 +14,21 @@ class SolInfo;
 /// @param p The relevant \ref goal::Physics structure.
 /// @param t The current evaluation time.
 /// @details This applies DBCs to the fields obtained by
-/// indexer->get_field(idx).
+/// p->get_indexer()->get_field(idx).
 void set_dbc_values(Physics* p, const double t);
 
 /// @brief Apply primal Dirichlet boundary conditions.
 /// @param p The relevant \ref goal::Physics structure.
-/// @param i The linear algebra data to apply the boundary conditions.
-/// @param c True if columns should be zeroed.
+/// @param i The relevant \ref goal::SolInfo structure.
 template <typename EvalT>
-void apply_primal_dbcs(Physics* p, SolInfo* i, bool c = false);
+void apply_pre_primal_dbcs(Physics* p, SolInfo* i);
 
-/// @brief Apply dual Dirihclet boundary conditions.
+/// @brief Apply primal Dirichlet boundary conditions.
 /// @param p The relevant \ref goal::Physics structure.
-/// @param i The linear algebra data to apply the boundary conditions.
-/// @param c True if columns should be zeroed.
+/// @param i The relevant \ref goal::SolInfo structure.
+/// @param t The current evaluation time.
 template <typename EvalT>
-void apply_dual_dbcs(Physics* p, SolInfo* i, bool c = false);
+void apply_post_primal_dbcs(Physics* p, SolInfo* i, const double t);
 
 } // end namespace goal
 

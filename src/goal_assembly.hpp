@@ -12,6 +12,9 @@ class SolInfo;
 class Discretization;
 /// @endcond
 
+/// @brief Application mode of Dirichlet boundary conditions.
+enum DBCMode {PRE, POST};
+
 /// @brief Assemble volumetric fields.
 /// @param ws The \ref goal::Workset to operate on.
 /// @param p The \ref goal::Physics to use for assembly.
@@ -45,8 +48,9 @@ void assemble_dirichlet(
 /// @param d The \ref goal::Discretization to operate on.
 /// @param t_now The current evaluation time.
 /// @param t_old The previous evaluation time.
+/// @param dbc The \ref goal::DBCMode.
 void compute_primal_residual(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old);
+    const double t_now, const double t_old, const int dbc = POST);
 
 /// @brief Compute the Jacobian of the primal model.
 /// @param p The \ref goal::Physics defining the primal model.
@@ -54,8 +58,9 @@ void compute_primal_residual(Physics* p, SolInfo* i, Discretization* d,
 /// @param d The \ref goal::Discretization to operate on.
 /// @param t_now The current evaluation time.
 /// @param t_old The previous evaluation time.
+/// @param dbc The \ref goal::DBCMode.
 void compute_primal_jacobian(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old);
+    const double t_now, const double t_old, const int dbc = POST);
 
 /// @brief Compute the Jacobian of the dual model.
 /// @param p The \ref goal::Physics defining the dual model.
@@ -63,8 +68,9 @@ void compute_primal_jacobian(Physics* p, SolInfo* i, Discretization* d,
 /// @param d The \ref goal::Discretization to operate on.
 /// @param t_now The current evaluation time.
 /// @param t_old The previous evaluation time.
+/// @param dbc The \ref goal::DBCMode.
 void compute_dual_jacobian(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old);
+    const double t_now, const double t_old, const int dbc = POST);
 
 /// @brief Compute the error residual.
 /// @param p The \ref goal::Physics defining the error model.
@@ -72,8 +78,9 @@ void compute_dual_jacobian(Physics* p, SolInfo* i, Discretization* d,
 /// @param d The \ref goal::Discretization to operate on.
 /// @param t_now The current evaluation time.
 /// @param t_old The previous evaluation time.
+/// @param dbc The \ref goal::DBCMode.
 void compute_error_residual(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old);
+    const double t_now, const double t_old, const int dbc = POST);
 
 } // end namespace goal
 

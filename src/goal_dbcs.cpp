@@ -75,110 +75,9 @@ static double get_bc_val(
   return v;
 }
 
-enum Mode { RES, JAC, QOI };
-
-static void apply_bc_res(
-    int idx,
-    SolInfo* info,
-    Indexer* indexer,
-    std::vector<apf::Node> const& nodes) {
-  auto R = info->owned->R;
-  for (size_t n = 0; n < nodes.size(); ++n) {
-    LO row = indexer->get_owned_lid(idx, nodes[n]);
-    R->replaceLocalValue(row, 0.0);
-  }
-}
-
-static void apply_bc_jac(
-    int idx,
-    SolInfo* info,
-    Indexer* indexer,
-    std::vector<apf::Node> const& nodes) {
-  auto R = info->owned->R;
-  auto dRdu = info->owned->dRdu;
-  size_t num_entries;
-  Array<LO> indices;
-  Array<ST> entries;
-  for (size_t n = 0; n < nodes.size(); ++n) {
-    LO row = indexer->get_owned_lid(idx, nodes[n]);
-    num_entries = dRdu->getNumEntriesInLocalRow(row);
-    indices.resize(num_entries);
-    entries.resize(num_entries);
-    dRdu->getLocalRowCopy(row, indices(), entries(), num_entries);
-    for (size_t c = 0; c < num_entries; ++c)
-      if (indices[c] != row)
-        entries[c] = 0.0;
-    dRdu->replaceLocalValues(row, indices(), entries());
-    R->replaceLocalValue(row, 0.0);
-  }
-}
-
-static void apply_bc_qoi(
-    int idx,
-    SolInfo* info,
-    Indexer* indexer,
-    std::vector<apf::Node> const& nodes) {
-  auto dJdu = info->owned->dJdu;
-  for (size_t n = 0; n < nodes.size(); ++n) {
-    LO row = indexer->get_owned_lid(idx, nodes[n]);
-    for (size_t c = 0; c < dJdu->getNumVectors(); ++c)
-      dJdu->replaceLocalValue(row, c, 0.0);
-  }
-}
-
-static void apply_bc(
-    SolInfo* info, Indexer* indexer, ParameterList const& p, int m) {
-  for (auto it = p.begin(); it != p.end(); ++it) {
-    auto entry = p.entry(it);
-    auto a = getValue<Array<std::string> >(entry);
-    auto fld = a[0];
-    auto set = a[1];
-    auto idx = indexer->get_field_idx(fld);
-    auto nodes = indexer->get_node_set_nodes(set);
-    switch (m) {
-      case RES: apply_bc_res(idx, info, indexer, nodes); break;
-      case JAC: apply_bc_jac(idx, info, indexer, nodes); break;
-      case QOI: apply_bc_qoi(idx, info, indexer, nodes); break;
-    }
-  }
-}
-
-static void condense(
-    SolInfo* info, Indexer* indexer, ParameterList const& p) {
-  auto dRdu = info->owned->dRdu;
-  auto transposer = rcp(new Transposer(dRdu));
-  auto dRduT = transposer->createTranspose();
-  size_t num_entries;
-  Array<GO> indices;
-  Array<ST> entries;
-  Array<GO> index(1);
-  Array<ST> entry(1);
-  entry[0] = 0.0;
-  for (auto i = p.begin(); i != p.end(); ++i) {
-    auto param_entry = p.entry(i);
-    auto a = getValue<Array<std::string> >(param_entry);
-    auto fld = a[0];
-    auto set = a[1];
-    auto idx = indexer->get_field_idx(fld);
-    auto nodes = indexer->get_node_set_nodes(set);
-    for (std::size_t n = 0; n < nodes.size(); ++n) {
-      LO dof_lid = indexer->get_owned_lid(idx, nodes[n]);
-      GO dof_gid = indexer->get_owned_map()->getGlobalElement(dof_lid);
-      index[0] = dof_gid;
-      num_entries = dRduT->getNumEntriesInGlobalRow(dof_gid);
-      indices.resize(num_entries);
-      entries.resize(num_entries);
-      dRduT->getGlobalRowCopy(dof_gid, indices(), entries(), num_entries);
-      for (size_t r = 0; r < num_entries; ++r)
-        if (indices[r] != dof_gid)
-          dRdu->replaceGlobalValues(indices[r], index(), entry());
-    }
-  }
-}
-
-void set_dbc_values(Physics* p, const double t) {
-  auto params = p->get_dbc_params();
-  auto indexer = p->get_indexer();
+void set_dbc_values(Physics* physics, const double t) {
+  auto params = physics->get_dbc_params();
+  auto indexer = physics->get_indexer();
   validate_params(indexer, params);
   for (auto it = params.begin(); it != params.end(); ++it) {
     auto entry = params.entry(it);
@@ -201,29 +100,153 @@ void set_dbc_values(Physics* p, const double t) {
   }
 }
 
-template <> void apply_primal_dbcs<goal::Traits::Residual>(
-    Physics* p, SolInfo* i, bool c) {
-  auto params = p->get_dbc_params();
-  auto indexer = p->get_indexer();
-  apply_bc(i, indexer, params, RES);
-  (void)c;
+template <> void apply_pre_primal_dbcs<goal::Traits::Residual>(
+    Physics* physics, SolInfo* info) {
+  auto params = physics->get_dbc_params();
+  auto indexer = physics->get_indexer();
+  auto R = info->owned->R->get1dViewNonConst();
+  for (auto it = params.begin(); it != params.end(); ++it) {
+    auto param_entry = params.entry(it);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto fld = a[0];
+    auto set = a[1];
+    auto idx = indexer->get_field_idx(fld);
+    auto nodes = indexer->get_node_set_nodes(set);
+    for (size_t node = 0; node < nodes.size(); ++node) {
+      LO row = indexer->get_owned_lid(idx, nodes[node]);
+      R[row] = 0.0;
+    }
+  }
 }
 
-template <> void apply_primal_dbcs<goal::Traits::Jacobian>(
-    Physics* p, SolInfo* i, bool c) {
-  auto params = p->get_dbc_params();
-  auto indexer = p->get_indexer();
-  apply_bc(i, indexer, params, JAC);
-  if (c) condense(i, indexer, params);
+template <> void apply_pre_primal_dbcs<goal::Traits::Jacobian>(
+    Physics* physics, SolInfo* info) {
+
+  auto params = physics->get_dbc_params();
+  auto indexer = physics->get_indexer();
+  auto dRdu = info->owned->dRdu;
+  auto transposer = rcp(new Transposer(dRdu));
+  auto dRduT = transposer->createTranspose();
+  auto R = info->owned->R->get1dViewNonConst();
+
+  size_t num_entries;
+  Array<LO> col_indices;
+  Array<ST> col_entries;
+
+  Array<GO> row_indices;
+  Array<ST> row_entries;
+  Array<GO> col_index(1);
+  Array<ST> entry(1);
+  entry[0] = 0.0;
+
+
+  for (auto it = params.begin(); it != params.end(); ++it) {
+
+    auto param_entry = params.entry(it);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto fld = a[0];
+    auto set = a[1];
+    auto idx = indexer->get_field_idx(fld);
+    auto nodes = indexer->get_node_set_nodes(set);
+
+    for (size_t node = 0; node < nodes.size(); ++node) {
+
+      LO row = indexer->get_owned_lid(idx, nodes[node]);
+      num_entries = dRdu->getNumEntriesInLocalRow(row);
+      col_indices.resize(num_entries);
+      col_entries.resize(num_entries);
+      dRdu->getLocalRowCopy(row, col_indices(), col_entries(), num_entries);
+      for (size_t c = 0; c < num_entries; ++c)
+        if (col_indices[c] != row)
+          col_entries[c] = 0.0;
+      dRdu->replaceLocalValues(row, col_indices(), col_entries());
+
+      GO gid = indexer->get_owned_map()->getGlobalElement(row);
+      col_index[0] = gid;
+      num_entries = dRduT->getNumEntriesInGlobalRow(gid);
+      row_indices.resize(num_entries);
+      row_entries.resize(num_entries);
+      dRduT->getGlobalRowCopy(gid, row_indices(), row_entries(), num_entries);
+      for (size_t r = 0; r < num_entries; ++r)
+        if (row_indices[r] != gid)
+          dRdu->replaceGlobalValues(row_indices[r], col_index(), entry());
+
+      R[row] = 0.0;
+    }
+  }
 }
 
-template <> void apply_dual_dbcs<goal::Traits::Jacobian>(
-    Physics* p, SolInfo* i, bool c) {
-  auto params = p->get_dbc_params();
-  auto indexer = p->get_indexer();
-  apply_bc(i, indexer, params, JAC);
-  apply_bc(i, indexer, params, QOI);
-  if (c) condense(i, indexer, params);
+template <> void apply_post_primal_dbcs<goal::Traits::Residual>(
+    Physics* physics, SolInfo* info, const double t) {
+  auto params = physics->get_dbc_params();
+  auto indexer = physics->get_indexer();
+  auto R = info->owned->R->get1dViewNonConst();
+  for (auto it = params.begin(); it != params.end(); ++it) {
+    auto param_entry = params.entry(it);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto fld = a[0];
+    auto set = a[1];
+    auto val = a[2];
+    auto idx = indexer->get_field_idx(fld);
+    auto f = indexer->get_field(idx);
+    auto apf_f = f->get_apf_field();
+    auto nodes = indexer->get_node_set_nodes(set);
+    for (size_t node = 0; node < nodes.size(); ++node) {
+      auto n = nodes[node];
+      LO row = indexer->get_owned_lid(idx, n);
+      double v = get_bc_val(f, val, n, t);
+      double sol = apf::getScalar(apf_f, n.entity, n.node);
+      R[row] = sol - v;
+    }
+  }
+}
+
+template <> void apply_post_primal_dbcs<goal::Traits::Jacobian>(
+    Physics* physics, SolInfo* info, const double t) {
+
+  auto params = physics->get_dbc_params();
+  auto indexer = physics->get_indexer();
+  auto dRdu = info->owned->dRdu;
+  auto R = info->owned->R->get1dViewNonConst();
+
+  size_t num_entries;
+  Array<LO> col_indices;
+  Array<ST> col_entries;
+  Array<LO> col_index(1);
+  Array<ST> diag_entry(1);
+  diag_entry[0] = 1.0;
+
+  for (auto it = params.begin(); it != params.end(); ++it) {
+
+    auto param_entry = params.entry(it);
+    auto a = getValue<Array<std::string> >(param_entry);
+    auto fld = a[0];
+    auto set = a[1];
+    auto val = a[2];
+    auto idx = indexer->get_field_idx(fld);
+    auto f = indexer->get_field(idx);
+    auto apf_f = f->get_apf_field();
+    auto nodes = indexer->get_node_set_nodes(set);
+
+    for (size_t node = 0; node < nodes.size(); ++node) {
+
+      auto n = nodes[node];
+      LO row = indexer->get_owned_lid(idx, n);
+      col_index[0] = row;
+      num_entries = dRdu->getNumEntriesInLocalRow(row);
+      col_indices.resize(num_entries);
+      col_entries.resize(num_entries);
+      dRdu->getLocalRowCopy(row, col_indices(), col_entries(), num_entries);
+      for (size_t c = 0; c < num_entries; ++c)
+        col_entries[c] = 0.0;
+      dRdu->replaceLocalValues(row, col_indices(), col_entries());
+      dRdu->replaceLocalValues(row, col_index(), diag_entry());
+
+      double v = get_bc_val(f, val, n, t);
+      double sol = apf::getScalar(apf_f, n.entity, n.node);
+      R[row] = sol - v;
+    }
+  }
 }
 
 } // end namespace goal

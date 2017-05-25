@@ -68,7 +68,7 @@ void assemble_dirichlet(
 }
 
 void compute_primal_residual(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old) {
+    const double t_now, const double t_old, const int dbc) {
   auto t0 = time();
   Workset ws;
   ws.t_now = t_now;
@@ -79,13 +79,14 @@ void compute_primal_residual(Physics* p, SolInfo* i, Discretization* d,
   assemble_neumann<Residual>(ws, p, i, d);
   i->gather_R();
   assemble_dirichlet<Residual>(ws, p, i, d);
-  apply_primal_dbcs<Residual>(p, i);
+  if (dbc == PRE) apply_pre_primal_dbcs<Residual>(p, i);
+  else if (dbc == POST) apply_post_primal_dbcs<Residual>(p, i, t_now);
   auto t1 = time();
   print(" > residual computed in %f seconds", t1 - t0);
 }
 
 void compute_primal_jacobian(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old) {
+    const double t_now, const double t_old, const int dbc) {
   auto t0 = time();
   Workset ws;
   ws.t_now = t_now;
@@ -102,14 +103,15 @@ void compute_primal_jacobian(Physics* p, SolInfo* i, Discretization* d,
   i->gather_R();
   i->gather_dRdu();
   assemble_dirichlet<Jacobian>(ws, p, i, d);
-  apply_primal_dbcs<Jacobian>(p, i, true);
+  if (dbc == PRE) apply_pre_primal_dbcs<Jacobian>(p, i);
+  else if (dbc == POST) apply_post_primal_dbcs<Jacobian>(p, i, t_now);
   i->owned->dRdu->fillComplete();
   auto t1 = time();
   print(" > jacobian computed in %f seconds", t1 - t0);
 }
 
 void compute_dual_jacobian(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old) {
+    const double t_now, const double t_old, const int dbc) {
   auto t0 = time();
   Workset ws;
   ws.t_now = t_now;
@@ -129,13 +131,13 @@ void compute_dual_jacobian(Physics* p, SolInfo* i, Discretization* d,
   i->gather_dJdu();
   i->gather_dRdu();
   assemble_dirichlet<Jacobian>(ws, p, i, d);
-  apply_dual_dbcs<Jacobian>(p, i, true);
   auto t1 = time();
   print(" > jacobian computed in %f seconds", t1 - t0);
+  (void)dbc;
 }
 
 void compute_error_residual(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old) {
+    const double t_now, const double t_old, const int dbc) {
   auto t0 = time();
   Workset ws;
   ws.t_now = t_now;
@@ -146,7 +148,8 @@ void compute_error_residual(Physics* p, SolInfo* i, Discretization* d,
   assemble_neumann<Residual>(ws, p, i, d);
   i->gather_R();
   assemble_dirichlet<Residual>(ws, p, i, d);
-  apply_primal_dbcs<Residual>(p, i, t_now);
+  if (dbc == PRE) apply_pre_primal_dbcs<Residual>(p, i);
+  else if (dbc == POST) apply_post_primal_dbcs<Residual>(p, i, t_now);
   auto t1 = time();
   print(" > residual computed in %f seconds", t1 - t0);
 }
