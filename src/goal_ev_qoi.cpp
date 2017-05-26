@@ -11,19 +11,18 @@ namespace goal {
 
 using Teuchos::rcp;
 
-static ParameterList get_valid_params() {
-  ParameterList p;
-  p.set<int>("qoi index", 0);
-  p.set<int>("ent type", 0);
-  p.set<std::string>("name", "");
-  p.set<goal::Field*>("field", 0);
-  p.set<goal::Indexer*>("indexer", 0);
-  return p;
-}
-
 template <typename TRAITS>
-QoI<goal::Traits::Residual, TRAITS>::QoI(ParameterList const& p) {
-  (void)p;
+QoI<goal::Traits::Residual, TRAITS>::QoI(
+    Indexer* i,
+    Field* f,
+    std::string const& n,
+    int idx,
+    int type) {
+  (void)i;
+  (void)f;
+  (void)n;
+  (void)idx;
+  (void)type;
 }
 
 template <typename TRAITS>
@@ -44,20 +43,19 @@ void QoI<goal::Traits::Residual, TRAITS>::evaluateFields(EvalData workset) {
 }
 
 template <typename TRAITS>
-QoI<goal::Traits::Jacobian, TRAITS>::QoI(ParameterList const& p) {
-  p.validateParameters(get_valid_params(), 0);
+QoI<goal::Traits::Jacobian, TRAITS>::QoI(
+    Indexer* i,
+    Field* f,
+    std::string const& n,
+    int idx,
+    int type)
+    : qoi_idx(idx),
+      indexer(i),
+      info(0) {
 
-  auto type = p.get<int>("ent type");
-  auto f = p.get<goal::Field*>("field");
-  auto n = p.get<std::string>("name");
   auto dl = f->ent0_dl(type);
-
-  qoi_idx = p.get<int>("qoi index");
-  indexer = p.get<goal::Indexer*>("indexer");
-  num_dofs = indexer->get_num_total_dofs(type);
-  info = 0;
-
   qoi = PHX::MDField<const ScalarT, Ent>(n, dl);
+  num_dofs = indexer->get_num_total_dofs(type);
 
   auto name = "QoI : " + n;
   PHX::Tag<ScalarT> op(name, rcp(new PHX::MDALayout<Dummy>(0)));
