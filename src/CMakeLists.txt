@@ -16,6 +16,7 @@ goal_ev_gather.cpp
 goal_ev_interpolate.cpp
 goal_ev_dual.cpp
 goal_ev_resid.cpp
+goal_ev_qoi.cpp
 )
 
 set(Goal_HEADERS
@@ -39,6 +40,7 @@ goal_ev_gather.hpp
 goal_ev_interpolate.hpp
 goal_ev_dual.hpp
 goal_ev_resid.hpp
+goal_ev_qoi.hpp
 )
 
 add_library(Goal ${Goal_SOURCES})
