@@ -167,6 +167,12 @@ RCP<PHX::DataLayout> Field::ip2_dl(const int t) {
   return rcp(new PHX::MDALayout<Ent, IP, Dim, Dim>(ws, ip, d, d));
 }
 
+RCP<PHX::DataLayout> Field::ent0_dl(const int t) {
+  int ws = disc->get_ws_size();
+  (void)t;
+  return rcp(new PHX::MDALayout<Ent>(ws));
+}
+
 Field* create_field(FieldInfo const& i) {
   return new Field(i);
 }
