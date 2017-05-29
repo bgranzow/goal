@@ -16,12 +16,10 @@ QoI<goal::Traits::Residual, TRAITS>::QoI(
     Indexer* i,
     Field* f,
     std::string const& n,
-    int idx,
     int type) {
   (void)i;
   (void)f;
   (void)n;
-  (void)idx;
   (void)type;
 }
 
@@ -47,10 +45,8 @@ QoI<goal::Traits::Jacobian, TRAITS>::QoI(
     Indexer* i,
     Field* f,
     std::string const& n,
-    int idx,
     int type)
-    : qoi_idx(idx),
-      indexer(i),
+    : indexer(i),
       info(0) {
 
   auto dl = f->ent0_dl(type);
@@ -80,7 +76,7 @@ void QoI<goal::Traits::Jacobian, TRAITS>::preEvaluate(PreEvalData i) {
 
 template <typename TRAITS>
 void QoI<goal::Traits::Jacobian, TRAITS>::evaluateFields(EvalData workset) {
-  auto dJdu = info->ghost->dJdu->getVector(qoi_idx);
+  auto dJdu = info->ghost->dJdu->get1dViewNonConst();
   std::vector<LO> rows(num_dofs);
   for (int elem = 0; elem < workset.size; ++elem) {
     auto e = workset.entities[elem];
@@ -88,7 +84,7 @@ void QoI<goal::Traits::Jacobian, TRAITS>::evaluateFields(EvalData workset) {
     for (int dof = 0; dof < num_dofs; ++dof) {
       LO row = rows[dof];
       auto val = qoi(elem).fastAccessDx(dof);
-      dJdu->sumIntoLocalValue(row, val);
+      dJdu[row] = val;
     }
   }
 }

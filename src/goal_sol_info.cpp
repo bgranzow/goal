@@ -8,7 +8,7 @@ namespace goal {
 
 using Teuchos::rcp;
 
-SolInfo::SolInfo(Indexer* i, int nqoi) {
+SolInfo::SolInfo(Indexer* i) {
   owned = new LinearObj;
   ghost = new LinearObj;
   auto om = i->get_owned_map();
@@ -23,10 +23,8 @@ SolInfo::SolInfo(Indexer* i, int nqoi) {
   ghost->R = rcp(new Vector(gm));
   owned->dRdu = rcp(new Matrix(og));
   ghost->dRdu = rcp(new Matrix(gg));
-  if (nqoi > 0) {
-    owned->dJdu = rcp(new MultiVector(om, nqoi));
-    ghost->dJdu = rcp(new MultiVector(gm, nqoi));
-  }
+  owned->dJdu = rcp(new Vector(om));
+  ghost->dJdu = rcp(new Vector(gm));
 }
 
 SolInfo::~SolInfo() {
@@ -47,8 +45,6 @@ void SolInfo::gather_dRdu() {
 }
 
 void SolInfo::gather_dJdu() {
-  GOAL_DEBUG_ASSERT( Teuchos::nonnull(owned->dJdu) );
-  GOAL_DEBUG_ASSERT( Teuchos::nonnull(ghost->dJdu) );
   owned->dJdu->doExport(*(ghost->dJdu), *exporter, Tpetra::ADD);
 }
 
@@ -65,13 +61,11 @@ void SolInfo::scatter_dRdu() {
 }
 
 void SolInfo::scatter_dJdu() {
-  GOAL_DEBUG_ASSERT( Teuchos::nonnull(owned->dJdu) );
-  GOAL_DEBUG_ASSERT( Teuchos::nonnull(ghost->dJdu) );
   ghost->dJdu->doImport(*(owned->dJdu), *importer, Tpetra::INSERT);
 }
 
-SolInfo* create_sol_info(Indexer* i, int nqoi) {
-  return new SolInfo(i, nqoi);
+SolInfo* create_sol_info(Indexer* i) {
+  return new SolInfo(i);
 }
 
 void destroy_sol_info(SolInfo* s) {

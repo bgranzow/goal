@@ -39,9 +39,8 @@ class QoI<goal::Traits::Residual, TRAITS>
     /// @param i The relevant \ref goal::Indexer.
     /// @param f A relevant \ref goal::Field.
     /// @param n The name of the PHX MDField to scatter.
-    /// @param idx The QoI multi-vector index.
     /// @param type The entity type to operate on.
-    QoI(Indexer* i, Field* f, std::string const& n, int idx, int type);
+    QoI(Indexer* i, Field* f, std::string const& n, int type);
 
     /// @brief Finalize the field manager registration.
     /// @param d The \ref goal::Traits::SetupData.
@@ -76,9 +75,8 @@ class QoI<goal::Traits::Jacobian, TRAITS>
     /// @param i The relevant \ref goal::Indexer.
     /// @param f A relevant \ref goal::Field.
     /// @param n The name of the PHX MDField to scatter.
-    /// @param idx The QoI multi-vector index.
     /// @param type The entity type to operate on.
-    QoI(Indexer* i, Field* f, std::string const& n, int idx, int type);
+    QoI(Indexer* i, Field* f, std::string const& n, int type);
 
     /// @brief Finalize the field manager registration.
     /// @param d The \ref goal::Traits::SetupData.
@@ -95,7 +93,6 @@ class QoI<goal::Traits::Jacobian, TRAITS>
 
   private:
 
-    int qoi_idx;
     int num_dofs;
 
     goal::Indexer* indexer;

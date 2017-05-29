@@ -24,7 +24,7 @@ struct LinearObj {
   /// @param The Jacobian matrix.
   RCP<Matrix> dRdu;
   /// @param The functional derivative vector.
-  RCP<MultiVector> dJdu;
+  RCP<Vector> dJdu;
 };
 
 /// @brief A container for parallel solution information.
@@ -34,8 +34,7 @@ class SolInfo {
 
     /// @brief Construct the solution information object.
     /// @param i The relevant \ref goal::Indexer object.
-    /// @param num_qoi The number of QoIs.
-    SolInfo(Indexer* i, int num_qoi);
+    SolInfo(Indexer* i);
 
     /// @brief Destroy the solution info object.
     /// @details This will destroy the owned and ghost objects.
@@ -88,7 +87,7 @@ class SolInfo {
 /// @brief Create a solution information object.
 /// @param i The relevant \ref goal::Indexer.
 /// @param nqoi The number of quantities of interest.
-SolInfo* create_sol_info(Indexer* i, int nqoi);
+SolInfo* create_sol_info(Indexer* i);
 
 /// @brief Destroy a solution information object.
 /// @param s The \ref goal::SolInfo object to destroy.
