@@ -40,15 +40,13 @@ static void destroy_fields(std::vector<goal::Field*>& u) {
 static void check_sol_info(
     goal::Discretization* d, std::vector<goal::Field*> const& u) {
   goal::Indexer* i = goal::create_indexer(d, u);
-  goal::SolInfo* s = goal::create_sol_info(i, 1);
+  goal::SolInfo* s = goal::create_sol_info(i);
   goal::print("owned du rows: %lu", s->owned->du->getGlobalLength());
   goal::print("ghost du rows: %lu", s->ghost->du->getGlobalLength());
   goal::print("owned R rows: %lu", s->owned->R->getGlobalLength());
   goal::print("ghost R rows: %lu", s->ghost->R->getGlobalLength());
   goal::print("owned dRdu rows: %lu", s->owned->dRdu->getGlobalNumRows());
   goal::print("ghost dRdu cols: %lu", s->ghost->dRdu->getGlobalNumCols());
-  goal::print("owned dJdu #vecs: %lu", s->owned->dJdu->getNumVectors());
-  goal::print("ghost dJdu #vecs: %lu", s->ghost->dJdu->getNumVectors());
   goal::print("owned dJdu rows: %lu", s->owned->dJdu->getGlobalLength());
   goal::print("ghost dJdu rows: %lu", s->ghost->dJdu->getGlobalLength());
   goal::destroy_sol_info(s);
