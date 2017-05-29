@@ -181,4 +181,18 @@ void destroy_field(Field* f) {
   delete f;
 }
 
+void project_field(Field* to, Field* from) {
+  auto to_basis_type = to->get_basis_type();
+  auto from_basis_type = from->get_basis_type();
+  GOAL_DEBUG_ASSERT(to_basis_type == from_basis_type);
+  auto apf_to = to->get_apf_field();
+  auto apf_from = from->get_apf_field();
+  if (to_basis_type == LAGRANGE)
+    apf::projectField(apf_to, apf_from);
+  else if (to_basis_type == HIERARCHICAL)
+    apf::projectHierarchicField(apf_to, apf_from);
+  else
+    fail("project: unknown value type");
+}
+
 } // end namespace goal

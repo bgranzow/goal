@@ -209,6 +209,11 @@ Field* create_field(FieldInfo const& i);
 /// @param f The field to destroy.
 void destroy_field(Field* f);
 
+/// @brief Project data from one field to another.
+/// @param to The field to project data to.
+/// @param from The field to project data from.
+void project_field(Field* to, Field* from);
+
 } // end namespace goal
 
 #endif
