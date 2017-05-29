@@ -87,6 +87,30 @@ class Physics {
     /// @brief Destroy the current model.
     void destroy_model();
 
+    /// @brief Build the enriched primal fields.
+    void build_enriched_primal_fields();
+
+    /// @brief Build the dual fields.
+    void build_dual_fields();
+
+    /// @brief Build the enriched dual fields.
+    void build_enriched_dual_fields();
+
+    /// @brief Build the error fields.
+    void build_error_fields();
+
+    /// @brief Destroy the enriched primal fields.
+    void destroy_enriched_primal_fields();
+
+    /// @brief Destroy the dual fields.
+    void destroy_dual_fields();
+
+    /// @brief Destroy the enriched dual fields.
+    void destroy_enriched_dual_fields();
+
+    /// @brief Destroy the error fields.
+    void destroy_error_fields();
+
     /// @brief Returns the volumetric field managers.
     FieldManagers get_volumetric() { return vfms; }
 

@@ -105,6 +105,108 @@ void Physics::destroy_model() {
   dfm = Teuchos::null;
 }
 
+static int get_q_degree(const int p) {
+  int q = 0;
+  switch (p) {
+    case 1: q = 1; break;
+    case 2: q = 2; break;
+    case 3: q = 4; break;
+  }
+  return q;
+}
+
+static int get_highest_p(std::vector<goal::Field*> const& u) {
+  int p = 0;
+  for (size_t i = 0; i < u.size(); ++i)
+    p = std::max(p, u[i]->get_p_order());
+  return p;
+}
+
+void Physics::build_enriched_primal_fields() {
+  GOAL_DEBUG_ASSERT(u_fine.size() == 0);
+  int highest_p = get_highest_p(u);
+  int q = get_q_degree(highest_p + 1);
+  for (size_t i = 0; i < u.size(); ++i) {
+    auto idx = u[i]->get_associated_dof_idx();
+    auto n = u[i]->name() + "_fine";
+    auto b = u[i]->get_basis_type();
+    auto p = u[i]->get_p_order() + 1;
+    FieldInfo info = {disc, n, p, q, b};
+    u_fine.push_back(goal::create_field(info));
+    u_fine.back()->set_associated_dof_idx(idx);
+    u_fine.back()->set_seed(1.0);
+    project_field(u_fine.back(), u[i]);
+  }
+}
+
+void Physics::build_dual_fields() {
+  GOAL_DEBUG_ASSERT(z.size() == 0);
+  for (size_t i = 0; i < u.size(); ++i) {
+    auto idx = u[i]->get_associated_dof_idx();
+    auto n = u[i]->name() + "_dual";
+    auto b = u[i]->get_basis_type();
+    auto p = u[i]->get_p_order();
+    auto q = u[i]->get_q_degree();
+    FieldInfo info = {disc, n, p, q, b};
+    z.push_back(goal::create_field(info));
+    z.back()->set_associated_dof_idx(idx);
+    z.back()->set_seed(0.0);
+  }
+}
+
+void Physics::build_enriched_dual_fields() {
+  GOAL_DEBUG_ASSERT(z_fine.size() == 0);
+  int highest_p = get_highest_p(u);
+  int q = get_q_degree(highest_p + 1);
+  for (size_t i = 0; i < u.size(); ++i) {
+    auto idx = u[i]->get_associated_dof_idx();
+    auto n = u[i]->name() + "_dual_fine";
+    auto b = u[i]->get_basis_type();
+    auto p = u[i]->get_p_order() + 1;
+    FieldInfo info = {disc, n, p, q, b};
+    z_fine.push_back(goal::create_field(info));
+    z_fine.back()->set_associated_dof_idx(idx);
+    z_fine.back()->set_seed(0.0);
+    project_field(z_fine.back(), z[i]);
+  }
+}
+
+void Physics::build_error_fields() {
+  GOAL_DEBUG_ASSERT(e.size() == 0);
+  for (size_t i = 0; i < u.size(); ++i) {
+    auto idx = u[i]->get_associated_dof_idx();
+    auto n = u[i]->name() + "_error";
+    FieldInfo info = {disc, n, 1, 1, LAGRANGE};
+    e.push_back(goal::create_field(info));
+    e.back()->set_associated_dof_idx(idx);
+    e.back()->set_seed(0.0);
+  }
+}
+
+void Physics::destroy_enriched_primal_fields() {
+  for (size_t i = 0; i < u_fine.size(); ++i)
+    destroy_field(u_fine[i]);
+  u_fine.resize(0);
+}
+
+void Physics::destroy_dual_fields() {
+  for (size_t i = 0; i < z.size(); ++i)
+    destroy_field(z[i]);
+  z.resize(0);
+}
+
+void Physics::destroy_enriched_dual_fields() {
+  for (size_t i = 0; i < z_fine.size(); ++i)
+    destroy_field(z_fine[i]);
+  z_fine.resize(0);
+}
+
+void Physics::destroy_error_fields() {
+  for (size_t i = 0; i < e.size(); ++i)
+    destroy_field(e[i]);
+  e.resize(0);
+}
+
 void set_extended_data_type_dims(Indexer* indexer, FieldManager fm, int t) {
   std::vector<PHX::index_size_type> dd;
   dd.push_back(indexer->get_num_total_dofs(t));
