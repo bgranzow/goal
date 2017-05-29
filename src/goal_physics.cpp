@@ -167,7 +167,6 @@ void Physics::build_enriched_dual_fields() {
     z_fine.push_back(goal::create_field(info));
     z_fine.back()->set_associated_dof_idx(idx);
     z_fine.back()->set_seed(0.0);
-    project_field(z_fine.back(), z[i]);
   }
 }
 
