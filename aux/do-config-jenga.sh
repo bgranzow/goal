@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 # Modify these paths for your system
-TRILINOS_DIR=/lore/granzb/trilinos_nightly/install
+TRILINOS_DIR=/usr/local/trilinos/latest
 GOAL_SRC_DIR=/lore/granzb/goal
 GOAL_INSTALL_DIR=/lore/granzb/goal/install
 
