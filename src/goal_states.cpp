@@ -24,9 +24,11 @@ States::~States() {
 
 static apf::Matrix3x3 get_I(Discretization* d) {
   auto dim = d->get_num_dims();
+  static apf::Matrix3x3 I1x1(1, 0, 0, 0, 0, 0, 0, 0, 0);
   static apf::Matrix3x3 I2x2(1, 0, 0, 0, 1, 0, 0, 0, 0);
   static apf::Matrix3x3 I3x3(1, 0, 0, 0, 1, 0, 0, 0, 1);
   switch (dim) {
+    case 1: return I1x1; break;
     case 2: return I2x2; break;
     case 3: return I3x3; break;
     default: fail("unable to set identity");
