@@ -16,6 +16,8 @@ assert_trilinos_pkg(Phalanx)
 assert_trilinos_pkg(Belos)
 assert_trilinos_pkg(Ifpack2)
 assert_trilinos_pkg(MiniTensor)
+assert_trilinos_pkg(Amesos2)
+assert_trilinos_pkg(MueLu)
 
 list(REVERSE Trilinos_INCLUDE_DIRS)
 list(REVERSE Trilinos_TPL_INCLUDE_DIRS)

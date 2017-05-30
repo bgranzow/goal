@@ -8,11 +8,9 @@
 #include "goal_indexer.hpp"
 #include "goal_linear_solvers.hpp"
 
-#ifdef Goal_MueLu
 #include <MueLu.hpp>
 #include <MueLu_TpetraOperator.hpp>
 #include <MueLu_CreateTpetraPreconditioner.hpp>
-#endif
 
 namespace goal {
 
@@ -91,7 +89,6 @@ static RCP<Solver> build_ilu_solver(
     return Teuchos::null;
 }
 
-#ifdef Goal_MueLu
 static RCP<Solver> build_multigrid_solver_impl(
     ParameterList const& in,
     Indexer* i,
@@ -104,7 +101,7 @@ static RCP<Solver> build_multigrid_solver_impl(
   auto belos_params = get_belos_params(in);
   auto AA = (RCP<OP>)A;
   RCP<MultiVector> coords = Teuchos::null;
-  if (Teuchos::nonnull(i)) coords = i->get_coords();
+  if (i) coords = i->get_coords();
   auto P = MueLu::CreateTpetraPreconditioner(AA, mg_params, coords);
   auto problem = rcp(new LinearProblem(A, x, b));
   problem->setLeftPrec(P);
@@ -115,7 +112,6 @@ static RCP<Solver> build_multigrid_solver_impl(
     solver = rcp(new GmresSolver(problem, rcpFromRef(belos_params)));
   return solver;
 }
-#endif
 
 static RCP<Solver> build_multigrid_solver(
     ParameterList const& in,
@@ -125,12 +121,7 @@ static RCP<Solver> build_multigrid_solver(
     RCP<Vector> b,
     int type) {
   RCP<Solver> solver = Teuchos::null;
-#ifdef Goal_MueLu
   solver = build_multigrid_solver_impl(in, i, A, x, b, type);
-#else
-  (void)in; (void)i; (void)A; (void)x; (void)b; (void)type;
-  fail("calling multigrid preconditioner but Goal_MueLu=OFF!");
-#endif
   return solver;
 }
 
