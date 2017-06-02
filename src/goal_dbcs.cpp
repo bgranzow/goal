@@ -100,84 +100,8 @@ void set_dbc_values(Physics* physics, const double t) {
   }
 }
 
-template <> void apply_pre_primal_dbcs<goal::Traits::Residual>(
-    Physics* physics, SolInfo* info) {
-  auto params = physics->get_dbc_params();
-  auto indexer = physics->get_indexer();
-  auto R = info->owned->R->get1dViewNonConst();
-  for (auto it = params.begin(); it != params.end(); ++it) {
-    auto param_entry = params.entry(it);
-    auto a = getValue<Array<std::string> >(param_entry);
-    auto fld = a[0];
-    auto set = a[1];
-    auto idx = indexer->get_field_idx(fld);
-    auto nodes = indexer->get_node_set_nodes(set);
-    for (size_t node = 0; node < nodes.size(); ++node) {
-      LO row = indexer->get_owned_lid(idx, nodes[node]);
-      R[row] = 0.0;
-    }
-  }
-}
-
-template <> void apply_pre_primal_dbcs<goal::Traits::Jacobian>(
-    Physics* physics, SolInfo* info) {
-
-  auto params = physics->get_dbc_params();
-  auto indexer = physics->get_indexer();
-  auto dRdu = info->owned->dRdu;
-  auto transposer = rcp(new Transposer(dRdu));
-  auto dRduT = transposer->createTranspose();
-  auto R = info->owned->R->get1dViewNonConst();
-
-  size_t num_entries;
-  Array<LO> col_indices;
-  Array<ST> col_entries;
-
-  Array<GO> row_indices;
-  Array<ST> row_entries;
-  Array<GO> col_index(1);
-  Array<ST> entry(1);
-  entry[0] = 0.0;
-
-
-  for (auto it = params.begin(); it != params.end(); ++it) {
-
-    auto param_entry = params.entry(it);
-    auto a = getValue<Array<std::string> >(param_entry);
-    auto fld = a[0];
-    auto set = a[1];
-    auto idx = indexer->get_field_idx(fld);
-    auto nodes = indexer->get_node_set_nodes(set);
-
-    for (size_t node = 0; node < nodes.size(); ++node) {
-
-      LO row = indexer->get_owned_lid(idx, nodes[node]);
-      num_entries = dRdu->getNumEntriesInLocalRow(row);
-      col_indices.resize(num_entries);
-      col_entries.resize(num_entries);
-      dRdu->getLocalRowCopy(row, col_indices(), col_entries(), num_entries);
-      for (size_t c = 0; c < num_entries; ++c)
-        if (col_indices[c] != row)
-          col_entries[c] = 0.0;
-      dRdu->replaceLocalValues(row, col_indices(), col_entries());
-
-      GO gid = indexer->get_owned_map()->getGlobalElement(row);
-      col_index[0] = gid;
-      num_entries = dRduT->getNumEntriesInGlobalRow(gid);
-      row_indices.resize(num_entries);
-      row_entries.resize(num_entries);
-      dRduT->getGlobalRowCopy(gid, row_indices(), row_entries(), num_entries);
-      for (size_t r = 0; r < num_entries; ++r)
-        if (row_indices[r] != gid)
-          dRdu->replaceGlobalValues(row_indices[r], col_index(), entry());
-
-      R[row] = 0.0;
-    }
-  }
-}
-
-template <> void apply_post_primal_dbcs<goal::Traits::Residual>(
-    Physics* physics, SolInfo* info, const double t) {
+template <> void apply_dbcs<goal::Traits::Residual>(
+    Physics* phsyics, SolInfo* info) {
   auto params = physics->get_dbc_params();
   auto indexer = physics->get_indexer();
   auto R = info->owned->R->get1dViewNonConst();
@@ -201,23 +125,20 @@ template <> void apply_post_primal_dbcs<goal::Traits::Residual>(
   }
 }
 
-template <> void apply_post_primal_dbcs<goal::Traits::Jacobian>(
-    Physics* physics, SolInfo* info, const double t) {
-
+template <> void apply_dbcs<goal::Traits::Jacobian>(
+    Physics* physics, SolInfo* info) {
   auto params = physics->get_dbc_params();
   auto indexer = physics->get_indexer();
-  auto dRdu = info->owned->dRdu;
   auto R = info->owned->R->get1dViewNonConst();
-
+  auto dJdu = info->owned->dJdu->get1dViewNonConst();
+  auto dRdu = info->owned->dRdu;
   size_t num_entries;
   Array<LO> col_indices;
   Array<ST> col_entries;
   Array<LO> col_index(1);
   Array<ST> diag_entry(1);
   diag_entry[0] = 1.0;
-
   for (auto it = params.begin(); it != params.end(); ++it) {
-
     auto param_entry = params.entry(it);
     auto a = getValue<Array<std::string> >(param_entry);
     auto fld = a[0];
@@ -227,11 +148,13 @@ template <> void apply_post_primal_dbcs<goal::Traits::Jacobian>(
     auto f = indexer->get_field(idx);
     auto apf_f = f->get_apf_field();
     auto nodes = indexer->get_node_set_nodes(set);
-
     for (size_t node = 0; node < nodes.size(); ++node) {
-
       auto n = nodes[node];
       LO row = indexer->get_owned_lid(idx, n);
+      double v = get_bc_val(f, val, n, t);
+      double sol = apf::getScalar(apf_f, n.entity, n.node);
+      R[row] = sol - v;
+      dJdu[row] = 0.0;
       col_index[0] = row;
       num_entries = dRdu->getNumEntriesInLocalRow(row);
       col_indices.resize(num_entries);
@@ -241,10 +164,6 @@ template <> void apply_post_primal_dbcs<goal::Traits::Jacobian>(
         col_entries[c] = 0.0;
       dRdu->replaceLocalValues(row, col_indices(), col_entries());
       dRdu->replaceLocalValues(row, col_index(), diag_entry());
-
-      double v = get_bc_val(f, val, n, t);
-      double sol = apf::getScalar(apf_f, n.entity, n.node);
-      R[row] = sol - v;
     }
   }
 }
