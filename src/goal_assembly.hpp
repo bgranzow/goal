@@ -12,9 +12,6 @@ class SolInfo;
 class Discretization;
 /// @endcond
 
-/// @brief Application mode of Dirichlet boundary conditions.
-enum DBCMode {PRE, POST};
-
 /// @brief Assemble volumetric fields.
 /// @param ws The \ref goal::Workset to operate on.
 /// @param p The \ref goal::Physics to use for assembly.
@@ -42,45 +39,23 @@ template <typename EvalT>
 void assemble_dirichlet(
     Workset& ws, Physics* p, SolInfo* i, Discretization* d);
 
-/// @brief Compute the residual of the primal model.
+/// @brief Compute the forward values of a physical model.
 /// @param p The \ref goal::Physics defining the primal model.
 /// @param i The \ref goal::Indexer used for linear algebra indexing.
 /// @param d The \ref goal::Discretization to operate on.
 /// @param t_now The current evaluation time.
 /// @param t_old The previous evaluation time.
-/// @param dbc The \ref goal::DBCMode.
-void compute_primal_residual(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old, const int dbc = POST);
+void compute_residual(Physics* p, SolInfo* i, Discretization* d,
+    const double t_now, const double t_old);
 
-/// @brief Compute the Jacobian of the primal model.
+/// @brief Compute the derivatives of a physical model.
 /// @param p The \ref goal::Physics defining the primal model.
 /// @param i The \ref goal::Indexer used for linear algebra indexing.
 /// @param d The \ref goal::Discretization to operate on.
 /// @param t_now The current evaluation time.
 /// @param t_old The previous evaluation time.
-/// @param dbc The \ref goal::DBCMode.
-void compute_primal_jacobian(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old, const int dbc = POST);
-
-/// @brief Compute the Jacobian of the dual model.
-/// @param p The \ref goal::Physics defining the dual model.
-/// @param i The \ref goal::Indexer used for linear algebra indexing.
-/// @param d The \ref goal::Discretization to operate on.
-/// @param t_now The current evaluation time.
-/// @param t_old The previous evaluation time.
-/// @param dbc The \ref goal::DBCMode.
-void compute_dual_jacobian(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old, const int dbc = POST);
-
-/// @brief Compute the error residual.
-/// @param p The \ref goal::Physics defining the error model.
-/// @param i The \ref goal::Indexer used for linear algebra indexing.
-/// @param d The \ref goal::Discretization to operate on.
-/// @param t_now The current evaluation time.
-/// @param t_old The previous evaluation time.
-/// @param dbc The \ref goal::DBCMode.
-void compute_error_residual(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old, const int dbc = POST);
+void compute_jacobian(Physics* p, SolInfo* i, Discretization* d,
+    const double t_now, const double t_old);
 
 } // end namespace goal
 
