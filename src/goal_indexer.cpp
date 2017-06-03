@@ -114,7 +114,7 @@ static LO get_dof(const LO nid, const int eq, const int eqs) {
   return nid * eqs + eq;
 }
 
-static GO get_gdof(const LO nid, const int eq, const int eqs) {
+static GO get_gdof(const GO nid, const int eq, const int eqs) {
   return nid * eqs + eq;
 }
 
