@@ -79,13 +79,13 @@ void compute_residual(Physics* p, SolInfo* i, Discretization* d,
   assemble_neumann<Residual>(ws, p, i, d);
   i->gather_R();
   assemble_dirichlet<Residual>(ws, p, i, d);
-  apply_dbcs<Residual>(p, i, false);
+  apply_dbcs<Residual>(p, i, t_now);
   auto t1 = time();
   print(" > residual computed in %f seconds", t1 - t0);
 }
 
 void compute_jacobian(Physics* p, SolInfo* i, Discretization* d,
-    const double t_now, const double t_old, bool is_adj) {
+    const double t_now, const double t_old) {
   auto t0 = time();
   Workset ws;
   ws.t_now = t_now;
@@ -105,7 +105,8 @@ void compute_jacobian(Physics* p, SolInfo* i, Discretization* d,
   i->gather_dJdu();
   i->gather_dRdu();
   assemble_dirichlet<Jacobian>(ws, p, i, d);
-  apply_dbcs<Jacobian>(p, i, is_adj);
+  apply_dbcs<Jacobian>(p, i, t_now);
+  i->owned->dRdu->fillComplete();
   auto t1 = time();
   print(" > jacobian computed in %f seconds", t1 - t0);
 }

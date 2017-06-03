@@ -20,8 +20,9 @@ void set_dbc_values(Physics* p, const double t);
 /// @brief Apply primal Dirichlet boundary conditions.
 /// @param p The relevant \ref goal::Physics structure.
 /// @param i The relevant \ref goal::SolInfo structure.
+/// @param t The current evaluation time.
 template <typename EvalT>
-void apply_dbcs(Physics* p, SolInfo* i);
+void apply_dbcs(Physics* p, SolInfo* i, const double t);
 
 } // end namespace goal
 

@@ -101,7 +101,7 @@ void set_dbc_values(Physics* physics, const double t) {
 }
 
 template <> void apply_dbcs<goal::Traits::Residual>(
-    Physics* phsyics, SolInfo* info) {
+    Physics* physics, SolInfo* info, const double t) {
   auto params = physics->get_dbc_params();
   auto indexer = physics->get_indexer();
   auto R = info->owned->R->get1dViewNonConst();
@@ -126,7 +126,7 @@ template <> void apply_dbcs<goal::Traits::Residual>(
 }
 
 template <> void apply_dbcs<goal::Traits::Jacobian>(
-    Physics* physics, SolInfo* info) {
+    Physics* physics, SolInfo* info, const double t) {
   auto params = physics->get_dbc_params();
   auto indexer = physics->get_indexer();
   auto R = info->owned->R->get1dViewNonConst();
