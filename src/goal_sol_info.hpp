@@ -86,7 +86,6 @@ class SolInfo {
 
 /// @brief Create a solution information object.
 /// @param i The relevant \ref goal::Indexer.
-/// @param nqoi The number of quantities of interest.
 SolInfo* create_sol_info(Indexer* i);
 
 /// @brief Destroy a solution information object.
