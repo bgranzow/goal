@@ -57,6 +57,15 @@ void compute_residual(Physics* p, SolInfo* i, Discretization* d,
 void compute_jacobian(Physics* p, SolInfo* i, Discretization* d,
     const double t_now, const double t_old);
 
+/// @brief Compute a quantity of interest.
+/// @param p The \ref goal::Physics defining the primal model.
+/// @param i The \ref goal::Indexer used for linear algebra indexing.
+/// @param d The \ref goal::Discretization to operate on.
+/// @param t_now The current evaluation time.
+/// @param t_old The previous evaluation time.
+void compute_qoi(Physics* p, SolInfo* i, Discretization* d,
+    const double t_now, const double t_old);
+
 } // end namespace goal
 
 #endif

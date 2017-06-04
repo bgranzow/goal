@@ -111,6 +111,19 @@ void compute_jacobian(Physics* p, SolInfo* i, Discretization* d,
   print(" > jacobian computed in %f seconds", t1 - t0);
 }
 
+void compute_qoi(Physics* p, SolInfo* i, Discretization* d,
+    const double t_now, const double t_old) {
+  auto t0 = time();
+  Workset ws;
+  ws.t_now = t_now;
+  ws.t_old = t_old;
+  assemble_volumetric<Residual>(ws, p, i, d);
+  assemble_neumann<Residual>(ws, p, i, d);
+  assemble_dirichlet<Residual>(ws, p, i, d);
+  auto t1 = time();
+  print(" > qoi computed in %f seconds", t1 - t0);
+}
+
 template void assemble_volumetric<Residual>(Workset& ws, Physics* p, SolInfo* i, Discretization* d);
 template void assemble_volumetric<Jacobian>(Workset& ws, Physics* p, SolInfo* i, Discretization* d);
 template void assemble_neumann<Residual>(Workset& ws, Physics* p, SolInfo* i, Discretization* d);
