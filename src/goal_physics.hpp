@@ -75,14 +75,13 @@ class Physics {
     /// @brief Destroy the current indexer.
     void destroy_indexer();
 
-    /// @brief Build the user-implemented primal model.
-    void build_primal_model();
-
-    /// @brief Build the user-implemented dual model.
-    void build_dual_model();
-
-    /// @brief Build the user-implemented error model.
-    void build_error_model();
+    /// @brief Build the user-implemented physics model.
+    /// @param name A user-defined name for the current model.
+    /// @details This calls the user-implemented methods:
+    /// - build_volumetric
+    /// - build_neumann
+    /// - build_dirichlet
+    void build_model(std::string const& name);
 
     /// @brief Destroy the current model.
     void destroy_model();
@@ -137,17 +136,9 @@ class Physics {
 
   protected:
 
-    virtual void build_primal_volumetric(FieldManager) {}
-    virtual void build_primal_neumann(FieldManager) {}
-    virtual void build_primal_dirichlet(FieldManager) {}
-
-    virtual void build_dual_volumetric(FieldManager) {}
-    virtual void build_dual_neumann(FieldManager) {}
-    virtual void build_dual_dirichlet(FieldManager) {}
-
-    virtual void build_error_volumetric(FieldManager) {}
-    virtual void build_error_neumann(FieldManager) {}
-    virtual void build_error_dirichlet(FieldManager) {}
+    virtual void build_volumetric(FieldManager) {}
+    virtual void build_neumann(FieldManager) {}
+    virtual void build_dirichlet(FieldManager) {}
 
     Discretization* disc;
     Indexer* indexer;

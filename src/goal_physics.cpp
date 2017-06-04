@@ -31,7 +31,7 @@ void Physics::destroy_indexer() {
   goal::destroy_indexer(indexer);
 }
 
-void Physics::build_primal_model() {
+void Physics::build_model(std::string const& name) {
   auto t0 = time();
   auto nes = disc->get_num_elem_sets();
   auto nss = disc->get_num_side_sets();
@@ -40,61 +40,17 @@ void Physics::build_primal_model() {
   for (int i = 0; i < nes; ++i) {
     elem_set = i;
     vfms[i] = rcp(new PHX::FieldManager<goal::Traits>);
-    build_primal_volumetric(vfms[i]);
+    build_volumetric(vfms[i]);
   }
   for (int i = 0; i < nss; ++i) {
     side_set = i;
     nfms[i] = rcp(new PHX::FieldManager<goal::Traits>);
-    build_primal_neumann(nfms[i]);
+    build_neumann(nfms[i]);
   }
   dfm = rcp(new PHX::FieldManager<goal::Traits>);
-  build_primal_dirichlet(dfm);
+  build_dirichlet(dfm);
   auto t1 = time();
-  print(" > primal model built in %f seconds", t1 - t0);
-}
-
-void Physics::build_dual_model() {
-  auto t0 = time();
-  auto nes = disc->get_num_elem_sets();
-  auto nss = disc->get_num_side_sets();
-  vfms.resize(nes);
-  nfms.resize(nss);
-  for (int i = 0; i < nes; ++i) {
-    elem_set = i;
-    vfms[i] = rcp(new PHX::FieldManager<goal::Traits>);
-    build_dual_volumetric(vfms[i]);
-  }
-  for (int i = 0; i < nss; ++i) {
-    side_set = i;
-    nfms[i] = rcp(new PHX::FieldManager<goal::Traits>);
-    build_dual_neumann(nfms[i]);
-  }
-  dfm = rcp(new PHX::FieldManager<goal::Traits>);
-  build_dual_dirichlet(dfm);
-  auto t1 = time();
-  print(" > dual model built in %f seconds", t1 - t0);
-}
-
-void Physics::build_error_model() {
-  auto t0 = time();
-  auto nes = disc->get_num_elem_sets();
-  auto nss = disc->get_num_side_sets();
-  vfms.resize(nes);
-  nfms.resize(nss);
-  for (int i = 0; i < nes; ++i) {
-    elem_set = i;
-    vfms[i] = rcp(new PHX::FieldManager<goal::Traits>);
-    build_error_volumetric(vfms[i]);
-  }
-  for (int i = 0; i < nss; ++i) {
-    side_set = i;
-    nfms[i] = rcp(new PHX::FieldManager<goal::Traits>);
-    build_error_neumann(nfms[i]);
-  }
-  dfm = rcp(new PHX::FieldManager<goal::Traits>);
-  build_error_dirichlet(dfm);
-  auto t1 = time();
-  print(" > error model built in %f seconds", t1 - t0);
+  print(" > %s model built in %f seconds", name.c_str(), t1 - t0);
 }
 
 void Physics::destroy_model() {
