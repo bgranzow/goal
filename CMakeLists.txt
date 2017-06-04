@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(Goal VERSION 0.1.0 LANGUAGES CXX)
+project(Goal VERSION 1.0.0 LANGUAGES CXX)
 include(cmake/bob.cmake)
 bob_begin_package()
 bob_begin_cxx_flags()
