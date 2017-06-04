@@ -17,17 +17,25 @@ QoI<goal::Traits::Residual, TRAITS>::QoI(
     Field* f,
     std::string const& n,
     int type) {
+
+  auto dl = f->ent0_dl(type);
+  qoi = PHX::MDField<const ScalarT, Ent>(n, dl);
+
+  auto name = "QoI : " + n;
+  PHX::Tag<ScalarT> op(name, rcp(new PHX::MDALayout<Dummy>(0)));
+
+  this->addDependentField(qoi);
+  this->addEvaluatedField(op);
+  this->setName(name);
+
   (void)i;
-  (void)f;
-  (void)n;
-  (void)type;
 }
 
 template <typename TRAITS>
 void QoI<goal::Traits::Residual, TRAITS>::postRegistrationSetup(
     SetupData d, PHX::FieldManager<TRAITS>& fm) {
+  this->utils.setFieldData(qoi, fm);
   (void)d;
-  (void)fm;
 }
 
 template <typename TRAITS>

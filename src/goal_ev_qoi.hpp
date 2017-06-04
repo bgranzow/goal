@@ -54,6 +54,11 @@ class QoI<goal::Traits::Residual, TRAITS>
     /// @brief Do nothing.
     /// @param workset The local workset to operate over.
     void evaluateFields(EvalData workset);
+
+  private:
+
+    // input
+    PHX::MDField<const ScalarT, Ent> qoi;
 };
 
 /// @brief Scatter the QoI derivative vector.
