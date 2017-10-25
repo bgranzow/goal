@@ -1,0 +1,10 @@
+elem set square 1
+2 9
+node set xmin 1
+1 4
+node set xmax 1
+1 6
+node set ymin 1
+1 2
+node set ymax 1
+1 8
