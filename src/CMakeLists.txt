@@ -17,6 +17,7 @@ goal_mixed.cpp
 goal_mresidual.cpp
 goal_presidual.cpp
 goal_stabilization.cpp
+goal_assembly.cpp
 )
 
 set(GOAL_HEADERS
@@ -41,6 +42,7 @@ goal_mixed.hpp
 goal_mresidual.hpp
 goal_presidual.hpp
 goal_stabilization.hpp
+goal_assembly.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
