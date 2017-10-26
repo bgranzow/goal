@@ -23,6 +23,7 @@ goal_avg_disp.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
 goal_linear_solve.cpp
+goal_mechanics.cpp
 )
 
 set(GOAL_HEADERS
@@ -53,6 +54,7 @@ goal_avg_disp.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
 goal_linear_solve.hpp
+goal_mechanics.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
