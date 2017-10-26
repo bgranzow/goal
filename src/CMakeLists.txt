@@ -83,4 +83,12 @@ target_link_libraries(GOAL PUBLIC
   SCOREC::core)
 bob_export_target(GOAL)
 
+function(add_exe exename exesrc)
+  add_executable(${exename} ${exesrc})
+  target_link_libraries(${exename} PRIVATE GOAL)
+  bob_export_target(${exename})
+endfunction()
+
+add_exe(GoalPrimal main_primal.cpp)
+
 bob_end_subdir()
