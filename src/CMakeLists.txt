@@ -18,6 +18,7 @@ goal_mresidual.cpp
 goal_presidual.cpp
 goal_stabilization.cpp
 goal_qoi.cpp
+goal_point_wise.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
 goal_linear_solve.cpp
@@ -46,6 +47,7 @@ goal_mresidual.hpp
 goal_presidual.hpp
 goal_stabilization.hpp
 goal_qoi.hpp
+goal_point_wise.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
 goal_linear_solve.hpp
