@@ -3,9 +3,9 @@ J2 uniaxial 3D:
   step size: 1.0
   initial time: 0.0 
   discretization:
-    geom file: '../test/mesh/cube/cube.dmg'
-    mesh file: '../test/mesh/cube/cube.smb'
-    assoc file: '../test/mesh/cube/cube.txt'
+    geom file: '../../test/mesh/cube/cube.dmg'
+    mesh file: '../../test/mesh/cube/cube.smb'
+    assoc file: '../../test/mesh/cube/cube.txt'
   dirichlet bcs:
     bc 1: [0, xmin, 0.0]
     bc 2: [1, ymin, 0.0]

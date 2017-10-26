@@ -1,23 +1,22 @@
-J2 uniaxial 2D:
+neohookean uniaxial 3D:
   num steps: 3
   step size: 1.0
   initial time: 0.0 
   discretization:
-    geom file: '../test/mesh/square/square.dmg'
-    mesh file: '../test/mesh/square/square.smb'
-    assoc file: '../test/mesh/square/square.txt'
+    geom file: '../../test/mesh/cube/cube.dmg'
+    mesh file: '../../test/mesh/cube/cube.smb'
+    assoc file: '../../test/mesh/cube/cube.txt'
   dirichlet bcs:
     bc 1: [0, xmin, 0.0]
     bc 2: [1, ymin, 0.0]
-    bc 3: [0, xmax, 0.01*t]
+    bc 3: [2, zmin, 0.0]
+    bc 4: [0, xmax, 0.01*t]
   mechanics:
-    model: J2
+    model: neohookean
     materials:
-      square:
+      cube:
         E: 1000.0
         nu: 0.25
-        K: 100.0
-        Y: 10.0
         c0: 1.0
   primal linear algebra:
     krylov size: 100
@@ -25,13 +24,13 @@ J2 uniaxial 2D:
     tolerance: 1.0e-10
     multigrid:
       verbosity: none
-      number of equations: 3
+      number of equations: 4
     nonlinear tolerance: 1.0e-8
     nonlinear max iters: 5
   functional:
     type: avg disp
   output:
-    out file: out_J2_uniaxial_2D
+    out file: out_neohookean_uniaxial_3D
   regression:
-    value: 2.695252589253065e-03
+    value: 2.541285341193943e-03
     tolerance: 1.0e-8
