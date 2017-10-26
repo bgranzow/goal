@@ -10,6 +10,7 @@ goal_pressure.cpp
 goal_scalar_weight.cpp
 goal_vector_weight.cpp
 goal_kinematics.cpp
+goal_model.cpp
 )
 
 set(GOAL_HEADERS
@@ -27,6 +28,7 @@ goal_pressure.hpp
 goal_scalar_weight.hpp
 goal_vector_weight.hpp
 goal_kinematics.hpp
+goal_model.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
