@@ -65,4 +65,8 @@ mpi_test(sol_info_2D_4p test_sol_info 4 ${square_4p_args})
 mpi_test(sol_info_3D_1p test_sol_info 1 ${cube_1p_args})
 mpi_test(sol_info_3D_4p test_sol_info 4 ${cube_4p_args})
 
+test_exe(test_states states.cpp)
+mpi_test(states_2D test_states 1 ${square_1p_args})
+mpi_test(states_3D test_states 1 ${cube_1p_args})
+
 bob_end_subdir()
