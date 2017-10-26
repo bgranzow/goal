@@ -20,7 +20,13 @@ class Nested : public Disc {
   private:
     void number_elems();
     void copy_mesh();
+    void tag_old_verts();
+    void refine_uniform();
+    void refine_mesh();
+    void refine_long();
+    void store_old_verts();
     int mode;
+    double ratio;
     apf::Mesh2* base_mesh;
     apf::MeshTag* old_vtx_tag;
     apf::MeshTag* new_vtx_tag;

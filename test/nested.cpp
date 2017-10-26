@@ -95,10 +95,12 @@ int main(int argc, char** argv) {
   p.set<std::string>("mesh file", argv[2]);
   p.set<std::string>("assoc file", argv[3]);
   auto d = goal::create_disc(p);
-  auto n1 = goal::create_nested(d, 0);
-  if (0)
-  test::check_disc(d);
+  auto n1 = goal::create_nested(d, goal::UNIFORM);
+  test::check_disc(n1);
   goal::destroy_nested(n1);
+  auto n2 = goal::create_nested(d, goal::LONG);
+  test::check_disc(n2);
+  goal::destroy_nested(n2);
   goal::destroy_disc(d);
   goal::finalize();
 }
