@@ -30,7 +30,7 @@ class Disc {
     Disc(ParameterList const& p);
     ~Disc();
     apf::Mesh2* get_apf_mesh() { return mesh; }
-    apf::StkModels* get_model_set() { return sets; }
+    apf::StkModels* get_model_sets() { return sets; }
     bool is_base() const { return am_base; }
     int get_num_eqs() const { return num_eqs; }
     int get_num_dims() const { return num_dims; }
@@ -55,7 +55,7 @@ class Disc {
     void get_lids(apf::MeshEntity* e, std::vector<LO>& lids);
     void build_data();
     void destroy_data();
-  private:
+  protected:
     void initialize();
     void compute_owned_maps();
     void compute_ghost_map();
