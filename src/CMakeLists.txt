@@ -24,6 +24,7 @@ goal_assembly.cpp
 goal_dbcs.cpp
 goal_linear_solve.cpp
 goal_mechanics.cpp
+goal_primal.cpp
 )
 
 set(GOAL_HEADERS
@@ -55,6 +56,7 @@ goal_assembly.hpp
 goal_dbcs.hpp
 goal_linear_solve.hpp
 goal_mechanics.hpp
+goal_primal.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
