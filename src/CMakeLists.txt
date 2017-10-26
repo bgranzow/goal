@@ -26,6 +26,7 @@ goal_linear_solve.cpp
 goal_mechanics.cpp
 goal_primal.cpp
 goal_functional.cpp
+goal_output.cpp
 )
 
 set(GOAL_HEADERS
@@ -59,6 +60,7 @@ goal_linear_solve.hpp
 goal_mechanics.hpp
 goal_primal.hpp
 goal_functional.hpp
+goal_output.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
