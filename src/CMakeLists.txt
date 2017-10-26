@@ -27,6 +27,7 @@ goal_mechanics.cpp
 goal_primal.cpp
 goal_functional.cpp
 goal_output.cpp
+goal_regression.cpp
 )
 
 set(GOAL_HEADERS
@@ -61,6 +62,7 @@ goal_mechanics.hpp
 goal_primal.hpp
 goal_functional.hpp
 goal_output.hpp
+goal_regression.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
