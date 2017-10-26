@@ -76,7 +76,7 @@ class Transfer : public ma::SolutionTransfer {
   public:
     Transfer(apf::Mesh* m, apf::MeshTag* o, apf::MeshTag* n);
     bool hasNodesOn(int dim);
-    void onVertex(apf::MeshElement* p, ma::Vector&, ma::Entity* vtx);
+    void onVertex(apf::MeshElement* p, ma::Vector const&, ma::Entity* vtx);
     void onRefine(ma::Entity* p, ma::EntityArray& c);
     int num_elems;
     double ratio;
@@ -102,7 +102,10 @@ bool Transfer::hasNodesOn(int dim) {
   return false;
 }
 
-void Transfer::onVertex(apf::MeshElement* p, ma::Vector&, ma::Entity* vtx) {
+void Transfer::onVertex(
+    apf::MeshElement* p,
+    ma::Vector const&,
+    ma::Entity* vtx) {
   int tags[2];
   apf::MeshEntity* verts[2];
   auto edge = apf::getMeshEntity(p);
