@@ -12,6 +12,7 @@ goal_vector_weight.cpp
 goal_kinematics.cpp
 goal_model.cpp
 goal_neohookean.cpp
+goal_J2.cpp
 )
 
 set(GOAL_HEADERS
@@ -31,6 +32,7 @@ goal_vector_weight.hpp
 goal_kinematics.hpp
 goal_model.hpp
 goal_neohookean.hpp
+goal_J2.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
