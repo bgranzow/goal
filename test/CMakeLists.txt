@@ -69,4 +69,8 @@ test_exe(test_states states.cpp)
 mpi_test(states_2D test_states 1 ${square_1p_args})
 mpi_test(states_3D test_states 1 ${cube_1p_args})
 
+test_exe(test_dofs dofs.cpp)
+mpi_test(dofs_2D test_dofs 1 ${square_1p_args})
+mpi_test(dofs_3D test_dofs 1 ${cube_1p_args})
+
 bob_end_subdir()

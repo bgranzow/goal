@@ -5,17 +5,22 @@ goal_nested.cpp
 goal_sol_info.cpp
 goal_states.cpp
 goal_integrator.cpp
+goal_displacement.cpp
+goal_pressure.cpp
 )
 
 set(GOAL_HEADERS
 goal_scalar_types.hpp
 goal_data_types.hpp
+goal_eval_modes.hpp
 goal_control.hpp
 goal_disc.hpp
 goal_nested.hpp
 goal_sol_info.hpp
 goal_states.hpp
 goal_integrator.hpp
+goal_displacement.hpp
+goal_pressure.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
