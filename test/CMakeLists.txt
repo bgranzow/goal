@@ -53,4 +53,6 @@ mpi_test(disc_2D_4p test_disc 4 ${square_4p_args})
 mpi_test(disc_3D_1p test_disc 1 ${cube_1p_args})
 mpi_test(disc_3D_4p test_disc 4 ${cube_4p_args})
 
+test_exe(test_nested nested.cpp)
+
 bob_end_subdir()
