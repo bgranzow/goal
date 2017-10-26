@@ -2,6 +2,7 @@ set(GOAL_SOURCES
 goal_control.cpp
 goal_disc.cpp
 goal_nested.cpp
+goal_sol_info.cpp
 )
 
 set(GOAL_HEADERS
@@ -10,6 +11,7 @@ goal_data_types.hpp
 goal_control.hpp
 goal_disc.hpp
 goal_nested.hpp
+goal_sol_info.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})

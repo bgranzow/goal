@@ -54,5 +54,15 @@ mpi_test(disc_3D_1p test_disc 1 ${cube_1p_args})
 mpi_test(disc_3D_4p test_disc 4 ${cube_4p_args})
 
 test_exe(test_nested nested.cpp)
+mpi_test(nested_2D_1p test_nested 1 ${square_1p_args})
+mpi_test(nested_2D_4p test_nested 4 ${square_4p_args})
+mpi_test(nested_3D_1p test_nested 1 ${cube_1p_args})
+mpi_test(nested_3D_4p test_nested 4 ${cube_4p_args})
+
+test_exe(test_sol_info sol_info.cpp)
+mpi_test(sol_info_2D_1p test_sol_info 1 ${square_1p_args})
+mpi_test(sol_info_2D_4p test_sol_info 4 ${square_4p_args})
+mpi_test(sol_info_3D_1p test_sol_info 1 ${cube_1p_args})
+mpi_test(sol_info_3D_4p test_sol_info 4 ${cube_4p_args})
 
 bob_end_subdir()
