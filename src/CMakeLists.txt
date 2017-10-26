@@ -7,6 +7,8 @@ goal_states.cpp
 goal_integrator.cpp
 goal_displacement.cpp
 goal_pressure.cpp
+goal_scalar_weight.cpp
+goal_vector_weight.cpp
 )
 
 set(GOAL_HEADERS
@@ -21,6 +23,8 @@ goal_states.hpp
 goal_integrator.hpp
 goal_displacement.hpp
 goal_pressure.hpp
+goal_scalar_weight.hpp
+goal_vector_weight.hpp
 )
 
 add_library(GOAL ${GOAL_SOURCES} ${GOAL_HEADERS})
