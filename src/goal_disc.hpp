@@ -53,6 +53,7 @@ class Disc {
     LO get_lid(apf::MeshEntity* e, int n, int eq);
     LO get_lid(apf::Node const& n, int eq);
     void get_lids(apf::MeshEntity* e, std::vector<LO>& lids);
+    void add_soln(RCP<VectorT> du);
     void build_data();
     void destroy_data();
   protected:

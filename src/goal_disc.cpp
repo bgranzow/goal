@@ -365,6 +365,32 @@ void Disc::compute_node_sets() {
   }
 }
 
+void Disc::add_soln(RCP<VectorT> du) {
+  apf::Vector3 disp;
+  apf::DynamicArray<apf::Node> nodes;
+  apf::getNodes(owned_nmbr, nodes);
+  auto data = du->get1dView();
+  auto u = mesh->findField("u");
+  auto p = mesh->findField("p");
+  for (size_t n = 0; n < nodes.size(); ++n) {
+    auto node = nodes[n];
+    auto ent = node.entity;
+    auto lnode = node.node;
+    double press = apf::getScalar(p, ent, lnode);
+    apf::getVector(u, ent, lnode, disp);
+    for (int d = 0; d < num_dims; ++d) {
+      LO row = get_lid(node, d);
+      disp[d] += data[row];
+    }
+    LO row = get_lid(node, num_dims);
+    press += data[row];
+    apf::setVector(u, ent, lnode, disp);
+    apf::setScalar(p, ent, lnode, press);
+  }
+  apf::synchronize(u);
+  apf::synchronize(p);
+}
+
 Disc* create_disc(ParameterList const& p) {
   return new Disc(p);
 }
