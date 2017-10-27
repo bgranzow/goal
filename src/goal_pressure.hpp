@@ -13,14 +13,14 @@ template <typename T> class Pressure;
 template <>
 class Pressure<ST> : public Integrator {
   public:
-    Pressure(apf::Field* base, const int mode);
+    Pressure(apf::Field* base, int mode);
     ~Pressure();
     int get_num_dims() { return num_dims; }
     int get_num_nodes() { return num_nodes; }
     ST& val();
-    ST& grad(const int i);
-    ST& nodal(const int n);
-    ST& resid(const int n);
+    ST& grad(int i);
+    ST& nodal(int n);
+    ST& resid(int n);
     void pre_process(SolInfo* s);
     void gather(apf::MeshElement* me);
     void at_point(apf::Vector3 const& p, double, double);
@@ -47,14 +47,14 @@ class Pressure<ST> : public Integrator {
 template <>
 class Pressure<FADT> : public Integrator {
   public:
-    Pressure(apf::Field* base, const int mode);
+    Pressure(apf::Field* base, int mode);
     ~Pressure();
     int get_num_dims() { return num_dims; }
     int get_num_nodes() { return num_nodes; }
     FADT& val();
-    FADT& grad(const int i);
-    FADT& nodal(const int n);
-    FADT& resid(const int n);
+    FADT& grad(int i);
+    FADT& nodal(int n);
+    FADT& resid(int n);
     void pre_process(SolInfo* s);
     void gather(apf::MeshElement* me);
     void at_point(apf::Vector3 const& p, double, double);

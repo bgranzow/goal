@@ -59,7 +59,7 @@ class Solver {
     ~Solver();
     void solve();
   private:
-    void adapt(const int step, const int cycle);
+    void adapt(int step, int cycle);
     RCP<ParameterList> params;
     Disc* disc;
     Mechanics* mech;
@@ -112,12 +112,12 @@ static int get_shrink_factor(apf::Mesh* m, double min) {
   return factor;
 }
 
-static void warn_about_shrink(const int factor) {
+static void warn_about_shrink(int factor) {
   int nprocs = PCU_Comm_Peers() / factor;
   print(" > shrinking to %d procs to avoid turkey gobbling", nprocs);
 }
 
-static void run_shrunken(apf::Mesh2* m, const int f, GroupCode& c) {
+static void run_shrunken(apf::Mesh2* m, int f, GroupCode& c) {
   if (f == 1) c.run(0);
   else {
     warn_about_shrink(f);
@@ -134,7 +134,7 @@ static void configure_ma(ma::Input* in, ParameterList& p) {
 
 struct SPRCallback : public GroupCode {
   public:
-    SPRCallback(apf::Mesh2* m, const int t, ParameterList const& p) {
+    SPRCallback(apf::Mesh2* m, int t, ParameterList const& p) {
       mesh = m;
       target = t;
       params = p;
@@ -160,7 +160,7 @@ struct SPRCallback : public GroupCode {
     ParameterList params;
 };
 
-void Solver::adapt(const int step, const int cycle) {
+void Solver::adapt(int step, int cycle) {
   if (cycle == num_cycles) return;
   print("*** adaptation");
   print("*** at step: (%d)", step);

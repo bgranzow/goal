@@ -34,7 +34,7 @@ class Nested : public Disc {
     EntArray old_vertices;
 };
 
-Nested* create_nested(Disc* d, const int mode);
+Nested* create_nested(Disc* d, int mode);
 void destroy_nested(Nested* n);
 
 }

@@ -50,7 +50,7 @@ J2<T>::J2(
 }
 
 template <typename T>
-void J2<T>::set_elem_set(const int es_idx) {
+void J2<T>::set_elem_set(int es_idx) {
   auto d = states->get_disc();
   auto es_name = d->get_elem_set_name(es_idx);
   ParameterList mat = params.sublist(es_name);

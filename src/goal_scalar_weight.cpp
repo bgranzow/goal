@@ -13,11 +13,11 @@ ScalarWeight::ScalarWeight(apf::Field* base) {
 ScalarWeight::~ScalarWeight() {
 }
 
-ST const& ScalarWeight::val(const int node) const {
+ST const& ScalarWeight::val(int node) const {
   return BF[node];
 }
 
-ST const& ScalarWeight::grad(const int node, const int i) const {
+ST const& ScalarWeight::grad(int node, int i) const {
   return GBF[node][i];
 }
 

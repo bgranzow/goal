@@ -40,7 +40,7 @@ Neohookean<T>::Neohookean(
 }
 
 template <typename T>
-void Neohookean<T>::set_elem_set(const int es_idx) {
+void Neohookean<T>::set_elem_set(int es_idx) {
   auto d = states->get_disc();
   auto es_name = d->get_elem_set_name(es_idx);
   ParameterList mat = params.sublist(es_name);

@@ -8,7 +8,7 @@
 
 namespace goal {
 
-Pressure<ST>::Pressure(apf::Field* base, const int mode) {
+Pressure<ST>::Pressure(apf::Field* base, int mode) {
   disc = 0;
   elem = 0;
   num_dims = 0;
@@ -30,15 +30,15 @@ ST& Pressure<ST>::val() {
   return value;
 }
 
-ST& Pressure<ST>::grad(const int i) {
+ST& Pressure<ST>::grad(int i) {
   return gradient[i];
 }
 
-ST& Pressure<ST>::nodal(const int n) {
+ST& Pressure<ST>::nodal(int n) {
   return node[n];
 }
 
-ST& Pressure<ST>::resid(const int n) {
+ST& Pressure<ST>::resid(int n) {
   return residual[n];
 }
 
@@ -92,7 +92,7 @@ void Pressure<ST>::post_process(SolInfo*) {
   disc = 0;
 }
 
-Pressure<FADT>::Pressure(apf::Field* base, const int mode) {
+Pressure<FADT>::Pressure(apf::Field* base, int mode) {
   disc = 0;
   elem = 0;
   num_dims = 0;
@@ -116,15 +116,15 @@ FADT& Pressure<FADT>::val() {
   return value;
 }
 
-FADT& Pressure<FADT>::grad(const int i) {
+FADT& Pressure<FADT>::grad(int i) {
   return gradient[i];
 }
 
-FADT& Pressure<FADT>::nodal(const int n) {
+FADT& Pressure<FADT>::nodal(int n) {
   return node_fadt[n];
 }
 
-FADT& Pressure<FADT>::resid(const int n) {
+FADT& Pressure<FADT>::resid(int n) {
   return residual[n];
 }
 

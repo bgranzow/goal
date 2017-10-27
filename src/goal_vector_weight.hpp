@@ -10,8 +10,8 @@ namespace goal {
 class VectorWeight : public Integrator {
   public:
     VectorWeight(apf::Field* base);
-    virtual ST const& val(const int node, const int i) const;
-    virtual ST const& grad(const int node, const int i, const int j) const;
+    virtual ST const& val(int node, int i) const;
+    virtual ST const& grad(int node, int i, int j) const;
     virtual void in_elem(apf::MeshElement* me);
     virtual void at_point(apf::Vector3 const& p, double, double);
     virtual void out_elem();

@@ -25,7 +25,7 @@ class Stabilization : public Integrator {
         RCP<Kinematics<T>> k,
         ParameterList const& mat);
     void pre_process(SolInfo*);
-    void set_elem_set(const int es_idx);
+    void set_elem_set(int es_idx);
     void in_elem(apf::MeshElement* me);
     void at_point(apf::Vector3 const&, double ipw, double dv);
     void out_elem();

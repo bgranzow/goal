@@ -13,14 +13,14 @@ template <typename T> class Displacement;
 template <>
 class Displacement<ST> : public Integrator {
   public:
-    Displacement(apf::Field* base, const int mode);
+    Displacement(apf::Field* base, int mode);
     ~Displacement();
     int get_num_dims() { return num_dims; }
     int get_num_nodes() { return num_nodes; }
-    ST& val(const int i);
-    ST& grad(const int i, const int j);
-    ST& nodal(const int n, const int i);
-    ST& resid(const int n, const int i);
+    ST& val(int i);
+    ST& grad(int i, int j);
+    ST& nodal(int n, int i);
+    ST& resid(int n, int i);
     void pre_process(SolInfo* s);
     void gather(apf::MeshElement* me);
     void at_point(apf::Vector3 const& p, double, double);
@@ -47,14 +47,14 @@ class Displacement<ST> : public Integrator {
 template <>
 class Displacement<FADT> : public Integrator {
   public:
-    Displacement(apf::Field* base, const int mode);
+    Displacement(apf::Field* base, int mode);
     ~Displacement();
     int get_num_dims() { return num_dims; }
     int get_num_nodes() { return num_nodes; }
-    FADT& val(const int i);
-    FADT& grad(const int i, const int j);
-    FADT& nodal(const int n, const int i);
-    FADT& resid(const int n, const int i);
+    FADT& val(int i);
+    FADT& grad(int i, int j);
+    FADT& nodal(int n, int i);
+    FADT& resid(int n, int i);
     void pre_process(SolInfo* s);
     void gather(apf::MeshElement* me);
     void at_point(apf::Vector3 const& p, double, double);

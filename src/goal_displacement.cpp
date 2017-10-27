@@ -8,7 +8,7 @@
 
 namespace goal {
 
-Displacement<ST>::Displacement(apf::Field* base, const int mode) {
+Displacement<ST>::Displacement(apf::Field* base, int mode) {
   disc = 0;
   elem = 0;
   num_nodes = 0;
@@ -25,19 +25,19 @@ Displacement<ST>::Displacement(apf::Field* base, const int mode) {
 Displacement<ST>::~Displacement() {
 }
 
-ST& Displacement<ST>::val(const int i) {
+ST& Displacement<ST>::val(int i) {
   return value[i];
 }
 
-ST& Displacement<ST>::grad(const int i, const int j) {
+ST& Displacement<ST>::grad(int i, int j) {
   return gradient[i][j];
 }
 
-ST& Displacement<ST>::nodal(const int n, const int i) {
+ST& Displacement<ST>::nodal(int n, int i) {
   return node[n][i];
 }
 
-ST& Displacement<ST>::resid(const int n, const int i) {
+ST& Displacement<ST>::resid(int n, int i) {
   return residual[n * num_dims + i];
 }
 
@@ -95,7 +95,7 @@ void Displacement<ST>::post_process(SolInfo*) {
   disc = 0;
 }
 
-Displacement<FADT>::Displacement(apf::Field* base, const int mode) {
+Displacement<FADT>::Displacement(apf::Field* base, int mode) {
   disc = 0;
   elem = 0;
   num_nodes = 0;
@@ -114,19 +114,19 @@ Displacement<FADT>::Displacement(apf::Field* base, const int mode) {
 Displacement<FADT>::~Displacement() {
 }
 
-FADT& Displacement<FADT>::val(const int i) {
+FADT& Displacement<FADT>::val(int i) {
   return value[i];
 }
 
-FADT& Displacement<FADT>::grad(const int i, const int j) {
+FADT& Displacement<FADT>::grad(int i, int j) {
   return gradient[i * num_dims + j];
 }
 
-FADT& Displacement<FADT>::nodal(const int n, const int i) {
+FADT& Displacement<FADT>::nodal(int n, int i) {
   return node_fadt[n * num_dims + i];
 }
 
-FADT& Displacement<FADT>::resid(const int n, const int i) {
+FADT& Displacement<FADT>::resid(int n, int i) {
   return residual[n * num_dims + i];
 }
 

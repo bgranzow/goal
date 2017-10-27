@@ -16,7 +16,7 @@ class PResidual : public Integrator {
         RCP<Kinematics<T>> k,
         ParameterList const& mat);
     void pre_process(SolInfo* s);
-    void set_elem_set(const int es_idx);
+    void set_elem_set(int es_idx);
     void at_point(apf::Vector3 const&, double, double);
     void post_process(SolInfo*);
   private:

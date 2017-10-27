@@ -13,7 +13,7 @@ class Model : public Integrator {
   public:
     Model();
     virtual ~Model();
-    virtual void set_elem_set(const int) {}
+    virtual void set_elem_set(int) {}
     virtual void in_elem(apf::MeshElement*) {}
     virtual void at_point(apf::Vector3 const&, double, double) {}
     virtual void out_elem() {}

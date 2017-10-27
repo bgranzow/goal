@@ -11,8 +11,8 @@ class ScalarWeight : public Integrator {
   public:
     ScalarWeight(apf::Field* base);
     virtual ~ScalarWeight();
-    virtual ST const& val(const int node) const;
-    virtual ST const& grad(const int node, const int i) const;
+    virtual ST const& val(int node) const;
+    virtual ST const& grad(int node, int i) const;
     virtual void in_elem(apf::MeshElement* me);
     virtual void at_point(apf::Vector3 const& p, double, double);
     virtual void out_elem();

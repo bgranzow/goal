@@ -44,7 +44,7 @@ void Stabilization<T>::pre_process(SolInfo* s) {
 }
 
 template <typename T>
-void Stabilization<T>::set_elem_set(const int es_idx) {
+void Stabilization<T>::set_elem_set(int es_idx) {
   auto es_name = disc->get_elem_set_name(es_idx);
   ParameterList mat = params.sublist(es_name);
   double E = mat.get<double>("E");

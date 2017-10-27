@@ -21,7 +21,7 @@ class J2 : public Model<T> {
         States* s,
         const bool save,
         ParameterList const& p);
-    void set_elem_set(const int es_idx);
+    void set_elem_set(int es_idx);
     void in_elem(apf::MeshElement* me);
     void at_point(apf::Vector3 const&, double, double);
     void out_elem();

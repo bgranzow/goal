@@ -10,11 +10,11 @@ VectorWeight::VectorWeight(apf::Field* base) {
   this->name = fname.substr(0, 1) + "w";
 }
 
-ST const& VectorWeight::val(const int node, const int) const {
+ST const& VectorWeight::val(int node, int) const {
   return BF[node];
 }
 
-ST const& VectorWeight::grad(const int node, const int, const int j) const {
+ST const& VectorWeight::grad(int node, int, int j) const {
   return GBF[node][j];
 }
 

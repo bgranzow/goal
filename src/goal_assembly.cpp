@@ -26,7 +26,7 @@ void pre_process(SolInfo* s, Evaluators const& E) {
     E[i]->pre_process(s);
 }
 
-void set_elem_sets(const int es_idx, Evaluators const& E) {
+void set_elem_sets(int es_idx, Evaluators const& E) {
   for (size_t i = 0; i < E.size(); ++i)
     E[i]->set_elem_set(es_idx);
 }
