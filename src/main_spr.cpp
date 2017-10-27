@@ -30,6 +30,7 @@ static ParameterList get_valid_params() {
   p.set<double>("initial time", 0.0);
   p.sublist("discretization");
   p.sublist("dirichlet bcs");
+  p.sublist("traction bcs");
   p.sublist("mechanics");
   p.sublist("functional");
   p.sublist("primal linear algebra");

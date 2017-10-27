@@ -10,6 +10,7 @@
 #include "goal_primal.hpp"
 #include "goal_scalar_weight.hpp"
 #include "goal_sol_info.hpp"
+#include "goal_tbcs.hpp"
 #include "goal_vector_weight.hpp"
 
 namespace goal {
@@ -73,9 +74,12 @@ void Primal::print_banner(double t_now) {
 void Primal::compute_resid(double t_now, double t_old) {
   auto t0 = time();
   auto dbc = params.sublist("dirichlet bcs");
+  auto tbc = params.sublist("traction bcs");
+  auto w = find_evaluator("uw", residual);
   sol_info->zero_R();
   set_time(residual, t_now, t_old);
   assemble(residual, sol_info);
+  set_tbcs(tbc, w, sol_info, t_now);
   sol_info->gather_R();
   set_resid_dbcs(dbc, sol_info, t_now);
   auto t1 = time();
@@ -85,10 +89,13 @@ void Primal::compute_resid(double t_now, double t_old) {
 void Primal::compute_jacob(double t_now, double t_old) {
   auto t0 = time();
   auto dbc = params.sublist("dirichlet bcs");
+  auto tbc = params.sublist("traction bcs");
+  auto w = find_evaluator("uw", jacobian);
   sol_info->resume_fill();
   sol_info->zero_all();
   set_time(jacobian, t_now, t_old);
   assemble(jacobian, sol_info);
+  set_tbcs(tbc, w, sol_info, t_now);
   sol_info->gather_all();
   set_jac_dbcs(dbc, sol_info, t_now);
   sol_info->complete_fill();
