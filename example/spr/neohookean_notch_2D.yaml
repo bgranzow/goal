@@ -1,5 +1,5 @@
 neohookean notch 2D point wise spr:
-  num steps: 2
+  num steps: 1
   step size: 1.0
   initial time: 0.0 
   discretization:
@@ -39,5 +39,5 @@ neohookean notch 2D point wise spr:
   output:
     out file: out_neohookean_notch_2D
   regression:
-    value: 1.037813593532042e-02
+    value: 5.181872976877754e-03
     tolerance: 1.0e-8

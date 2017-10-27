@@ -5,6 +5,6 @@ function(spr_test input)
   add_test(${input} ${MPIEXE} ${MPIFLAGS} 4 ${exe} ${inyaml})
 endfunction()
 
-primal_test(neohookean_notch_2D)
+spr_test(neohookean_notch_2D)
 
 bob_end_subdir()
