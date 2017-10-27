@@ -7,7 +7,9 @@ endfunction()
 
 primal_test(neohookean_uniaxial_2D)
 primal_test(neohookean_uniaxial_3D)
+primal_test(neohookean_traction_2D)
 primal_test(J2_uniaxial_2D)
 primal_test(J2_uniaxial_3D)
+primal_test(J2_traction_3D)
 
 bob_end_subdir()

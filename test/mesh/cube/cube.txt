@@ -6,7 +6,7 @@ node set xmax 1
 2 26
 node set ymin 1
 2 29
-node set ymax 1
+side set ymax 1
 2 23
 node set zmin 1
 2 9
