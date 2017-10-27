@@ -21,11 +21,11 @@ class Primal {
     SolInfo* get_sol_info() { return sol_info; }
     void build_data();
     void destroy_data();
-    void solve(const double t_now, const double t_old);
+    void solve(double t_now, double t_old);
   private:
-    void print_banner(const double t_now);
-    void compute_resid(const double t_now, const double t_old);
-    void compute_jacob(const double t_now, const double t_old);
+    void print_banner(double t_now);
+    void compute_resid(double t_now, double t_old);
+    void compute_jacob(double t_now, double t_old);
     ParameterList params;
     Mechanics* mech;
     SolInfo* sol_info;

@@ -27,7 +27,7 @@ static double get_val(
     apf::Field* f,
     std::string const& val,
     apf::Node const& node,
-    const double t) {
+    double t) {
   apf::Vector3 x;
   auto e = node.entity;
   auto m = apf::getMesh(f);
@@ -36,7 +36,7 @@ static double get_val(
   return v;
 }
 
-void set_resid_dbcs(ParameterList const& p, SolInfo* s, const double t) {
+void set_resid_dbcs(ParameterList const& p, SolInfo* s, double t) {
   validate_params(p, s);
   apf::Vector3 disp;
   auto d = s->get_disc();
@@ -60,7 +60,7 @@ void set_resid_dbcs(ParameterList const& p, SolInfo* s, const double t) {
   }
 }
 
-void set_jac_dbcs(ParameterList const& p, SolInfo* s, const double t) {
+void set_jac_dbcs(ParameterList const& p, SolInfo* s, double t) {
   validate_params(p, s);
   apf::Vector3 disp;
   auto d = s->get_disc();

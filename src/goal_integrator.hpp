@@ -19,7 +19,7 @@ class Integrator {
     Integrator();
     virtual ~Integrator();
     std::string const& get_name() { return name; }
-    virtual void set_time(const double, const double) {}
+    virtual void set_time(double, double) {}
     virtual void pre_process(SolInfo*) {}
     virtual void set_elem_set(const int) {}
     virtual void gather(apf::MeshElement*) {}

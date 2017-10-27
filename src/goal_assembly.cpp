@@ -16,7 +16,7 @@ RCP<Integrator> find_evaluator(std::string const& n, Evaluators const& E) {
   return Teuchos::null;
 }
 
-void set_time(Evaluators& E, const double t_now, const double t_old) {
+void set_time(Evaluators& E, double t_now, double t_old) {
   for (size_t i = 0; i < E.size(); ++i)
     E[i]->set_time(t_now, t_old);
 }

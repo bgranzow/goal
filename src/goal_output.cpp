@@ -56,7 +56,7 @@ static void update_pvd(
     std::string const& name,
     std::string const& vtu,
     int& pos,
-    const double t) {
+    double t) {
   if (PCU_Comm_Self()) return;
   std::string pvd = name + ".pvd";
   std::fstream pvdf;
@@ -71,7 +71,7 @@ static void update_pvd(
   pvdf.close();
 }
 
-void Output::write_vtk(const double t) {
+void Output::write_vtk(double t) {
   auto m = disc->get_apf_mesh();
   std::ostringstream oss;
   oss << name << "_" << index;
@@ -81,7 +81,7 @@ void Output::write_vtk(const double t) {
   ++index;
 }
 
-void Output::write(const double t, const int iter) {
+void Output::write(double t, int iter) {
   if (turn_off) return;
   static int my_out_interval = 0;
   if (my_out_interval++ % interval) return;

@@ -64,13 +64,13 @@ void Primal::destroy_data() {
   }
 }
 
-void Primal::print_banner(const double t_now) {
+void Primal::print_banner(double t_now) {
   auto ndofs = sol_info->owned->R->getGlobalLength();
   print("*** primal solve: %d dofs", ndofs);
   print("*** at time: %f", t_now);
 }
 
-void Primal::compute_resid(const double t_now, const double t_old) {
+void Primal::compute_resid(double t_now, double t_old) {
   auto t0 = time();
   auto dbc = params.sublist("dirichlet bcs");
   sol_info->zero_R();
@@ -82,7 +82,7 @@ void Primal::compute_resid(const double t_now, const double t_old) {
   print(" > residual computed in %f seconds", t1 - t0);
 }
 
-void Primal::compute_jacob(const double t_now, const double t_old) {
+void Primal::compute_jacob(double t_now, double t_old) {
   auto t0 = time();
   auto dbc = params.sublist("dirichlet bcs");
   sol_info->resume_fill();
@@ -96,7 +96,7 @@ void Primal::compute_jacob(const double t_now, const double t_old) {
   print(" > jacobian computed in %f seconds", t1 - t0);
 }
 
-void Primal::solve(const double t_now, const double t_old) {
+void Primal::solve(double t_now, double t_old) {
   print_banner(t_now);
   auto disc = sol_info->get_disc();
   auto R = sol_info->owned->R;

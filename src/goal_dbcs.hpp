@@ -11,8 +11,8 @@ using Teuchos::ParameterList;
 
 class SolInfo;
 
-void set_resid_dbcs(ParameterList const& p, SolInfo* s, const double t);
-void set_jac_dbcs(ParameterList const& p, SolInfo* s, const double t);
+void set_resid_dbcs(ParameterList const& p, SolInfo* s, double t);
+void set_jac_dbcs(ParameterList const& p, SolInfo* s, double t);
 
 }
 

@@ -20,10 +20,10 @@ void assert_fail(const char* why, ...) __attribute__((noreturn));
 
 double eval(
     std::string const& v,
-    const double x,
-    const double y,
-    const double z,
-    const double t);
+    double x,
+    double y,
+    double z,
+    double t);
 
 double time();
 

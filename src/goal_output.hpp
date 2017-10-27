@@ -11,9 +11,9 @@ class Output {
   public:
     Output(ParameterList const& p, Disc* d);
     ~Output();
-    void write(const double t, const int iter);
+    void write(double t, int iter);
   private:
-    void write_vtk(const double t);
+    void write_vtk(double t);
     Disc* disc;
     ParameterList params;
     int interval;

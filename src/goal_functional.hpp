@@ -22,7 +22,7 @@ class Functional {
     ~Functional();
     double get_value();
     void print_value();
-    void compute(const double t_now, const double t_old);
+    void compute(double t_now, double t_old);
   private:
     ParameterList params;
     Primal* primal;

@@ -16,7 +16,7 @@ class QoI<ST> : public Integrator {
     virtual ~QoI();
     ST const& get_qoi_value() const { return qoi_value; }
     ST const& get_elem_value() const { return elem_value; }
-    virtual void set_time(const double, const double) {}
+    virtual void set_time(double, double) {}
     virtual void set_elem_set(const int) {}
     virtual void pre_process(SolInfo*);
     virtual void gather(apf::MeshElement* me);
@@ -39,7 +39,7 @@ class QoI<FADT> : public Integrator {
     virtual ~QoI();
     ST const& get_qoi_value() const { return qoi_value; }
     FADT const& get_elem_value() const { return elem_value; }
-    virtual void set_time(const double, const double) {}
+    virtual void set_time(double, double) {}
     virtual void set_elem_set(const int) {}
     virtual void pre_process(SolInfo* s);
     virtual void gather(apf::MeshElement* me);

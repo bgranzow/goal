@@ -59,7 +59,7 @@ void Functional::print_value() {
   print(" > J(uH) = %.15e", J);
 }
 
-void Functional::compute(const double t_now, const double t_old) {
+void Functional::compute(double t_now, double t_old) {
   auto t0 = time();
   sol_info = primal->get_sol_info();
   set_time(evaluators, t_now, t_old);

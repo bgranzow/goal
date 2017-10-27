@@ -100,7 +100,7 @@ static double get_avg_density(apf::Mesh* m) {
   return nelem / PCU_Comm_Peers();
 }
 
-static int get_shrink_factor(apf::Mesh* m, const double min) {
+static int get_shrink_factor(apf::Mesh* m, double min) {
   int factor = 1;
   auto rho = get_avg_density(m);
   while (rho < min) {
