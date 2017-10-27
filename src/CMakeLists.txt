@@ -90,5 +90,6 @@ function(add_exe exename exesrc)
 endfunction()
 
 add_exe(GoalPrimal main_primal.cpp)
+add_exe(GoalSPR main_spr.cpp)
 
 bob_end_subdir()
