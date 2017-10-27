@@ -22,6 +22,7 @@ goal_point_wise.cpp
 goal_avg_disp.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
+goal_tbcs.cpp
 goal_linear_solve.cpp
 goal_mechanics.cpp
 goal_primal.cpp
@@ -57,6 +58,7 @@ goal_point_wise.hpp
 goal_avg_disp.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
+goal_tbcs.hpp
 goal_linear_solve.hpp
 goal_mechanics.hpp
 goal_primal.hpp
