@@ -27,6 +27,7 @@ goal_linear_solve.cpp
 goal_mechanics.cpp
 goal_primal.cpp
 goal_functional.cpp
+goal_dissipation.cpp
 goal_output.cpp
 goal_regression.cpp
 )
@@ -63,6 +64,7 @@ goal_linear_solve.hpp
 goal_mechanics.hpp
 goal_primal.hpp
 goal_functional.hpp
+goal_dissipation.hpp
 goal_output.hpp
 goal_regression.hpp
 )
@@ -93,5 +95,6 @@ endfunction()
 
 add_exe(GoalPrimal main_primal.cpp)
 add_exe(GoalSPR main_spr.cpp)
+add_exe(GoalDissipation main_dissipation.cpp)
 
 bob_end_subdir()
