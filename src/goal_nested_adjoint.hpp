@@ -37,7 +37,7 @@ class NestedAdjoint {
 };
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr);
-void destroy_adjoint(NestedAdjoint* a);
+void destroy_nested_adjoint(NestedAdjoint* a);
 
 }
 

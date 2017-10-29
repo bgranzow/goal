@@ -123,4 +123,12 @@ void NestedAdjoint::run(double t_now, double t_old) {
   solve(t_now, t_old);
 }
 
+NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr) {
+  return new NestedAdjoint(p, pr);
+}
+
+void destroy_nested_adjoint(NestedAdjoint* a) {
+  delete a;
+}
+
 }
