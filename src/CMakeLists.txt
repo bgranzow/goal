@@ -10,6 +10,7 @@ goal_pressure.cpp
 goal_scalar_weight.cpp
 goal_vector_weight.cpp
 goal_pressure_adjoint.cpp
+goal_displacement_adjoint.cpp
 goal_kinematics.cpp
 goal_model.cpp
 goal_neohookean.cpp
@@ -48,6 +49,7 @@ goal_pressure.hpp
 goal_scalar_weight.hpp
 goal_vector_weight.hpp
 goal_pressure_adjoint.hpp
+goal_displacement_adjoint.hpp
 goal_kinematics.hpp
 goal_model.hpp
 goal_neohookean.hpp
