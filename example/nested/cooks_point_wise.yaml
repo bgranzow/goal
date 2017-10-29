@@ -1,0 +1,43 @@
+cooks point wise:
+  num steps: 1
+  step size: 1.0
+  initial time: 0.0 
+  adjoint mode: uniform
+  discretization:
+    geom file: '../mesh/cooks/cooks.dmg'
+    mesh file: '../mesh/cooks/cooks-serial.smb'
+    assoc file: '../mesh/cooks/cooks.txt'
+  dirichlet bcs:
+    bc 1: [0, xmin, 0.0]
+    bc 2: [1, xmin, 0.0]
+  traction bcs:
+    bc 3: [xmax, 0.0, 1.0]
+  mechanics:
+    model: neohookean
+    materials:
+      membrane:
+        E: 1000.0
+        nu: 0.4999
+        c0: 1.0
+  primal linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+      number of equations: 3
+    nonlinear tolerance: 1.0e-8
+    nonlinear max iters: 5
+  adjoint linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+      number of equations: 3
+  functional:
+    type: point wise
+    point: vtx
+    idx: 1
+  output:
+    out file: out_cooks_point_wise

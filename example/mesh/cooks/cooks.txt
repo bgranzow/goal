@@ -1,0 +1,8 @@
+elem set membrane 1
+2 10
+node set xmin 1
+1 8
+node set vtx 1
+0 4
+side set xmax 1
+1 6 
