@@ -27,7 +27,7 @@ class Mechanics {
     apf::Field* get_displacement() { return displacement; }
     apf::Field* get_pressure() { return pressure; }
     template <typename T>
-    void build_resid(Evaluators& E, const bool save_states);
+    void build_resid(Evaluators& E, bool save_states);
     template <typename T>
     void build_functional(ParameterList const& params, Evaluators& E);
   private:

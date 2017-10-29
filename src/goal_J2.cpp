@@ -26,7 +26,7 @@ template <typename T>
 J2<T>::J2(
   RCP<Kinematics<T>> k,
   States* s,
-  const bool save,
+  bool save,
   ParameterList const& p) :
     kinematics(k),
     states(s),

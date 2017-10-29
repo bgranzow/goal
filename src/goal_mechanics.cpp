@@ -83,7 +83,7 @@ void Mechanics::make_states() {
 }
 
 template <typename T>
-void Mechanics::build_resid(Evaluators& E, const bool save) {
+void Mechanics::build_resid(Evaluators& E, bool save) {
   ParameterList mat = params.sublist("materials");
   auto u = find_evaluator("u", E);
   auto p = find_evaluator("p", E);
@@ -131,8 +131,8 @@ void destroy_mechanics(Mechanics* m) {
   delete m;
 }
 
-template void Mechanics::build_resid<ST>(Evaluators&, const bool);
-template void Mechanics::build_resid<FADT>(Evaluators&, const bool);
+template void Mechanics::build_resid<ST>(Evaluators&, bool);
+template void Mechanics::build_resid<FADT>(Evaluators&, bool);
 template void Mechanics::build_functional<ST>(ParameterList const&, Evaluators&);
 template void Mechanics::build_functional<FADT>(ParameterList const&, Evaluators&);
 

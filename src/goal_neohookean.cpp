@@ -24,7 +24,7 @@ template <typename T>
 Neohookean<T>::Neohookean(
   RCP<Kinematics<T>> kinematics,
   States* s,
-  const bool save,
+  bool save,
   ParameterList const& p) :
     k(kinematics),
     states(s),

@@ -19,7 +19,7 @@ class Neohookean : public Model<T> {
     Neohookean(
         RCP<Kinematics<T>> kinematics,
         States* s,
-        const bool set,
+        bool set,
         ParameterList const& p);
     void set_elem_set(int es_idx);
     void in_elem(apf::MeshElement* me);

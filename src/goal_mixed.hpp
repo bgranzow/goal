@@ -19,7 +19,7 @@ class Mixed : public Integrator {
         RCP<Integrator> p,
         RCP<Model<T>> cm,
         States* s,
-        const bool save);
+        bool save);
     void in_elem(apf::MeshElement* me);
     void at_point(apf::Vector3 const&, double, double);
     void out_elem();

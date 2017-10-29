@@ -13,7 +13,7 @@ Mixed<T>::Mixed(
   RCP<Integrator> pr,
   RCP<Model<T>> m,
   States* s,
-  const bool save) :
+  bool save) :
     p(rcp_static_cast<Pressure<T>>(pr)),
     model(m),
     states(s),
