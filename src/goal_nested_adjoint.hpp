@@ -27,6 +27,7 @@ class NestedAdjoint {
     void print_banner(double t_now);
     void compute_adjoint(double t_now, double t_old);
     void solve(double t_now, double t_old);
+    void localize(double t_now, double t_old);
     ParameterList params;
     Primal* primal;
     Disc* base_disc;
@@ -34,8 +35,13 @@ class NestedAdjoint {
     Mechanics* mech;
     SolInfo* sol_info;
     Evaluators adjoint;
-    apf::Field* z_displacement;
-    apf::Field* z_pressure;
+    Evaluators error;
+    apf::Field* z_disp;
+    apf::Field* z_press;
+    apf::Field* z_disp_diff;
+    apf::Field* z_press_diff;
+    apf::Field* e_disp;
+    apf::Field* e_press;
 };
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr);
