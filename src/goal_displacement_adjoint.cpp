@@ -52,4 +52,9 @@ void DisplacementAdjoint::at_point(apf::Vector3 const& p, double, double) {
   }
 }
 
+void DisplacementAdjoint::out_elem() {
+  apf::destroyElement(z_elem);
+  elem = 0;
+}
+
 }
