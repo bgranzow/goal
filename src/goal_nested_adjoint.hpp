@@ -34,6 +34,8 @@ class NestedAdjoint {
     Mechanics* mech;
     SolInfo* sol_info;
     Evaluators adjoint;
+    apf::Field* z_displacement;
+    apf::Field* z_pressure;
 };
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr);

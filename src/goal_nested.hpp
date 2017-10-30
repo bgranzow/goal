@@ -4,6 +4,7 @@
 #include "goal_disc.hpp"
 
 namespace apf {
+class Field;
 class MeshTag;
 }
 
@@ -17,6 +18,8 @@ class Nested : public Disc {
   public:
     Nested(Disc* d, int mode);
     ~Nested();
+    void set_fields(RCP<VectorT> z, apf::Field* u, apf::Field* p);
+    void set_adjoint(RCP<VectorT> z, apf::Field* u, apf::Field* p);
   private:
     void number_elems();
     void copy_mesh();
@@ -25,6 +28,8 @@ class Nested : public Disc {
     void refine_mesh();
     void refine_long();
     void store_old_verts();
+    void subtract_adj(apf::Field* zu, apf::Field* zp);
+    void zero_adj(apf::Field* zu, apf::Field* zp);
     int mode;
     double ratio;
     apf::Mesh2* base_mesh;

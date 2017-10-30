@@ -48,6 +48,8 @@ NestedAdjoint::NestedAdjoint(ParameterList const& p, Primal* pr) {
   nested_disc = 0;
   mech = 0;
   sol_info = 0;
+  z_displacement = 0;
+  z_pressure = 0;
 }
 
 NestedAdjoint::~NestedAdjoint() {
@@ -73,15 +75,22 @@ void NestedAdjoint::build_data() {
   make_pressure_adj(nested_disc, adjoint);
   mech->build_resid<FADT>(adjoint, false);
   mech->build_functional<FADT>(func_params, adjoint);
+  auto nested_mesh = nested_disc->get_apf_mesh();
+  z_displacement = apf::createFieldOn(nested_mesh, "zu", apf::VECTOR);
+  z_pressure = apf::createFieldOn(nested_mesh, "zp", apf::SCALAR);
 }
 
 void NestedAdjoint::destroy_data() {
+  if (z_displacement) apf::destroyField(z_displacement);
+  if (z_pressure) apf::destroyField(z_pressure);
   if (sol_info) destroy_sol_info(sol_info);
   if (mech) destroy_mechanics(mech);
   if (nested_disc) destroy_nested(nested_disc);
   nested_disc = 0;
   mech = 0;
   sol_info = 0;
+  z_displacement = 0;
+  z_pressure = 0;
 }
 
 void NestedAdjoint::print_banner(const double t_now) {
@@ -116,6 +125,10 @@ void NestedAdjoint::solve(double t_now, double t_old) {
   compute_adjoint(t_now, t_old);
   z->putScalar(0.0);
   goal::solve(lp, dRduT, z, dMdu, nested_disc);
+  nested_disc->set_adjoint(z, z_displacement, z_pressure);
+
+  auto nested_mesh = nested_disc->get_apf_mesh();
+  apf::writeVtkFiles("DEBUG", nested_mesh);
 }
 
 void NestedAdjoint::run(double t_now, double t_old) {
