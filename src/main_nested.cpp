@@ -1,3 +1,4 @@
+#include <apf.h>
 #include <Teuchos_YamlParameterListHelpers.hpp>
 
 #include "goal_control.hpp"
@@ -90,7 +91,8 @@ void Solver::solve() {
     primal->destroy_data();
     disc->destroy_data();
     adjoint->build_data();
-    adjoint->run(t_now, t_old);
+    auto e = adjoint->run(t_now, t_old);
+    apf::destroyField(e);
     adjoint->destroy_data();
     output->write(t_now, 0);
     mech->get_states()->update();

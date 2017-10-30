@@ -21,13 +21,14 @@ class NestedAdjoint {
     NestedAdjoint(ParameterList const& p, Primal* pr);
     ~NestedAdjoint();
     void build_data();
-    void run(double t_now, double t_old);
+    apf::Field* run(double t_now, double t_old);
     void destroy_data();
   private:
     void print_banner(double t_now);
     void compute_adjoint(double t_now, double t_old);
     void solve(double t_now, double t_old);
     void localize(double t_now, double t_old);
+    void write_out();
     ParameterList params;
     Primal* primal;
     Disc* base_disc;

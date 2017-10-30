@@ -3,6 +3,7 @@
 #include "goal_dbcs.hpp"
 #include "goal_displacement.hpp"
 #include "goal_displacement_adjoint.hpp"
+#include "goal_error.hpp"
 #include "goal_eval_modes.hpp"
 #include "goal_linear_solve.hpp"
 #include "goal_mechanics.hpp"
@@ -193,13 +194,27 @@ void NestedAdjoint::localize(double t_now, double t_old) {
   print(" > error localized in %f seconds", t1 - t0);
 }
 
-void NestedAdjoint::run(double t_now, double t_old) {
+void NestedAdjoint::write_out() {
+  static int i = 0;
+  auto out_params = params.sublist("output");
+  auto name = out_params.get<std::string>("out file");
+  auto m = nested_disc->get_apf_mesh();
+  std::ostringstream oss;
+  oss << name << "_adjoint_" << i;
+  std::string fname = oss.str();
+  apf::writeVtkFiles(fname.c_str(), m);
+  i++;
+}
+
+apf::Field* NestedAdjoint::run(double t_now, double t_old) {
   print_banner(t_now);
   solve(t_now, t_old);
   localize(t_now, t_old);
-
-  auto nested_mesh = nested_disc->get_apf_mesh();
-  apf::writeVtkFiles("DEBUG", nested_mesh);
+  auto e = compute_error(e_disp, e_press);
+  auto bound = sum_contribs(e);
+  print(" > |J(u)-J(uh)| ~ %.15e", bound);
+  write_out();
+  return e;
 }
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr) {
