@@ -30,6 +30,7 @@ goal_mechanics.cpp
 goal_primal.cpp
 goal_functional.cpp
 goal_nested_adjoint.cpp
+goal_error.cpp
 goal_output.cpp
 goal_regression.cpp
 )
@@ -69,6 +70,7 @@ goal_mechanics.hpp
 goal_primal.hpp
 goal_functional.hpp
 goal_nested_adjoint.hpp
+goal_error.hpp
 goal_output.hpp
 goal_regression.hpp
 )
