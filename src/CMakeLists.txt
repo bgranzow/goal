@@ -31,6 +31,7 @@ goal_primal.cpp
 goal_functional.cpp
 goal_nested_adjoint.cpp
 goal_error.cpp
+goal_size_field.cpp
 goal_output.cpp
 goal_regression.cpp
 )
@@ -71,6 +72,7 @@ goal_primal.hpp
 goal_functional.hpp
 goal_nested_adjoint.hpp
 goal_error.hpp
+goal_size_field.hpp
 goal_output.hpp
 goal_regression.hpp
 )
