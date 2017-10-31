@@ -1,4 +1,5 @@
 #include <apf.h>
+#include <ma.h>
 #include <Teuchos_YamlParameterListHelpers.hpp>
 
 #include "goal_control.hpp"
@@ -9,6 +10,7 @@
 #include "goal_output.hpp"
 #include "goal_primal.hpp"
 #include "goal_regression.hpp"
+#include "goal_size_field.hpp"
 #include "goal_states.hpp"
 
 namespace goal {
@@ -29,8 +31,20 @@ static ParameterList get_valid_params() {
   p.sublist("functional");
   p.sublist("primal linear algebra");
   p.sublist("adjoint linear algebra");
+  p.sublist("adaptation");
   p.sublist("output");
   p.sublist("regression");
+  return p;
+}
+
+static ParameterList get_valid_adapt_params() {
+  ParameterList p;
+  p.set<int>("adapt cycles", 1);
+  p.set<int>("adapt iters", 1);
+  p.set<bool>("fix shape", true);
+  p.set<bool>("shoud coarsen", true);
+  p.set<double>("good quality", 0.3);
+  p.set<int>("target elems", 1);
   return p;
 }
 
@@ -40,6 +54,7 @@ class Solver {
     ~Solver();
     void solve();
   private:
+    void adapt(int step, int cycle, double t_now, double t_old);
     RCP<ParameterList> params;
     Disc* disc;
     Mechanics* mech;
@@ -47,6 +62,7 @@ class Solver {
     Functional* functional;
     NestedAdjoint* adjoint;
     Output* output;
+    int num_cycles;
 };
 
 Solver::Solver(const char* in) {
@@ -57,6 +73,9 @@ Solver::Solver(const char* in) {
   auto disc_params = params->sublist("discretization");
   auto mech_params = params->sublist("mechanics");
   auto out_params = params->sublist("output");
+  auto adapt_params = params->sublist("adaptation");
+  num_cycles = adapt_params.get<int>("adapt cycles");
+  adapt_params.validateParameters(get_valid_adapt_params(), 0);
   disc = create_disc(disc_params);
   mech = create_mechanics(mech_params, disc);
   primal = create_primal(*params, mech);
@@ -74,6 +93,31 @@ Solver::~Solver() {
   destroy_disc(disc);
 }
 
+static void configure_ma(ma::Input* in, ParameterList& p) {
+  in->maximumIterations = p.get<int>("adapt iters", 1);
+  in->shouldCoarsen = p.get<bool>("should coarsen", true);
+  in->shouldFixShape = p.get<bool>("fix shape", true);
+  in->goodQuality = p.get<double>("good quality", 0.2);
+}
+
+void Solver::adapt(int step, int cycle, double t_now, double t_old) {
+  if (cycle == num_cycles) return;
+  adjoint->build_data();
+  auto e = adjoint->run(t_now, t_old);
+  adjoint->destroy_data();
+  print("*** adaptation");
+  print("*** at step: (%d)", step);
+  print("*** at cycle: (%d)", cycle);
+  auto mesh = disc->get_apf_mesh();
+  auto adapt_params = params->sublist("adaptation");
+  auto target = adapt_params.get<int>("target elems");
+  auto size = get_iso_target_size(e, target);
+  auto in = ma::configure(mesh, size);
+  configure_ma(in, adapt_params);
+  ma::adapt(in);
+  apf::destroyField(size);
+}
+
 void Solver::solve() {
   int num_steps = params->get<int>("num steps");
   double dt = params->get<double>("step size");
@@ -83,18 +127,17 @@ void Solver::solve() {
     print("****** load step: %d", step);
     print("****** from time: %f", t_old);
     print("****** to time:   %f", t_now);
-    disc->build_data();
-    primal->build_data();
-    primal->solve(t_now, t_old);
-    functional->compute(t_now, t_old);
-    functional->print_value();
-    primal->destroy_data();
-    disc->destroy_data();
-    adjoint->build_data();
-    auto e = adjoint->run(t_now, t_old);
-    apf::destroyField(e);
-    adjoint->destroy_data();
-    output->write(t_now, 0);
+    for (int cycle = 0; cycle <= num_cycles; ++cycle) {
+      disc->build_data();
+      primal->build_data();
+      primal->solve(t_now, t_old);
+      functional->compute(t_now, t_old);
+      functional->print_value();
+      output->write(t_now, cycle);
+      primal->destroy_data();
+      disc->destroy_data();
+      adapt(step, cycle, t_now, t_old);
+    }
     mech->get_states()->update();
     t_old = t_now;
     t_now += dt;
