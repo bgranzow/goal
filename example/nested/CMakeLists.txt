@@ -1,6 +1,6 @@
 function(nested_test input)
   set(inyaml "${input}.yaml")
-  set(exe ${CMAKE_BINARY_DIR}/src/GoalNESTED)
+  set(exe ${CMAKE_BINARY_DIR}/src/GoalNested)
   copy(${inyaml})
   add_test(${input} ${MPIEXE} ${MPIFLAGS} 4 ${exe} ${inyaml})
 endfunction()
