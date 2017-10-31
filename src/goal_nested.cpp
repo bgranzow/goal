@@ -296,7 +296,7 @@ void Nested::zero_adj(apf::Field* zu, apf::Field* zp) {
 }
 
 void Nested::set_fields(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
-  apf::Vector3 disp;
+  apf::Vector3 disp(0,0,0);
   apf::DynamicArray<apf::Node> nodes;
   apf::getNodes(owned_nmbr, nodes);
   auto data = x->get1dView();
