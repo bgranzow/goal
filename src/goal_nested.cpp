@@ -323,6 +323,25 @@ void Nested::set_adjoint(RCP<VectorT> z, apf::Field* zu, apf::Field* zp) {
   zero_adj(zu, zp);
 }
 
+apf::Field* Nested::set_error(apf::Field* nested_err) {
+  auto elem_nmbr = mesh->findField("elems");
+  auto base_err = apf::createStepField(base_mesh, "error", apf::SCALAR);
+  apf::zeroField(base_err);
+  apf::MeshEntity* nested_elem;
+  apf::MeshIterator* it = mesh->begin(num_dims);
+  while ((nested_elem = mesh->iterate(it))) {
+    auto nmbr = (int)apf::getScalar(elem_nmbr, nested_elem, 0);
+    auto nested_contrib = apf::getScalar(nested_err, nested_elem, 0);
+    auto base_elem = base_elems[nmbr];
+    auto base_val = apf::getScalar(base_err, base_elem, 0);
+    base_val += nested_contrib;
+    apf::setScalar(base_err, base_elem, 0, base_val);
+  }
+  mesh->end(it);
+  apf::destroyField(nested_err);
+  return base_err;
+}
+
 Nested* create_nested(Disc* d, int m) {
   return new Nested(d, m);
 }
