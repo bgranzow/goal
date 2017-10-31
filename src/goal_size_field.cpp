@@ -139,13 +139,11 @@ static void create_size_field(Specification* s) {
 
 apf::Field* get_iso_target_size(
     apf::Field* e,
-    const int t,
-    const int p)
-{
+    const int t) {
   auto t0 = time();
   GOAL_DEBUG_ASSERT(t > 0);
   Specification s;
-  setup_specification(&s, e, t, p);
+  setup_specification(&s, e, t, 1);
   create_size_field(&s);
   auto t1 = time();
   print(" > isotropic target size field computed in %f seconds", t1 - t0);
