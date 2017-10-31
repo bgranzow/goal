@@ -22,8 +22,7 @@ apf::Field* compute_error(apf::Field* ue, apf::Field* pe) {
     apf::getVector(u_elem, xi, u_err);
     double total = 0.0;
     for (int d = 0; d < num_dims; ++d)
-      total += u_err[d];
-    total = std::abs(total);
+      total += std::abs(u_err[d]);
     total += std::abs(p_err);
     apf::setScalar(err, elem, 0, total);
     apf::destroyElement(u_elem);
