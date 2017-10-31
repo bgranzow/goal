@@ -137,6 +137,8 @@ void NestedAdjoint::destroy_data() {
   z_press_diff = 0;
   e_disp = 0;
   e_press = 0;
+  adjoint.resize(0);
+  error.resize(0);
 }
 
 void NestedAdjoint::print_banner(const double t_now) {
