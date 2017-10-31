@@ -35,6 +35,10 @@ cooks point wise:
     multigrid:
       verbosity: none
       number of equations: 3
+  adaptation:
+    adapt cycles: 5
+    adapt iters: 1
+    target elems: 5000
   functional:
     type: point wise
     point: vtx
