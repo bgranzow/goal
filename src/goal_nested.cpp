@@ -252,50 +252,7 @@ void Nested::store_old_verts() {
   mesh->end(it);
 }
 
-void Nested::subtract_adj(apf::Field* zu, apf::Field* zp) {
-  int tags[2];
-  apf::Vector3 zdisp_vtx;
-  apf::Vector3 zdisp_vtx0;
-  apf::Vector3 zdisp_vtx1;
-  apf::Vector3 zdisp_avg;
-  apf::Vector3 zdisp_subtract;
-  apf::MeshEntity* vtx;
-  apf::MeshIterator* it = mesh->begin(0);
-  while ((vtx = mesh->iterate(it))) {
-    if (! mesh->hasTag(vtx, new_vtx_tag)) continue;
-    mesh->getIntTag(vtx, new_vtx_tag, &(tags[0]));
-    auto vtx0 = old_vertices[tags[0]];
-    auto vtx1 = old_vertices[tags[1]];
-    apf::getVector(zu, vtx, 0, zdisp_vtx);
-    apf::getVector(zu, vtx0, 0, zdisp_vtx0);
-    apf::getVector(zu, vtx1, 0, zdisp_vtx1);
-    zdisp_avg = (zdisp_vtx0 + zdisp_vtx1)*0.5;
-    zdisp_subtract = zdisp_vtx - zdisp_avg;
-    apf::setVector(zu, vtx, 0, zdisp_subtract);
-    auto zp_vtx = apf::getScalar(zp, vtx, 0);
-    auto zp_vtx0 = apf::getScalar(zp, vtx0, 0);
-    auto zp_vtx1 = apf::getScalar(zp, vtx1, 0);
-    auto zp_avg = (zp_vtx0 + zp_vtx1)*0.5;
-    auto zp_subtract = zp_vtx - zp_avg;
-    apf::setScalar(zp, vtx, 0, zp_subtract);
-  }
-  mesh->end(it);
-}
-
-void Nested::zero_adj(apf::Field* zu, apf::Field* zp) {
-  double zpress = 0.0;
-  apf::Vector3 zdisp(0,0,0);
-  apf::MeshEntity* vtx;
-  apf::MeshIterator* it = mesh->begin(0);
-  while ((vtx = mesh->iterate(it))) {
-    if (! mesh->hasTag(vtx, old_vtx_tag)) continue;
-    apf::setVector(zu, vtx, 0, zdisp);
-    apf::setScalar(zp, vtx, 0, zpress);
-  }
-  mesh->end(it);
-}
-
-void Nested::set_fields(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
+void Nested::set_fine(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
   apf::Vector3 disp(0,0,0);
   apf::DynamicArray<apf::Node> nodes;
   apf::getNodes(owned_nmbr, nodes);
@@ -317,10 +274,30 @@ void Nested::set_fields(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
   apf::synchronize(p);
 }
 
-void Nested::set_adjoint(RCP<VectorT> z, apf::Field* zu, apf::Field* zp) {
-  set_fields(z, zu, zp);
-  subtract_adj(zu, zp);
-  zero_adj(zu, zp);
+void Nested::set_coarse(apf::Field* u, apf::Field* p) {
+  int tags[2];
+  apf::Vector3 u0(0,0,0);
+  apf::Vector3 u1(0,0,0);
+  apf::Vector3 u_avg(0,0,0);
+  apf::MeshEntity* vtx;
+  apf::MeshIterator* it = mesh->begin(0);
+  while ((vtx = mesh->iterate(it))) {
+    if (! mesh->hasTag(vtx, new_vtx_tag)) continue;
+    mesh->getIntTag(vtx, new_vtx_tag, &(tags[0]));
+    auto vtx0 = old_vertices[tags[0]];
+    auto vtx1 = old_vertices[tags[1]];
+    apf::getVector(u, vtx0, 0, u0);
+    apf::getVector(u, vtx1, 0, u1);
+    u_avg = (u0 + u1)*0.5;
+    auto p0 = apf::getScalar(p, vtx0, 0);
+    auto p1 = apf::getScalar(p, vtx1, 0);
+    auto p_avg = (p0 + p1)*0.5;
+    apf::setVector(u, vtx, 0, u_avg);
+    apf::setVector(p, vtx, 0, p_avg);
+  }
+  mesh->end(it);
+  apf::synchronize(u);
+  apf::synchronize(p);
 }
 
 apf::Field* Nested::set_error(apf::Field* nested_err) {
