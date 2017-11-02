@@ -60,12 +60,15 @@ static void make_pressure_err(Disc* d, Evaluators& e) {
   auto m = d->get_apf_mesh();
   auto fp = m->findField("p");
   auto fz = m->findField("p_z_diff");
+  auto fzc = m->findField("p_z_coarse");
   GOAL_DEBUG_ASSERT(fp);
   GOAL_DEBUG_ASSERT(fz);
   auto p = rcp(new Pressure<ST>(fp, PRIMAL));
-  auto w = rcp(new PressureAdjoint(fz));
+  auto w = rcp(new PressureAdjoint(fz, "pw"));
+  auto wc = rcp(new PressureAdjoint(fzc, "pwc"));
   e.push_back(p);
   e.push_back(w);
+  e.push_back(wc);
 }
 
 NestedAdjoint::NestedAdjoint(ParameterList const& p, Primal* pr) {
@@ -119,7 +122,7 @@ void NestedAdjoint::build_data() {
   mech->build_functional<FADT>(func_params, adjoint);
   make_displacement_err(nested_disc, error);
   make_pressure_err(nested_disc, error);
-  mech->build_resid<ST>(error, false);
+  mech->build_error(error);
 }
 
 void NestedAdjoint::destroy_data() {
