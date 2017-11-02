@@ -243,19 +243,11 @@ apf::Field* NestedAdjoint::run(double t_now, double t_old) {
   print_banner(t_now);
   solve(t_now, t_old);
   localize(t_now, t_old);
-
+  auto bound = sum_contribs(u_error, p_error);
+  auto e_nested = compute_error(u_error, p_error);
+  print(" > |J(u)-J(uh)| < %.15e", bound);
   write_out();
-
-#if 0
-  auto e_nested = compute_error(e_disp, e_press);
-  auto bound = sum_contribs(e_nested);
-  print(" > |J(u)-J(uh)| ~ %.15e", bound);
-  write_out();
-  auto e_base = nested_disc->set_error(e_nested);
-  return e_base;
-#endif
-
-  return 0;
+  return nested_disc->set_error(e_nested);
 }
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr) {
