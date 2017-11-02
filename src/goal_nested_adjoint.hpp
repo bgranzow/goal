@@ -26,6 +26,7 @@ class NestedAdjoint {
   private:
     void print_banner(double t_now);
     void compute_adjoint(double t_now, double t_old);
+    void subtract();
     void solve(double t_now, double t_old);
     void localize(double t_now, double t_old);
     void write_out();
@@ -37,12 +38,14 @@ class NestedAdjoint {
     SolInfo* sol_info;
     Evaluators adjoint;
     Evaluators error;
-    apf::Field* z_disp;
-    apf::Field* z_press;
-    apf::Field* z_disp_diff;
-    apf::Field* z_press_diff;
-    apf::Field* e_disp;
-    apf::Field* e_press;
+    apf::Field* zu_coarse;
+    apf::Field* zu_fine;
+    apf::Field* zu_diff;
+    apf::Field* u_error;
+    apf::Field* zp_coarse;
+    apf::Field* zp_fine;
+    apf::Field* zp_diff;
+    apf::Field* p_error;
 };
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr);

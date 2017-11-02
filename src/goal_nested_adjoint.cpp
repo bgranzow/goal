@@ -75,12 +75,14 @@ NestedAdjoint::NestedAdjoint(ParameterList const& p, Primal* pr) {
   nested_disc = 0;
   mech = 0;
   sol_info = 0;
-  z_disp = 0;
-  z_press = 0;
-  z_disp_diff = 0;
-  z_press_diff = 0;
-  e_disp = 0;
-  e_press = 0;
+  zu_coarse = 0;
+  zu_fine = 0;
+  zu_diff = 0;
+  u_error = 0;
+  zp_coarse = 0;
+  zp_fine = 0;
+  zp_diff = 0;
+  p_error = 0;
 }
 
 NestedAdjoint::~NestedAdjoint() {
@@ -103,12 +105,14 @@ void NestedAdjoint::build_data() {
   nested_disc->build_data();
   sol_info = create_sol_info(nested_disc);
   auto nested_mesh = nested_disc->get_apf_mesh();
-  z_disp = apf::createFieldOn(nested_mesh, "u_z", apf::VECTOR);
-  z_press = apf::createFieldOn(nested_mesh, "p_z", apf::SCALAR);
-  z_disp_diff = apf::createFieldOn(nested_mesh, "u_z_diff", apf::VECTOR);
-  z_press_diff = apf::createFieldOn(nested_mesh, "p_z_diff", apf::SCALAR);
-  e_disp = apf::createFieldOn(nested_mesh, "u_e", apf::VECTOR);
-  e_press = apf::createFieldOn(nested_mesh, "p_e", apf::SCALAR);
+  zu_coarse = apf::createFieldOn(nested_mesh, "u_z_coarse", apf::VECTOR);
+  zu_fine = apf::createFieldOn(nested_mesh, "u_z_fine", apf::VECTOR);
+  zu_diff = apf::createFieldOn(nested_mesh, "u_z_diff", apf::VECTOR);
+  u_error = apf::createFieldOn(nested_mesh, "u_error", apf::VECTOR);
+  zp_coarse = apf::createFieldOn(nested_mesh, "p_z_coarse", apf::VECTOR);
+  zp_fine = apf::createFieldOn(nested_mesh, "p_z_fine", apf::VECTOR);
+  zp_diff = apf::createFieldOn(nested_mesh, "p_z_diff", apf::VECTOR);
+  p_error = apf::createFieldOn(nested_mesh, "p_error", apf::VECTOR);
   make_displacement_adj(nested_disc, adjoint);
   make_pressure_adj(nested_disc, adjoint);
   mech->build_resid<FADT>(adjoint, false);
@@ -119,24 +123,28 @@ void NestedAdjoint::build_data() {
 }
 
 void NestedAdjoint::destroy_data() {
-  if (e_disp) apf::destroyField(e_disp);
-  if (e_press) apf::destroyField(e_press);
-  if (z_disp_diff) apf::destroyField(z_disp_diff);
-  if (z_press_diff) apf::destroyField(z_press_diff);
-  if (z_disp) apf::destroyField(z_disp);
-  if (z_press) apf::destroyField(z_press);
+  if (p_error) apf::destroyField(p_error);
+  if (zp_diff) apf::destroyField(zp_diff);
+  if (zp_fine) apf::destroyField(zp_fine);
+  if (zp_coarse) apf::destroyField(zp_coarse);
+  if (u_error) apf::destroyField(u_error);
+  if (zu_diff) apf::destroyField(zu_diff);
+  if (zu_fine) apf::destroyField(zu_fine);
+  if (zu_coarse) apf::destroyField(zu_coarse);
   if (sol_info) destroy_sol_info(sol_info);
   if (mech) destroy_mechanics(mech);
   if (nested_disc) destroy_nested(nested_disc);
   nested_disc = 0;
   mech = 0;
   sol_info = 0;
-  z_disp = 0;
-  z_press = 0;
-  z_disp_diff = 0;
-  z_press_diff = 0;
-  e_disp = 0;
-  e_press = 0;
+  zu_coarse = 0;
+  zu_fine = 0;
+  zu_diff = 0;
+  u_error = 0;
+  zp_coarse = 0;
+  zp_fine = 0;
+  zp_diff = 0;
+  p_error = 0;
   adjoint.resize(0);
   error.resize(0);
 }
