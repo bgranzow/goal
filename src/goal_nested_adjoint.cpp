@@ -172,6 +172,23 @@ void NestedAdjoint::compute_adjoint(double t_now, double t_old) {
   print(" > adjoint computed in %f seconds", t1 - t0);
 }
 
+void NestedAdjoint::subtract() {
+  apf::Vector3 zuf(0,0,0);
+  apf::Vector3 zuc(0,0,0);
+  auto m = nested_disc->get_apf_mesh();
+  apf::MeshEntity* vtx;
+  apf::MeshIterator* it = m->begin(0);
+  while ((vtx = m->iterate(it))) {
+    apf::getVector(zu_fine, vtx, 0, zuf);
+    apf::getVector(zu_coarse, vtx, 0, zuc);
+    auto zpf = apf::getScalar(zp_fine, vtx, 0);
+    auto zpc = apf::getScalar(zp_coarse, vtx, 0);
+    apf::setVector(zu_diff, vtx, 0, zuf - zuc);
+    apf::setScalar(zp_diff, vtx, 0, zpf - zpc);
+  }
+  m->end(it);
+}
+
 void NestedAdjoint::solve(double t_now, double t_old) {
   auto R = sol_info->owned->R;
   auto dRduT = sol_info->owned->dRdu;
@@ -181,8 +198,11 @@ void NestedAdjoint::solve(double t_now, double t_old) {
   compute_adjoint(t_now, t_old);
   z->putScalar(0.0);
   goal::solve(lp, dRduT, z, dMdu, nested_disc);
-  nested_disc->set_fields(z, z_disp, z_press);
-  nested_disc->set_adjoint(z, z_disp_diff, z_press_diff);
+  nested_disc->set_fine(z, zu_fine, zp_fine);
+  apf::copyData(zu_coarse, zu_fine);
+  apf::copyData(zu_coarse, zu_fine);
+  nested_disc->set_coarse(zu_coarse, zp_coarse);
+  subtract();
   auto e = -(R->dot(*z));
   print(" > z.R = %.15e", e);
 }
@@ -199,7 +219,7 @@ void NestedAdjoint::localize(double t_now, double t_old) {
   set_tbcs(tbc, w, sol_info, t_now);
   sol_info->gather_all();
   set_resid_dbcs(dbc, sol_info, t_now);
-  nested_disc->set_fields(R, e_disp, e_press);
+  nested_disc->set_fine(R, u_error, p_error);
   auto t1 = time();
   print(" > error localized in %f seconds", t1 - t0);
 }
@@ -220,12 +240,19 @@ apf::Field* NestedAdjoint::run(double t_now, double t_old) {
   print_banner(t_now);
   solve(t_now, t_old);
   localize(t_now, t_old);
+
+  write_out();
+
+#if 0
   auto e_nested = compute_error(e_disp, e_press);
   auto bound = sum_contribs(e_nested);
   print(" > |J(u)-J(uh)| ~ %.15e", bound);
   write_out();
   auto e_base = nested_disc->set_error(e_nested);
   return e_base;
+#endif
+
+  return 0;
 }
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr) {
