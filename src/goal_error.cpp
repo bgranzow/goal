@@ -33,14 +33,21 @@ apf::Field* compute_error(apf::Field* ue, apf::Field* pe) {
   return err;
 }
 
-double sum_contribs(apf::Field* e) {
-  auto m = apf::getMesh(e);
-  apf::MeshEntity* elem;
-  apf::MeshIterator* elems = m->begin(m->getDimension());
+double sum_contribs(apf::Field* ue, apf::Field* pe) {
   double sum = 0.0;
-  while ((elem = m->iterate(elems)))
-    sum += apf::getScalar(e, elem, 0);
-  m->end(elems);
+  apf::Vector3 u(0,0,0);
+  apf::MeshEntity* vtx;
+  auto m = apf::getMesh(ue);
+  auto it = m->begin(0);
+  auto dim = m->getDimension();
+  while ((vtx = m->iterate(it))) {
+    apf::getVector(ue, vtx, 0, u);
+    auto p = apf::getScalar(pe, vtx, 0);
+    for (int d = 0; d < dim; ++d)
+      sum += std::abs(u[d]);
+    sum += std::abs(p);
+  }
+  m->end(it);
   PCU_Add_Doubles(&sum, 1);
   return sum;
 }
