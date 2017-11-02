@@ -30,6 +30,7 @@ class Mechanics {
     void build_resid(Evaluators& E, bool save_states);
     template <typename T>
     void build_functional(ParameterList const& params, Evaluators& E);
+    void build_error(Evaluators& E);
   private:
     void make_displacement();
     void make_pressure();

@@ -123,6 +123,33 @@ void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
   E.push_back(J);
 }
 
+void Mechanics::build_error(Evaluators& E) {
+  ParameterList mat = params.sublist("materials");
+  auto u = find_evaluator("u", E);
+  auto p = find_evaluator("p", E);
+  auto uw = find_evaluator("uw", E);
+  auto pw = find_evaluator("pw", E);
+  auto pwc = find_evaluator("pwc", E);
+  auto kin = rcp(new Kinematics<ST>(u));
+  RCP<Model<ST>> cm;
+  if (model == "neohookean")
+    cm = rcp(new Neohookean<ST>(kin, states, false, mat));
+  else if (model == "J2")
+    cm = rcp(new J2<ST>(kin, states, false, mat));
+  else
+    fail("unknown model: %s", model.c_str());
+  auto mixed = rcp(new Mixed<ST>(p, cm, states, false));
+  auto mresidual = rcp(new MResidual<ST>(u, uw, cm));
+  auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
+  auto stab = rcp(new Stabilization<ST>(p, pwc, cm, kin, mat));
+  E.push_back(kin);
+  E.push_back(cm);
+  E.push_back(mixed);
+  E.push_back(mresidual);
+  E.push_back(presidual);
+  E.push_back(stab);
+}
+
 Mechanics* create_mechanics(ParameterList const& p, Disc* d) {
   return new Mechanics(p, d);
 }
