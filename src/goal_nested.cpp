@@ -293,7 +293,7 @@ void Nested::set_coarse(apf::Field* u, apf::Field* p) {
     auto p1 = apf::getScalar(p, vtx1, 0);
     auto p_avg = (p0 + p1)*0.5;
     apf::setVector(u, vtx, 0, u_avg);
-    apf::setVector(p, vtx, 0, p_avg);
+    apf::setScalar(p, vtx, 0, p_avg);
   }
   mesh->end(it);
   apf::synchronize(u);
