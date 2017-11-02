@@ -7,7 +7,7 @@ namespace goal {
 
 class PressureAdjoint : public ScalarWeight {
   public:
-    PressureAdjoint(apf::Field* z);
+    PressureAdjoint(apf::Field* z, std::string const& n);
     ST const& val(int node) const;
     ST const& grad(int node, int i) const;
     void in_elem(apf::MeshElement* me);

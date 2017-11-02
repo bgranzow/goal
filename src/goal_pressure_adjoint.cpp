@@ -6,13 +6,14 @@
 
 namespace goal {
 
-PressureAdjoint::PressureAdjoint(apf::Field* f) :
+PressureAdjoint::PressureAdjoint(apf::Field* f, std::string const& n) :
     ScalarWeight(f) {
   field = f;
   GOAL_DEBUG_ASSERT(apf::getValueType(field) == apf::SCALAR);
   num_dims = apf::getMesh(field)->getDimension();
   num_nodes = 0;
   elem = 0;
+  this->name = n;
 }
 
 ST const& PressureAdjoint::val(int node) const {
