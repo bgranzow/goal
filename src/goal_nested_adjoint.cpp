@@ -109,10 +109,10 @@ void NestedAdjoint::build_data() {
   zu_fine = apf::createFieldOn(nested_mesh, "u_z_fine", apf::VECTOR);
   zu_diff = apf::createFieldOn(nested_mesh, "u_z_diff", apf::VECTOR);
   u_error = apf::createFieldOn(nested_mesh, "u_error", apf::VECTOR);
-  zp_coarse = apf::createFieldOn(nested_mesh, "p_z_coarse", apf::VECTOR);
-  zp_fine = apf::createFieldOn(nested_mesh, "p_z_fine", apf::VECTOR);
-  zp_diff = apf::createFieldOn(nested_mesh, "p_z_diff", apf::VECTOR);
-  p_error = apf::createFieldOn(nested_mesh, "p_error", apf::VECTOR);
+  zp_coarse = apf::createFieldOn(nested_mesh, "p_z_coarse", apf::SCALAR);
+  zp_fine = apf::createFieldOn(nested_mesh, "p_z_fine", apf::SCALAR);
+  zp_diff = apf::createFieldOn(nested_mesh, "p_z_diff", apf::SCALAR);
+  p_error = apf::createFieldOn(nested_mesh, "p_error", apf::SCALAR);
   make_displacement_adj(nested_disc, adjoint);
   make_pressure_adj(nested_disc, adjoint);
   mech->build_resid<FADT>(adjoint, false);
@@ -200,7 +200,7 @@ void NestedAdjoint::solve(double t_now, double t_old) {
   goal::solve(lp, dRduT, z, dMdu, nested_disc);
   nested_disc->set_fine(z, zu_fine, zp_fine);
   apf::copyData(zu_coarse, zu_fine);
-  apf::copyData(zu_coarse, zu_fine);
+  apf::copyData(zp_coarse, zp_fine);
   nested_disc->set_coarse(zu_coarse, zp_coarse);
   subtract();
   auto e = -(R->dot(*z));
