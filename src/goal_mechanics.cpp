@@ -6,6 +6,7 @@
 #include "goal_avg_disp.hpp"
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
+#include "goal_disp_squared.hpp"
 #include "goal_J2.hpp"
 #include "goal_kinematics.hpp"
 #include "goal_mechanics.hpp"
@@ -118,6 +119,8 @@ void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
     J = rcp(new PointWise<T>(params));
   else if (type == "avg disp")
     J = rcp(new AvgDisp<T>(u));
+  else if (type == "disp squared")
+    J = rcp(new DispSquared<T>(u));
   else
     fail("unknown functional type: %s", type.c_str());
   E.push_back(J);
