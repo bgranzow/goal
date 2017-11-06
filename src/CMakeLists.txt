@@ -22,6 +22,7 @@ goal_stabilization.cpp
 goal_qoi.cpp
 goal_point_wise.cpp
 goal_avg_disp.cpp
+goal_von_mises.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
 goal_tbcs.cpp
@@ -63,6 +64,7 @@ goal_stabilization.hpp
 goal_qoi.hpp
 goal_point_wise.hpp
 goal_avg_disp.hpp
+goal_von_mises.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
 goal_tbcs.hpp
