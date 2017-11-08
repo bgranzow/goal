@@ -3,7 +3,9 @@
 
 #include "goal_avg_vm.hpp"
 #include "goal_control.hpp"
+#include "goal_disc.hpp"
 #include "goal_model.hpp"
+#include "goal_sol_info.hpp"
 #include "goal_von_mises.hpp"
 
 namespace goal {
@@ -13,7 +15,7 @@ using Teuchos::rcp_static_cast;
 static ParameterList get_valid_params() {
   ParameterList p;
   p.set<std::string>("type", "");
-  p.set<int>("elem set", 0);
+  p.set<std::string>("elem set", "");
   return p;
 }
 
@@ -22,9 +24,17 @@ AvgVM<T>::AvgVM(ParameterList const& p, RCP<Integrator> m) {
   params = p;
   params.validateParameters(get_valid_params(), 0);
   model = rcp_static_cast<Model<T>>(m);
-  es_idx = params.get<int>("elem set");
+  es_idx = 0;
   num_dims = model->get_num_dims();
   this->name = "avg vm";
+}
+
+template <typename T>
+void AvgVM<T>::pre_process(SolInfo* s) {
+  this->disc = s->get_disc();
+  this->qoi_value = 0.0;
+  auto esn = params.get<std::string>("elem set");
+  es_idx = this->disc->get_elem_set_idx(esn);
 }
 
 template <typename T>
