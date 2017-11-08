@@ -24,6 +24,7 @@ goal_point_wise.cpp
 goal_avg_disp.cpp
 goal_disp_squared.cpp
 goal_von_mises.cpp
+goal_avg_vm.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
 goal_tbcs.cpp
@@ -67,6 +68,7 @@ goal_point_wise.hpp
 goal_avg_disp.hpp
 goal_disp_squared.hpp
 goal_von_mises.hpp
+goal_avg_vm.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
 goal_tbcs.hpp
