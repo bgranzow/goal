@@ -45,6 +45,9 @@ class Disc {
     std::string get_elem_set_name(int es_idx) const;
     std::string get_side_set_name(int ss_idx) const;
     std::string get_node_set_name(int ns_idx) const;
+    int get_elem_set_idx(std::string const& es_name) const;
+    int get_side_set_idx(std::string const& ss_name) const;
+    int get_node_set_idx(std::string const& ns_name) const;
     ElemSet const& get_elems(std::string const& es_name);
     SideSet const& get_sides(std::string const& ss_name);
     NodeSet const& get_nodes(std::string const& ns_name);

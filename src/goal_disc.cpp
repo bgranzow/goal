@@ -134,6 +134,30 @@ std::string Disc::get_node_set_name(int ns_idx) const {
   return sets->models[0][ns_idx]->stkName;
 }
 
+int Disc::get_elem_set_idx(std::string const& esn) const {
+  int idx = -1;
+  for (int i = 0; i < get_num_elem_sets(); ++i)
+    if (esn == sets->models[num_dims][i]->stkName) idx = i;
+  GOAL_DEBUG_ASSERT(idx > -1);
+  return idx;
+}
+
+int Disc::get_side_set_idx(std::string const& ssn) const {
+  int idx = -1;
+  for (int i = 0; i < get_num_side_sets(); ++i)
+    if (ssn == sets->models[num_dims-1][i]->stkName) idx = i;
+  GOAL_DEBUG_ASSERT(idx > -1);
+  return idx;
+}
+
+int Disc::get_node_set_idx(std::string const& nsn) const {
+  int idx = -1;
+  for (int i = 0; i < get_num_node_sets(); ++i)
+    if (nsn == sets->models[0][i]->stkName) idx = i;
+  GOAL_DEBUG_ASSERT(idx > -1);
+  return idx;
+}
+
 ElemSet const& Disc::get_elems(std::string const& es_name) {
   GOAL_DEBUG_ASSERT(elem_sets.count(es_name));
   return elem_sets[es_name];
