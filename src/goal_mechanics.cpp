@@ -4,6 +4,7 @@
 
 #include "goal_assembly.hpp"
 #include "goal_avg_disp.hpp"
+#include "goal_avg_vm.hpp"
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
 #include "goal_disp_squared.hpp"
@@ -114,6 +115,7 @@ template <typename T>
 void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
   auto type = params.get<std::string>("type");
   auto u = find_evaluator("u", E);
+  auto model = find_evaluator("model", E);
   RCP<QoI<T>> J;
   if (type == "point wise")
     J = rcp(new PointWise<T>(params));
@@ -121,6 +123,8 @@ void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
     J = rcp(new AvgDisp<T>(u));
   else if (type == "disp squared")
     J = rcp(new DispSquared<T>(u));
+  else if (type == "avg vm")
+    J = rcp(new AvgVM<T>(params, model));
   else
     fail("unknown functional type: %s", type.c_str());
   E.push_back(J);
