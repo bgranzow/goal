@@ -71,14 +71,16 @@ States::~States() {
 
 void States::add_state(const char* n, int type) {
   auto s = apf::getIPFitShape(num_dims, 1);
-  auto f = apf::createField(mesh, n, type, s);
+  auto f = mesh->findField(n);
+  if (!f) f = apf::createField(mesh, n, type, s);
   states.push_back(f);
 }
 
 void States::add_old_state(const char* n, int type) {
   auto s = apf::getIPFitShape(num_dims, 1);
   auto on = (std::string)n + "_old";
-  auto f = apf::createField(mesh, on.c_str(), type, s);
+  auto f = mesh->findField(on.c_str());
+  if (!f) f = apf::createField(mesh, on.c_str(), type, s);
   old_states.push_back(f);
 }
 

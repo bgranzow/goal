@@ -52,31 +52,22 @@ Mechanics::~Mechanics() {
 
 void Mechanics::make_displacement() {
   auto m = disc->get_apf_mesh();
-  if (disc->is_base()) {
-    displacement = apf::createFieldOn(m, "u", apf::VECTOR);
-    apf::zeroField(displacement);
-  }
-  else {
-    displacement = m->findField("u");
-    GOAL_DEBUG_ASSERT(displacement);
-  }
+  auto f = m->findField("u");
+  if (f) displacement = f;
+  else displacement = apf::createFieldOn(m, "u", apf::VECTOR);
+  if (!f) apf::zeroField(displacement);
 }
 
 void Mechanics::make_pressure() {
   auto m = disc->get_apf_mesh();
-  if (disc->is_base()) {
-    pressure = apf::createFieldOn(m, "p", apf::SCALAR);
-    apf::zeroField(pressure);
-  }
-  else {
-    pressure = m->findField("p");
-    GOAL_DEBUG_ASSERT(pressure);
-  }
+  auto f = m->findField("p");
+  if (f) pressure = f;
+  else pressure = apf::createFieldOn(m, "p", apf::SCALAR);
+  if (!f) apf::zeroField(pressure);
 }
 
 void Mechanics::make_states() {
   states = create_states(disc);
-  if (! disc->is_base()) return;
   states->add("sigma", apf::MATRIX);
   if (model == "J2") {
     states->add("eqps", apf::SCALAR, true);
