@@ -73,6 +73,7 @@ void Mechanics::make_states() {
     states->add("eqps", apf::SCALAR, true);
     states->add("Fp", apf::MATRIX, true, true);
   }
+  states->update();
 }
 
 template <typename T>
