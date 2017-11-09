@@ -33,6 +33,7 @@ goal_mechanics.cpp
 goal_primal.cpp
 goal_functional.cpp
 goal_nested_adjoint.cpp
+goal_dissipation.cpp
 goal_error.cpp
 goal_size_field.cpp
 goal_output.cpp
@@ -77,6 +78,7 @@ goal_mechanics.hpp
 goal_primal.hpp
 goal_functional.hpp
 goal_nested_adjoint.hpp
+goal_dissipation.hpp
 goal_error.hpp
 goal_size_field.hpp
 goal_output.hpp
@@ -110,5 +112,6 @@ endfunction()
 add_exe(GoalPrimal main_primal.cpp)
 add_exe(GoalSPR main_spr.cpp)
 add_exe(GoalNested main_nested.cpp)
+add_exe(GoalDissipation main_dissipation.cpp)
 
 bob_end_subdir()

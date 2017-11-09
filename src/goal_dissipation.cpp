@@ -62,8 +62,8 @@ void Dissipation::build_adjoint() {
   mech->build_resid<FADT>(adjoint, false);
   mech->build_functional<FADT>(func_params, adjoint);
   auto mesh = disc->get_apf_mesh();
-  z_displacement = apf::createFieldOn(mesh, "zu", apf::VECTOR);
-  z_pressure = apf::createFieldOn(mesh, "zp", apf::SCALAR);
+  z_displacement = apf::createFieldOn(mesh, "u_z", apf::VECTOR);
+  z_pressure = apf::createFieldOn(mesh, "p_z", apf::SCALAR);
 }
 
 void Dissipation::destroy_adjoint() {
