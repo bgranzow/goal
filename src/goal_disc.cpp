@@ -398,7 +398,7 @@ void Disc::compute_node_sets() {
 }
 
 void Disc::add_soln(RCP<VectorT> du) {
-  apf::Vector3 disp;
+  apf::Vector3 disp(0,0,0);
   apf::DynamicArray<apf::Node> nodes;
   apf::getNodes(owned_nmbr, nodes);
   auto data = du->get1dView();
@@ -421,6 +421,30 @@ void Disc::add_soln(RCP<VectorT> du) {
   }
   apf::synchronize(u);
   apf::synchronize(p);
+}
+
+void Disc::set_adj(RCP<VectorT> z) {
+  apf::Vector3 zdisp(0,0,0);
+  apf::DynamicArray<apf::Node> nodes;
+  apf::getNodes(owned_nmbr, nodes);
+  auto data = z->get1dView();
+  auto uz = mesh->findField("u_z");
+  auto pz = mesh->findField("p_z");
+  for (size_t n = 0; n < nodes.size(); ++n) {
+    auto node = nodes[n];
+    auto ent = node.entity;
+    auto lnode = node.node;
+    for (int d = 0; d < num_dims; ++d) {
+      LO row = get_lid(node, d);
+      zdisp[d] = data[row];
+    }
+    LO row = get_lid(node, num_dims);
+    double zpress = data[row];
+    apf::setVector(uz, ent, lnode, zdisp);
+    apf::setScalar(pz, ent, lnode, zpress);
+  }
+  apf::synchronize(uz);
+  apf::synchronize(pz);
 }
 
 Disc* create_disc(ParameterList const& p) {
