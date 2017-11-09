@@ -98,6 +98,13 @@ static void load_mesh(apf::Mesh2** mesh, ParameterList const& p) {
   *mesh = apf::loadMdsMesh(g, m);
 }
 
+static void prepare_if_restart(apf::Mesh2* m) {
+  auto on = m->findNumbering("owned");
+  auto gn = m->findNumbering("ghost");
+  if (on) apf::destroyNumbering(on);
+  if (gn) apf::destroyNumbering(gn);
+}
+
 Disc::Disc() {
 }
 
@@ -105,6 +112,7 @@ Disc::Disc(ParameterList const& p) {
   p.validateParameters(get_valid_params(), 0);
   am_base = true;
   load_mesh(&mesh, p);
+  prepare_if_restart(mesh);
   sets = read_sets(mesh, p);
   apf::reorderMdsMesh(mesh);
   mesh->verify();
