@@ -17,6 +17,7 @@ static ParameterList get_valid_params() {
   p.set<std::string>("out file", "");
   p.set<int>("interval", 0);
   p.set<bool>("turn off", false);
+  p.set<bool>("write native", false);
   return p;
 }
 
@@ -38,12 +39,15 @@ Output::Output(ParameterList const& p, Disc* d) :
     params(p),
     interval(1),
     turn_off(false),
+    write_native(false),
     pos(0),
     index(0) {
   params.validateParameters(get_valid_params(), 0);
   name = params.get<std::string>("out file");
   if (params.isParameter("turn off"))
     turn_off = params.get<bool>("turn off");
+  if (params.isParameter("write native"))
+    write_native = params.get<bool>("write native");
   if (params.isParameter("interval"))
     interval = params.get<int>("interval");
   if (! turn_off) write_initial_pvd(name, pos);
@@ -81,10 +85,19 @@ void Output::write_vtk(double t) {
   ++index;
 }
 
+void Output::write_native_mesh() {
+  auto m = disc->get_apf_mesh();
+  std::ostringstream oss;
+  oss << name << "_" << index << "/";
+  auto out = oss.str();
+  m->writeNative(out.c_str());
+}
+
 void Output::write(double t, int iter) {
   if (turn_off) return;
   static int my_out_interval = 0;
   if (my_out_interval++ % interval) return;
+  if (write_native) write_native_mesh();
   double eps = 1.0e-4;
   write_vtk(t + eps*iter);
 }

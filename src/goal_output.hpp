@@ -13,11 +13,13 @@ class Output {
     ~Output();
     void write(double t, int iter);
   private:
+    void write_native_mesh();
     void write_vtk(double t);
     Disc* disc;
     ParameterList params;
     int interval;
     bool turn_off;
+    bool write_native;
     std::string name;
     int pos;
     int index;
