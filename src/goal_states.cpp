@@ -121,7 +121,6 @@ void States::add(const char* n, int t, bool s, bool I) {
   bool init = true;
   auto f = mesh->findField(n);
   if (f) init = false;
-  std::cout << init << std::endl;
   add_state(n, t);
   if (init) init_state(states.back(), I);
   if (s) add_old_state(n, t);
