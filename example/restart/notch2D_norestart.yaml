@@ -1,0 +1,37 @@
+J2 notch 2D no restart:
+  num steps: 4
+  step size: 1.0
+  initial time: 0.0 
+  discretization:
+    geom file: '../mesh/notch2D/notch2D.dmg'
+    mesh file: '../mesh/notch2D/notch2D.smb'
+    assoc file: '../mesh/notch2D/notch2D.txt'
+  dirichlet bcs:
+    bc 1: [0, xmin, 0.0]
+    bc 2: [1, ymin, 0.0]
+    bc 3: [0, xmax, 0.01*t]
+  mechanics:
+    model: J2
+    materials:
+      body:
+        E: 1000.0
+        nu: 0.25
+        K: 100.0
+        Y: 10.0
+        c0: 1.0
+  functional:
+    type: avg disp
+  primal linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+      number of equations: 3
+    nonlinear tolerance: 1.0e-8
+    nonlinear max iters: 8
+  output:
+    out file: out_J2_notch2D_norestart
+  regression:
+    value: 5.751944294281983e-03
+    tolerance: 1.0e-8
