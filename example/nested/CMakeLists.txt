@@ -6,5 +6,6 @@ function(nested_test input)
 endfunction()
 
 nested_test(cooks_point_wise)
+nested_test(cooks_avg_disp_subdomain)
 
 bob_end_subdir()
