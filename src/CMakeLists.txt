@@ -28,6 +28,7 @@ goal_avg_vm.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
 goal_tbcs.cpp
+goal_ibcs.cpp
 goal_linear_solve.cpp
 goal_mechanics.cpp
 goal_primal.cpp
@@ -73,6 +74,7 @@ goal_avg_vm.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
 goal_tbcs.hpp
+goal_ibcs.hpp
 goal_linear_solve.hpp
 goal_mechanics.hpp
 goal_primal.hpp
