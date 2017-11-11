@@ -14,8 +14,7 @@ class Integrator;
 void set_ibcs(
     ParameterList const& p,
     RCP<Integrator> w,
-    SolInfo* s,
-    double t);
+    SolInfo* s);
 
 }
 

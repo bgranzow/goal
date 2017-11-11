@@ -15,7 +15,7 @@ using Teuchos::rcp_static_cast;
 static ParameterList get_valid_params() {
   ParameterList p;
   p.set<std::string>("side set", "");
-  p.set<std::string>("scale distance", "");
+  p.set<double>("scale distance", 0.0);
   return p;
 }
 
@@ -34,7 +34,6 @@ static void compute_traction(
   T = ip - center;
   auto length = T.getLength();
   T = T/length;
-  std::cout << length << std::endl;
   T = T*scale;
 }
 
@@ -86,8 +85,9 @@ void set_ibcs(
     ParameterList const& p,
     RCP<Integrator> w,
     SolInfo* s) {
+  if (! p.isParameter("side set")) return;
   validate_params(p, s);
-  auto scale = p.get<double>("scale");
+  auto scale = p.get<double>("scale distance");
   auto ss_name = p.get<std::string>("side set");
   auto ww = rcp_static_cast<VectorWeight>(w);
   apply_bc(scale, ss_name, ww, s);
