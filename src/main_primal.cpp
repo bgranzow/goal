@@ -22,6 +22,7 @@ static ParameterList get_valid_params() {
   p.sublist("discretization");
   p.sublist("dirichlet bcs");
   p.sublist("traction bcs");
+  p.sublist("inward bcs");
   p.sublist("mechanics");
   p.sublist("functional");
   p.sublist("primal linear algebra");

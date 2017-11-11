@@ -5,6 +5,7 @@
 #include "goal_displacement_adjoint.hpp"
 #include "goal_error.hpp"
 #include "goal_eval_modes.hpp"
+#include "goal_ibcs.hpp"
 #include "goal_linear_solve.hpp"
 #include "goal_mechanics.hpp"
 #include "goal_nested.hpp"
@@ -162,12 +163,14 @@ void NestedAdjoint::compute_adjoint(double t_now, double t_old) {
   auto t0 = time();
   auto dbc = params.sublist("dirichlet bcs");
   auto tbc = params.sublist("traction bcs");
+  auto ibc = params.sublist("inward bcs");
   auto w = find_evaluator("uw", adjoint);
   sol_info->resume_fill();
   sol_info->zero_all();
   set_time(adjoint, t_now, t_old);
   assemble(adjoint, sol_info);
   set_tbcs(tbc, w, sol_info, t_now);
+  set_ibcs(ibc, w, sol_info);
   sol_info->gather_all();
   set_jac_dbcs(dbc, sol_info, t_now);
   sol_info->complete_fill();
@@ -214,12 +217,14 @@ void NestedAdjoint::localize(double t_now, double t_old) {
   auto t0 = time();
   auto dbc = params.sublist("dirichlet bcs");
   auto tbc = params.sublist("traction bcs");
+  auto ibc = params.sublist("inward bcs");
   auto w = find_evaluator("uw", error);
   auto R = sol_info->owned->R;
   sol_info->zero_R();
   set_time(error, t_now, t_old);
   assemble(error, sol_info);
   set_tbcs(tbc, w, sol_info, t_now);
+  set_ibcs(ibc, w, sol_info);
   sol_info->gather_all();
   set_resid_dbcs(dbc, sol_info, t_now);
   nested_disc->set_fine(R, u_error, p_error);
