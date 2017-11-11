@@ -1,0 +1,19 @@
+elem set matrix 1
+3 33
+node set origin_vtx 1
+0 0
+node set xmax_vtx 1
+0 1
+node set ymax_vtx 1
+0 3
+node set zmax_vtx 1
+0 16
+side set sphere 8
+2 64
+2 51
+2 57
+2 70
+2 68
+2 66
+2 53
+2 55
