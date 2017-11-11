@@ -44,3 +44,6 @@ cooks avg disp subdomain:
     elem set: membrane
   output:
     out file: out_cooks_avg_disp_subdomain
+  regression:
+    value: 4.142329467049588e+01
+    tolerance: 1.0e-8

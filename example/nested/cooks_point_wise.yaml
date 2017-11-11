@@ -45,3 +45,6 @@ cooks point wise:
     idx: 1
   output:
     out file: out_cooks_point_wise
+  regression:
+    value: 2.522922598440381e-01
+    tolerance: 1.0e-8
