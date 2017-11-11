@@ -7,7 +7,7 @@ $(NAME).geo:
 	./$(NAME)
 
 $(NAME).msh: $(NAME).geo
-	gmsh -2 $(NAME).geo -o $(NAME).msh	
+	gmsh -3 $(NAME).geo -o $(NAME).msh	
 
 $(NAME)-serial.smb: $(NAME).msh
 	from_gmsh $(NAME).dmg $(NAME).msh $(NAME)-serial.smb

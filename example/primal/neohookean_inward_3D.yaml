@@ -1,0 +1,38 @@
+neohookean inward 3D:
+  num steps: 1
+  step size: 1.0
+  initial time: 0.0 
+  discretization:
+    geom file: '../mesh/sphere_in_cube/sphere_in_cube.dmg'
+    mesh file: '../mesh/sphere_in_cube/sphere_in_cube-serial.smb'
+    assoc file: '../mesh/sphere_in_cube/sphere_in_cube.txt'
+  dirichlet bcs:
+    bc 1: [0, origin_vtx, 0.0]
+    bc 2: [1, origin_vtx, 0.0]
+    bc 3: [2, origin_vtx, 0.0]
+    bc 4: [1, xmax_vtx, 0.0]
+    bc 5: [2, ymax_vtx, 0.0]
+    bc 6: [0, zmax_vtx, 0.0]
+  inward bcs:
+    side set: sphere
+    scale distance: 0.1
+  mechanics:
+    model: neohookean
+    materials:
+      matrix:
+        E: 1000.0
+        nu: 0.25
+        c0: 1.0
+  primal linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+      number of equations: 4
+    nonlinear tolerance: 1.0e-8
+    nonlinear max iters: 5
+  functional:
+    type: avg disp
+  output:
+    out file: out_neohookean_inward_3D
