@@ -15,7 +15,7 @@ neohookean inward 3D:
     bc 6: [0, zmax_vtx, 0.0]
   inward bcs:
     side set: sphere
-    scale distance: 0.1
+    scale distance: -0.1
   mechanics:
     model: neohookean
     materials:
