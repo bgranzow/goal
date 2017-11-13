@@ -28,6 +28,7 @@ class Nested : public Disc {
     void refine_uniform();
     void refine_mesh();
     void refine_long();
+    void refine_single();
     void store_old_verts();
     void subtract_adj(apf::Field* zu, apf::Field* zp);
     void zero_adj(apf::Field* zu, apf::Field* zp);

@@ -232,9 +232,101 @@ void Nested::refine_long() {
   delete size;
 }
 
+struct Single : public ma::IdentitySizeField {
+  Single(apf::Mesh2* m);
+  bool shouldSplit(apf::MeshEntity* edge);
+  void mark_edge(apf::MeshEntity* edge);
+  bool needs_marking(apf::Adjacent& elems);
+  void indicate_edges();
+  void gather_edges();
+  void mark_edges();
+  int dim;
+  apf::Mesh2* mesh;
+  apf::Field* edge_mark;
+  apf::Field* elem_mark;
+  std::set<apf::MeshEntity*> stored;
+};
+
+Single::Single(apf::Mesh2* m) : ma::IdentitySizeField(m) {
+  mesh = m;
+  dim = mesh->getDimension();
+  mark_edges();
+}
+
+bool Single::shouldSplit(apf::MeshEntity* edge) {
+  if (stored.count(edge)) return true;
+  else return false;
+}
+
+void Single::mark_edge(apf::MeshEntity* edge) {
+  apf::setScalar(edge_mark, edge, 0, 1.0);
+  apf::Adjacent elems;
+  mesh->getAdjacent(edge, dim, elems);
+  for (size_t i = 0; i < elems.getSize(); ++i)
+    apf::setScalar(elem_mark, elems[i], 0, 1.0);
+}
+
+bool Single::needs_marking(apf::Adjacent& elems) {
+  bool mark = true;
+  for (size_t i = 0; i < elems.getSize(); ++i)
+    if (apf::getScalar(elem_mark, elems[i], 0) > 0)
+      mark = false;
+  return mark;
+}
+
+void Single::indicate_edges() {
+  apf::Adjacent elems;
+  apf::MeshEntity* edge;
+  apf::MeshIterator* edges = mesh->begin(1);
+  while ((edge = mesh->iterate(edges))) {
+    mesh->getAdjacent(edge, dim, elems);
+    if (needs_marking(elems))
+      mark_edge(edge);
+  }
+  mesh->end(edges);
+  apf::accumulate(edge_mark);
+}
+
+void Single::gather_edges() {
+  apf::MeshEntity* edge;
+  apf::MeshIterator* edges = mesh->begin(1);
+  while ((edge = mesh->iterate(edges)))
+    if (apf::getScalar(edge_mark, edge, 0) > 0)
+      stored.insert(edge);
+  mesh->end(edges);
+}
+
+void Single::mark_edges() {
+  apf::FieldShape* sedge = apf::getConstant(1);
+  apf::FieldShape* selem = apf::getConstant(dim);
+  edge_mark = apf::createField(mesh, "edge_mark", apf::SCALAR, sedge);
+  elem_mark = apf::createField(mesh, "elem_mark", apf::SCALAR, selem);
+  apf::zeroField(edge_mark);
+  apf::zeroField(elem_mark);
+  indicate_edges();
+  gather_edges();
+  apf::destroyField(edge_mark);
+  apf::destroyField(elem_mark);
+}
+
+void Nested::refine_single() {
+  goal::print(" > nested: single");
+  ma::AutoSolutionTransfer transfers(mesh);
+  auto mytransfer = new Transfer(mesh, old_vtx_tag, new_vtx_tag);
+  transfers.add(mytransfer);
+  auto size = new Single(mesh);
+  auto in = ma::configureIdentity(mesh, size, &transfers);
+  in->shouldFixShape = false;
+  in->shouldSnap = false;
+  in->maximumIterations = 1;
+  ma::adapt(in);
+  delete size;
+}
+
 void Nested::refine_mesh() {
   if (mode == UNIFORM) refine_uniform();
   else if (mode == LONG) refine_long();
+  else if (mode == SINGLE) refine_single();
   else fail("unknown refine mode: %d", mode);
   apf::reorderMdsMesh(mesh);
   mesh->verify();

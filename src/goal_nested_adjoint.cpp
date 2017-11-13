@@ -96,6 +96,7 @@ NestedAdjoint::~NestedAdjoint() {
 static int get_mode(std::string const& m) {
   if (m == "uniform") return UNIFORM;
   else if (m == "long") return LONG;
+  else if (m == "single") return SINGLE;
   else fail("unknown adjoint mode: %s", m.c_str());
 }
 
