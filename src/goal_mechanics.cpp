@@ -10,6 +10,7 @@
 #include "goal_disc.hpp"
 #include "goal_J2.hpp"
 #include "goal_kinematics.hpp"
+#include "goal_ks_vm.hpp"
 #include "goal_mechanics.hpp"
 #include "goal_mresidual.hpp"
 #include "goal_mixed.hpp"
@@ -117,6 +118,8 @@ void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
     J = rcp(new AvgDispSubdomain<T>(params, u));
   else if (type == "avg vm")
     J = rcp(new AvgVM<T>(params, model));
+  else if (type == "max vm")
+    J = rcp(new KSVM<T>(params, model));
   else
     fail("unknown functional type: %s", type.c_str());
   E.push_back(J);

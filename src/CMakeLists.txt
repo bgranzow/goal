@@ -25,6 +25,7 @@ goal_avg_disp.cpp
 goal_avg_disp_subdomain.cpp
 goal_von_mises.cpp
 goal_avg_vm.cpp
+goal_ks_vm.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
 goal_tbcs.cpp
@@ -71,6 +72,7 @@ goal_avg_disp.hpp
 goal_avg_disp_subdomain.hpp
 goal_von_mises.hpp
 goal_avg_vm.hpp
+goal_ks_vm.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
 goal_tbcs.hpp
