@@ -5,7 +5,7 @@ notch 2D max vm:
   adjoint mode: uniform
   discretization:
     geom file: '../mesh/notch2D/notch2D.dmg'
-    mesh file: '../mesh/notch2D/notch2D-serial.smb'
+    mesh file: '../mesh/notch2D/notch2D.smb'
     assoc file: '../mesh/notch2D/notch2D.txt'
   dirichlet bcs:
     bc 1: [0, xmin, 0.0]
