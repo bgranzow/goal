@@ -95,7 +95,7 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
   auto mixed = rcp(new Mixed<T>(p, cm, states, save));
   auto mresidual = rcp(new MResidual<T>(u, uw, cm));
   auto presidual = rcp(new PResidual<T>(p, pw, kin, mat));
-  auto stab = rcp(new Stabilization<T>(p, pw, cm, kin, mat));
+  auto stab = rcp(new Stabilization<T>(p, pw, kin, mat));
   E.push_back(kin);
   E.push_back(cm);
   E.push_back(mixed);
@@ -143,7 +143,7 @@ void Mechanics::build_error(Evaluators& E) {
   auto mixed = rcp(new Mixed<ST>(p, cm, states, false));
   auto mresidual = rcp(new MResidual<ST>(u, uw, cm));
   auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
-  auto stab = rcp(new Stabilization<ST>(p, pwc, cm, kin, mat));
+  auto stab = rcp(new Stabilization<ST>(p, pwc, kin, mat));
   E.push_back(kin);
   E.push_back(cm);
   E.push_back(mixed);

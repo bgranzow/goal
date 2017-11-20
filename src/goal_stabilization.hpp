@@ -12,7 +12,6 @@ class Disc;
 class Integrator;
 class ScalarWeight;
 template <typename T> class Kinematics;
-template <typename T> class Model;
 template <typename T> class Pressure;
 
 template <typename T>
@@ -21,7 +20,6 @@ class Stabilization : public Integrator {
     Stabilization(
         RCP<Integrator> p,
         RCP<Integrator> w,
-        RCP<Model<T>> m,
         RCP<Kinematics<T>> k,
         ParameterList const& mat);
     void pre_process(SolInfo*);
@@ -33,7 +31,6 @@ class Stabilization : public Integrator {
   private:
     RCP<Pressure<T>> p;
     RCP<ScalarWeight> w;
-    RCP<Model<T>> m;
     RCP<Kinematics<T>> k;
     ParameterList params;
     Disc* disc;

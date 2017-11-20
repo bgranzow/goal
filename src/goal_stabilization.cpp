@@ -18,12 +18,10 @@ template <typename T>
 Stabilization<T>::Stabilization(
   RCP<Integrator> pressure,
   RCP<Integrator> weight,
-  RCP<Model<T>> model,
   RCP<Kinematics<T>> kinematics,
   ParameterList const& mat) :
     p(rcp_static_cast<Pressure<T>>(pressure)),
     w(rcp_static_cast<ScalarWeight>(weight)),
-    m(model),
     k(kinematics),
     params(mat),
     disc(0),
