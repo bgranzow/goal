@@ -4,7 +4,7 @@
 SCOREC_DIR=/Users/bng/codes/core/install-opt
 TRILINOS_DIR=/Users/bng/codes/trilinos/install-opt
 GOAL_SRC_DIR=/Users/bng/codes/goal
-GOAL_INSTALL_DIR=/Users/bng/goal/install-opt
+GOAL_INSTALL_DIR=/Users/bng/codes/goal/install-opt
 
 cmake $GOAL_SRC_DIR \
 -DCMAKE_CXX_COMPILER="mpicxx" \
