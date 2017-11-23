@@ -344,7 +344,7 @@ void Nested::store_old_verts() {
   mesh->end(it);
 }
 
-void Nested::set_fine(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
+void Nested::set_fine(RCP<VectorT> x, apf::Field* u) {
   apf::Vector3 disp(0,0,0);
   apf::DynamicArray<apf::Node> nodes;
   apf::getNodes(owned_nmbr, nodes);
@@ -357,16 +357,12 @@ void Nested::set_fine(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
       LO row = get_lid(node, d);
       disp[d] = data[row];
     }
-    LO row = get_lid(node, num_dims);
-    double press = data[row];
     apf::setVector(u, ent, lnode, disp);
-    apf::setScalar(p, ent, lnode, press);
   }
   apf::synchronize(u);
-  apf::synchronize(p);
 }
 
-void Nested::set_coarse(apf::Field* u, apf::Field* p) {
+void Nested::set_coarse(apf::Field* u) {
   int tags[2];
   apf::Vector3 u0(0,0,0);
   apf::Vector3 u1(0,0,0);
@@ -381,15 +377,10 @@ void Nested::set_coarse(apf::Field* u, apf::Field* p) {
     apf::getVector(u, vtx0, 0, u0);
     apf::getVector(u, vtx1, 0, u1);
     u_avg = (u0 + u1)*0.5;
-    auto p0 = apf::getScalar(p, vtx0, 0);
-    auto p1 = apf::getScalar(p, vtx1, 0);
-    auto p_avg = (p0 + p1)*0.5;
     apf::setVector(u, vtx, 0, u_avg);
-    apf::setScalar(p, vtx, 0, p_avg);
   }
   mesh->end(it);
   apf::synchronize(u);
-  apf::synchronize(p);
 }
 
 apf::Field* Nested::set_error(apf::Field* nested_err) {

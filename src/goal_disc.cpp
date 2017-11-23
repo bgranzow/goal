@@ -257,7 +257,7 @@ void Disc::destroy_data() {
 
 void Disc::initialize() {
   num_dims = mesh->getDimension();
-  num_eqs = num_dims + 1;
+  num_eqs = num_dims;
   num_elem_sets = sets->models[num_dims].size();
   num_side_sets = sets->models[num_dims-1].size();
   num_node_sets = sets->models[0].size();
@@ -403,24 +403,18 @@ void Disc::add_soln(RCP<VectorT> du) {
   apf::getNodes(owned_nmbr, nodes);
   auto data = du->get1dView();
   auto u = mesh->findField("u");
-  auto p = mesh->findField("p");
   for (size_t n = 0; n < nodes.size(); ++n) {
     auto node = nodes[n];
     auto ent = node.entity;
     auto lnode = node.node;
-    double press = apf::getScalar(p, ent, lnode);
     apf::getVector(u, ent, lnode, disp);
     for (int d = 0; d < num_dims; ++d) {
       LO row = get_lid(node, d);
       disp[d] += data[row];
     }
-    LO row = get_lid(node, num_dims);
-    press += data[row];
     apf::setVector(u, ent, lnode, disp);
-    apf::setScalar(p, ent, lnode, press);
   }
   apf::synchronize(u);
-  apf::synchronize(p);
 }
 
 void Disc::set_adj(RCP<VectorT> z) {
@@ -429,7 +423,6 @@ void Disc::set_adj(RCP<VectorT> z) {
   apf::getNodes(owned_nmbr, nodes);
   auto data = z->get1dView();
   auto uz = mesh->findField("u_z");
-  auto pz = mesh->findField("p_z");
   for (size_t n = 0; n < nodes.size(); ++n) {
     auto node = nodes[n];
     auto ent = node.entity;
@@ -438,13 +431,9 @@ void Disc::set_adj(RCP<VectorT> z) {
       LO row = get_lid(node, d);
       zdisp[d] = data[row];
     }
-    LO row = get_lid(node, num_dims);
-    double zpress = data[row];
     apf::setVector(uz, ent, lnode, zdisp);
-    apf::setScalar(pz, ent, lnode, zpress);
   }
   apf::synchronize(uz);
-  apf::synchronize(pz);
 }
 
 Disc* create_disc(ParameterList const& p) {

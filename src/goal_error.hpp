@@ -7,8 +7,8 @@ class Field;
 
 namespace goal {
 
-apf::Field* compute_error(apf::Field* ue, apf::Field* pe);
-double sum_contribs(apf::Field* ue, apf::Field* pe);
+apf::Field* compute_error(apf::Field* ue);
+double sum_contribs(apf::Field* ue);
 
 }
 

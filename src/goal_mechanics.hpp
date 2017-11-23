@@ -25,7 +25,6 @@ class Mechanics {
     Disc* get_disc() { return disc; }
     States* get_states() { return states; }
     apf::Field* get_displacement() { return displacement; }
-    apf::Field* get_pressure() { return pressure; }
     template <typename T>
     void build_resid(Evaluators& E, bool save_states);
     template <typename T>
@@ -33,14 +32,12 @@ class Mechanics {
     void build_error(Evaluators& E);
   private:
     void make_displacement();
-    void make_pressure();
     void make_states();
     ParameterList params;
     Disc* disc;
     States* states;
     std::string model;
     apf::Field* displacement;
-    apf::Field* pressure;
 };
 
 Mechanics* create_mechanics(ParameterList const& p, Disc* d);

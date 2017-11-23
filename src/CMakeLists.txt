@@ -6,19 +6,13 @@ goal_sol_info.cpp
 goal_states.cpp
 goal_integrator.cpp
 goal_displacement.cpp
-goal_pressure.cpp
-goal_scalar_weight.cpp
 goal_vector_weight.cpp
-goal_pressure_adjoint.cpp
 goal_displacement_adjoint.cpp
 goal_kinematics.cpp
 goal_model.cpp
 goal_neohookean.cpp
 goal_J2.cpp
-goal_mixed.cpp
 goal_mresidual.cpp
-goal_presidual.cpp
-goal_stabilization.cpp
 goal_qoi.cpp
 goal_point_wise.cpp
 goal_avg_disp.cpp
@@ -35,7 +29,6 @@ goal_mechanics.cpp
 goal_primal.cpp
 goal_functional.cpp
 goal_nested_adjoint.cpp
-goal_dissipation.cpp
 goal_error.cpp
 goal_size_field.cpp
 goal_output.cpp
@@ -53,19 +46,13 @@ goal_sol_info.hpp
 goal_states.hpp
 goal_integrator.hpp
 goal_displacement.hpp
-goal_pressure.hpp
-goal_scalar_weight.hpp
 goal_vector_weight.hpp
-goal_pressure_adjoint.hpp
 goal_displacement_adjoint.hpp
 goal_kinematics.hpp
 goal_model.hpp
 goal_neohookean.hpp
 goal_J2.hpp
-goal_mixed.hpp
 goal_mresidual.hpp
-goal_presidual.hpp
-goal_stabilization.hpp
 goal_qoi.hpp
 goal_point_wise.hpp
 goal_avg_disp.hpp
@@ -82,7 +69,6 @@ goal_mechanics.hpp
 goal_primal.hpp
 goal_functional.hpp
 goal_nested_adjoint.hpp
-goal_dissipation.hpp
 goal_error.hpp
 goal_size_field.hpp
 goal_output.hpp
@@ -116,6 +102,5 @@ endfunction()
 add_exe(GoalPrimal main_primal.cpp)
 add_exe(GoalSPR main_spr.cpp)
 add_exe(GoalNested main_nested.cpp)
-add_exe(GoalDissipation main_dissipation.cpp)
 
 bob_end_subdir()

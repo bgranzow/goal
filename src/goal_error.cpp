@@ -4,8 +4,7 @@
 
 namespace goal {
 
-apf::Field* compute_error(apf::Field* ue, apf::Field* pe) {
-  double p_err = 0.0;
+apf::Field* compute_error(apf::Field* ue) {
   apf::Vector3 u_err(0,0,0);
   apf::Vector3 xi(0,0,0);
   auto m = apf::getMesh(ue);
@@ -16,24 +15,20 @@ apf::Field* compute_error(apf::Field* ue, apf::Field* pe) {
   while ((elem = m->iterate(elems))) {
     auto me = apf::createMeshElement(m, elem);
     auto u_elem = apf::createElement(ue, me);
-    auto p_elem = apf::createElement(pe, me);
     apf::getIntPoint(me, 1, 0, xi);
-    p_err = apf::getScalar(p_elem, xi);
     apf::getVector(u_elem, xi, u_err);
     double total = 0.0;
     for (int d = 0; d < num_dims; ++d)
       total += std::abs(u_err[d]);
-    total += std::abs(p_err);
     apf::setScalar(err, elem, 0, total);
     apf::destroyElement(u_elem);
-    apf::destroyElement(p_elem);
     apf::destroyMeshElement(me);
   }
   m->end(elems);
   return err;
 }
 
-double sum_contribs(apf::Field* ue, apf::Field* pe) {
+double sum_contribs(apf::Field* ue) {
   double sum = 0.0;
   apf::Vector3 u(0,0,0);
   apf::MeshEntity* vtx;
@@ -42,10 +37,8 @@ double sum_contribs(apf::Field* ue, apf::Field* pe) {
   auto dim = m->getDimension();
   while ((vtx = m->iterate(it))) {
     apf::getVector(ue, vtx, 0, u);
-    auto p = apf::getScalar(pe, vtx, 0);
     for (int d = 0; d < dim; ++d)
       sum += std::abs(u[d]);
-    sum += std::abs(p);
   }
   m->end(it);
   PCU_Add_Doubles(&sum, 1);

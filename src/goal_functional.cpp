@@ -4,7 +4,6 @@
 #include "goal_eval_modes.hpp"
 #include "goal_functional.hpp"
 #include "goal_mechanics.hpp"
-#include "goal_pressure.hpp"
 #include "goal_primal.hpp"
 #include "goal_scalar_weight.hpp"
 #include "goal_qoi.hpp"
@@ -23,14 +22,6 @@ static void make_displacement(Mechanics* m, Evaluators& e) {
   e.push_back(w);
 }
 
-static void make_pressure(Mechanics* m, Evaluators& e) {
-  auto f = m->get_pressure();
-  auto p = rcp(new Pressure<ST>(f, NONE));
-  auto w = rcp(new ScalarWeight(f));
-  e.push_back(p);
-  e.push_back(w);
-}
-
 Functional::Functional(ParameterList const& p, Primal* pr) {
   params = p;
   primal = pr;
@@ -38,7 +29,6 @@ Functional::Functional(ParameterList const& p, Primal* pr) {
   sol_info = 0;
   auto fp = params.sublist("functional");
   make_displacement(mech, evaluators);
-  make_pressure(mech, evaluators);
   mech->build_resid<ST>(evaluators, false);
   mech->build_functional<ST>(fp, evaluators);
   auto eval = evaluators.back();

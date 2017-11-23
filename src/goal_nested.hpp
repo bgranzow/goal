@@ -18,8 +18,8 @@ class Nested : public Disc {
   public:
     Nested(Disc* d, int mode);
     ~Nested();
-    void set_fine(RCP<VectorT> z, apf::Field* u, apf::Field* p);
-    void set_coarse(apf::Field* u, apf::Field* p);
+    void set_fine(RCP<VectorT> z, apf::Field* u);
+    void set_coarse(apf::Field* u);
     apf::Field* set_error(apf::Field* nested_err);
   private:
     void number_elems();
@@ -30,8 +30,7 @@ class Nested : public Disc {
     void refine_long();
     void refine_single();
     void store_old_verts();
-    void subtract_adj(apf::Field* zu, apf::Field* zp);
-    void zero_adj(apf::Field* zu, apf::Field* zp);
+    void subtract_adj(apf::Field* zu);
     int mode;
     double ratio;
     apf::Mesh2* base_mesh;

@@ -7,7 +7,6 @@
 #include "goal_ibcs.hpp"
 #include "goal_linear_solve.hpp"
 #include "goal_mechanics.hpp"
-#include "goal_pressure.hpp"
 #include "goal_primal.hpp"
 #include "goal_scalar_weight.hpp"
 #include "goal_sol_info.hpp"
@@ -29,23 +28,11 @@ static void make_displacement(Mechanics* m, Evaluators& r, Evaluators& j) {
   j.push_back(w);
 }
 
-static void make_pressure(Mechanics* m, Evaluators& r, Evaluators& j) {
-  auto f = m->get_pressure();
-  auto p = rcp(new Pressure<ST>(f, PRIMAL));
-  auto pp = rcp(new Pressure<FADT>(f, PRIMAL));
-  auto w = rcp(new ScalarWeight(f));
-  r.push_back(p);
-  r.push_back(w);
-  j.push_back(pp);
-  j.push_back(w);
-}
-
 Primal::Primal(ParameterList const& p, Mechanics* m) {
   params = p;
   mech = m;
   sol_info = 0;
   make_displacement(mech, residual, jacobian);
-  make_pressure(mech, residual, jacobian);
   mech->build_resid<ST>(residual, true);
   mech->build_resid<FADT>(jacobian, true);
 }

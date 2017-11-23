@@ -10,8 +10,6 @@
 #include "goal_mechanics.hpp"
 #include "goal_nested.hpp"
 #include "goal_nested_adjoint.hpp"
-#include "goal_pressure.hpp"
-#include "goal_pressure_adjoint.hpp"
 #include "goal_primal.hpp"
 #include "goal_scalar_weight.hpp"
 #include "goal_sol_info.hpp"
@@ -35,16 +33,6 @@ static void make_displacement_adj(Disc* d, Evaluators& a) {
   a.push_back(w);
 }
 
-static void make_pressure_adj(Disc* d, Evaluators& a) {
-  auto m = d->get_apf_mesh();
-  auto f = m->findField("p");
-  GOAL_DEBUG_ASSERT(f);
-  auto p = rcp(new Pressure<FADT>(f, ADJOINT));
-  auto w = rcp(new ScalarWeight(f));
-  a.push_back(p);
-  a.push_back(w);
-}
-
 static void make_displacement_err(Disc* d, Evaluators& e) {
   auto m = d->get_apf_mesh();
   auto fu = m->findField("u");
@@ -55,21 +43,6 @@ static void make_displacement_err(Disc* d, Evaluators& e) {
   auto w = rcp(new DisplacementAdjoint(fz));
   e.push_back(u);
   e.push_back(w);
-}
-
-static void make_pressure_err(Disc* d, Evaluators& e) {
-  auto m = d->get_apf_mesh();
-  auto fp = m->findField("p");
-  auto fz = m->findField("p_z_diff");
-  auto fzc = m->findField("p_z_coarse");
-  GOAL_DEBUG_ASSERT(fp);
-  GOAL_DEBUG_ASSERT(fz);
-  auto p = rcp(new Pressure<ST>(fp, PRIMAL));
-  auto w = rcp(new PressureAdjoint(fz, "pw"));
-  auto wc = rcp(new PressureAdjoint(fzc, "pwc"));
-  e.push_back(p);
-  e.push_back(w);
-  e.push_back(wc);
 }
 
 NestedAdjoint::NestedAdjoint(ParameterList const& p, Primal* pr) {
@@ -83,10 +56,6 @@ NestedAdjoint::NestedAdjoint(ParameterList const& p, Primal* pr) {
   zu_fine = 0;
   zu_diff = 0;
   u_error = 0;
-  zp_coarse = 0;
-  zp_fine = 0;
-  zp_diff = 0;
-  p_error = 0;
 }
 
 NestedAdjoint::~NestedAdjoint() {
@@ -114,24 +83,14 @@ void NestedAdjoint::build_data() {
   zu_fine = apf::createFieldOn(nested_mesh, "u_z_fine", apf::VECTOR);
   zu_diff = apf::createFieldOn(nested_mesh, "u_z_diff", apf::VECTOR);
   u_error = apf::createFieldOn(nested_mesh, "u_error", apf::VECTOR);
-  zp_coarse = apf::createFieldOn(nested_mesh, "p_z_coarse", apf::SCALAR);
-  zp_fine = apf::createFieldOn(nested_mesh, "p_z_fine", apf::SCALAR);
-  zp_diff = apf::createFieldOn(nested_mesh, "p_z_diff", apf::SCALAR);
-  p_error = apf::createFieldOn(nested_mesh, "p_error", apf::SCALAR);
   make_displacement_adj(nested_disc, adjoint);
-  make_pressure_adj(nested_disc, adjoint);
   mech->build_resid<FADT>(adjoint, false);
   mech->build_functional<FADT>(func_params, adjoint);
   make_displacement_err(nested_disc, error);
-  make_pressure_err(nested_disc, error);
   mech->build_error(error);
 }
 
 void NestedAdjoint::destroy_data() {
-  if (p_error) apf::destroyField(p_error);
-  if (zp_diff) apf::destroyField(zp_diff);
-  if (zp_fine) apf::destroyField(zp_fine);
-  if (zp_coarse) apf::destroyField(zp_coarse);
   if (u_error) apf::destroyField(u_error);
   if (zu_diff) apf::destroyField(zu_diff);
   if (zu_fine) apf::destroyField(zu_fine);
@@ -146,10 +105,6 @@ void NestedAdjoint::destroy_data() {
   zu_fine = 0;
   zu_diff = 0;
   u_error = 0;
-  zp_coarse = 0;
-  zp_fine = 0;
-  zp_diff = 0;
-  p_error = 0;
   adjoint.resize(0);
   error.resize(0);
 }
@@ -188,10 +143,7 @@ void NestedAdjoint::subtract() {
   while ((vtx = m->iterate(it))) {
     apf::getVector(zu_fine, vtx, 0, zuf);
     apf::getVector(zu_coarse, vtx, 0, zuc);
-    auto zpf = apf::getScalar(zp_fine, vtx, 0);
-    auto zpc = apf::getScalar(zp_coarse, vtx, 0);
     apf::setVector(zu_diff, vtx, 0, zuf - zuc);
-    apf::setScalar(zp_diff, vtx, 0, zpf - zpc);
   }
   m->end(it);
 }
@@ -205,10 +157,9 @@ void NestedAdjoint::solve(double t_now, double t_old) {
   compute_adjoint(t_now, t_old);
   z->putScalar(0.0);
   goal::solve(lp, dRduT, z, dMdu, nested_disc);
-  nested_disc->set_fine(z, zu_fine, zp_fine);
+  nested_disc->set_fine(z, zu_fine);
   apf::copyData(zu_coarse, zu_fine);
-  apf::copyData(zp_coarse, zp_fine);
-  nested_disc->set_coarse(zu_coarse, zp_coarse);
+  nested_disc->set_coarse(zu_coarse);
   subtract();
   auto e = -(R->dot(*z));
   print(" > z.R = %.15e", e);
@@ -228,7 +179,7 @@ void NestedAdjoint::localize(double t_now, double t_old) {
   set_ibcs(ibc, w, sol_info);
   sol_info->gather_all();
   set_resid_dbcs(dbc, sol_info, t_now);
-  nested_disc->set_fine(R, u_error, p_error);
+  nested_disc->set_fine(R, u_error);
   auto t1 = time();
   print(" > error localized in %f seconds", t1 - t0);
 }
@@ -249,8 +200,8 @@ apf::Field* NestedAdjoint::run(double t_now, double t_old) {
   print_banner(t_now);
   solve(t_now, t_old);
   localize(t_now, t_old);
-  auto bound = sum_contribs(u_error, p_error);
-  auto e_nested = compute_error(u_error, p_error);
+  auto bound = sum_contribs(u_error);
+  auto e_nested = compute_error(u_error);
   print(" > |J(u)-J(uh)| < %.15e", bound);
   write_out();
   return nested_disc->set_error(e_nested);
