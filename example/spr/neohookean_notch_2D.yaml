@@ -39,5 +39,5 @@ neohookean notch 2D point wise spr:
   output:
     out file: out_neohookean_notch_2D
   regression:
-    value: 5.181872976877754e-03
+    value: 5.181856719605527e-03
     tolerance: 1.0e-8
