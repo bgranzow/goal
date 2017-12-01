@@ -15,6 +15,9 @@ using Teuchos::rcp_static_cast;
 static ParameterList get_valid_params() {
   ParameterList p;
   p.set<std::string>("side set", "");
+  p.set<double>("x_0", 0.0);
+  p.set<double>("y_0", 0.0);
+  p.set<double>("z_0", 0.0);
   p.set<double>("scale distance", 0.0);
   return p;
 }
@@ -32,13 +35,12 @@ static void compute_traction(
     apf::Vector3 const& center,
     apf::Vector3& T) {
   T = ip - center;
-  auto length = T.getLength();
-  T = T/length;
   T = T*scale;
 }
 
 static void apply_bc(
     double scale,
+    apf::Vector3 const& center,
     std::string const& ss_name,
     RCP<VectorWeight> w,
     SolInfo* s) {
@@ -54,10 +56,17 @@ static void apply_bc(
   apf::Vector3 xi(0,0,0);
   apf::Vector3 x(0,0,0);
   apf::Vector3 T(0,0,0);
-  apf::Vector3 c(0,0,0);
+
+  auto step = mesh->findField("T");
+  assert(step);
+  apf::Adjacent elems;
 
   for (size_t s = 0; s < sides.size(); ++s) {
     auto side = sides[s];
+    
+    mesh->getAdjacent(side, 3, elems);
+    assert(elems.getSize() == 2);
+
     auto me = apf::createMeshElement(mesh, side);
     auto es = shape->getEntityShape(mesh->getType(side));
     auto num_nodes = es->countNodes();
@@ -68,7 +77,11 @@ static void apply_bc(
     double ipw = apf::getIntWeight(me, 1, 0);
     apf::mapLocalToGlobal(me, xi, x);
     w->at_point(xi, ipw, dv);
-    compute_traction(scale, x, c, T);
+    compute_traction(scale, x, center, T);
+
+    for (int i = 0; i < 2; ++i)
+      apf::setVector(step, elems[i], 0, T);
+
     for (int n = 0; n < num_nodes; ++n) {
       for (int d = 0; d < num_dims; ++d) {
         LO row = disc->get_lid(side, n, d);
@@ -87,10 +100,24 @@ void set_ibcs(
     SolInfo* s) {
   if (! p.isParameter("side set")) return;
   validate_params(p, s);
+  apf::Vector3 center(0,0,0);
+  center[0] = p.get<double>("x_0");
+  center[1] = p.get<double>("y_0");
+  center[2] = p.get<double>("z_0");
+
+  std::cout << center << std::endl;
+  auto m = s->get_disc()->get_apf_mesh();
+  apf::Field* step = createStepField(m, "T", apf::VECTOR);
+  apf::zeroField(step);
+
   auto scale = p.get<double>("scale distance");
   auto ss_name = p.get<std::string>("side set");
   auto ww = rcp_static_cast<VectorWeight>(w);
-  apply_bc(scale, ss_name, ww, s);
+  apply_bc(scale, center, ss_name, ww, s);
+
+  m->writeNative("debug.smb");
+  apf::destroyField(step);
+
 }
 
 }

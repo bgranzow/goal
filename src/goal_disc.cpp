@@ -370,8 +370,6 @@ void Disc::compute_side_sets() {
     auto name = stkm->stkName;
     apf::Up adj_elems;
     mesh->getUp(side, adj_elems);
-    GOAL_DEBUG_ASSERT_VERBOSE(adj_elems.n == 1,
-        "side set defined on non-manifold geometric entity?");
     side_sets[name].push_back(side);
   }
   mesh->end(it);
