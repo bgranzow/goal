@@ -1,6 +1,7 @@
 #ifndef goal_avg_disp_subdomain_hpp
 #define goal_avg_disp_subdomain_hpp
 
+#include <functional>
 #include "goal_qoi.hpp"
 
 namespace goal {

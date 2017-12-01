@@ -2,6 +2,7 @@
 #define goal_displacement_hpp
 
 #include <apf.h>
+#include <functional>
 #include "goal_integrator.hpp"
 #include "goal_scalar_types.hpp"
 

@@ -2,6 +2,7 @@
 #define goal_avg_vm_hpp
 
 #include <Teuchos_ParameterList.hpp>
+#include <functional>
 #include "goal_qoi.hpp"
 
 namespace goal {
