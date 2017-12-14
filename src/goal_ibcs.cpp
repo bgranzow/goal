@@ -57,16 +57,8 @@ static void apply_bc(
   apf::Vector3 x(0,0,0);
   apf::Vector3 T(0,0,0);
 
-  auto step = mesh->findField("T");
-  assert(step);
-  apf::Adjacent elems;
-
   for (size_t s = 0; s < sides.size(); ++s) {
     auto side = sides[s];
-    
-    mesh->getAdjacent(side, 3, elems);
-    assert(elems.getSize() == 2);
-
     auto me = apf::createMeshElement(mesh, side);
     auto es = shape->getEntityShape(mesh->getType(side));
     auto num_nodes = es->countNodes();
@@ -78,10 +70,6 @@ static void apply_bc(
     apf::mapLocalToGlobal(me, xi, x);
     w->at_point(xi, ipw, dv);
     compute_traction(scale, x, center, T);
-
-    for (int i = 0; i < 2; ++i)
-      apf::setVector(step, elems[i], 0, T);
-
     for (int n = 0; n < num_nodes; ++n) {
       for (int d = 0; d < num_dims; ++d) {
         LO row = disc->get_lid(side, n, d);
@@ -104,20 +92,10 @@ void set_ibcs(
   center[0] = p.get<double>("x_0");
   center[1] = p.get<double>("y_0");
   center[2] = p.get<double>("z_0");
-
-  std::cout << center << std::endl;
-  auto m = s->get_disc()->get_apf_mesh();
-  apf::Field* step = createStepField(m, "T", apf::VECTOR);
-  apf::zeroField(step);
-
   auto scale = p.get<double>("scale distance");
   auto ss_name = p.get<std::string>("side set");
   auto ww = rcp_static_cast<VectorWeight>(w);
   apply_bc(scale, center, ss_name, ww, s);
-
-  m->writeNative("debug.smb");
-  apf::destroyField(step);
-
 }
 
 }
