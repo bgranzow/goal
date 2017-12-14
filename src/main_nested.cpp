@@ -100,6 +100,9 @@ static void configure_ma(ma::Input* in, ParameterList& p) {
   in->shouldCoarsen = p.get<bool>("should coarsen", true);
   in->shouldFixShape = p.get<bool>("fix shape", true);
   in->goodQuality = p.get<double>("good quality", 0.2);
+  in->shouldRunPreParma = true;
+  in->shouldRunMidParma = true;
+  in->shouldRunPostParma = true;
 }
 
 void Solver::adapt(int step, int cycle, double t_now, double t_old) {
