@@ -47,7 +47,7 @@ void PResidual<T>::at_point(apf::Vector3 const&, double ipw, double dv) {
   auto J = k->get_det_def_grad();
   T dUdJ = 0.5*(J - 1.0/J);
   for (int n = 0; n < p->get_num_nodes(); ++n)
-    p->resid(n) += (dUdJ - (p->val() / kappa)) * w->val(n) * ipw * dv;
+    p->resid(n) += ((p->val() / kappa) - dUdJ) * w->val(n) * ipw * dv;
 }
 
 template <typename T>

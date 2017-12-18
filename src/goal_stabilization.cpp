@@ -77,7 +77,7 @@ void Stabilization<T>::at_point(apf::Vector3 const&, double ipw, double dv) {
   for (int n = 0; n < p->get_num_nodes(); ++n)
   for (int i = 0; i < num_dims; ++i)
   for (int j = 0; j < num_dims; ++j)
-    p->resid(n) -= tau * J * Cinv(i, j) * p->grad(i) * w->grad(n, j) * ipw * dv;
+    p->resid(n) += tau * J * Cinv(i, j) * p->grad(i) * w->grad(n, j) * ipw * dv;
 }
 
 template <typename T>
