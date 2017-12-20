@@ -359,7 +359,7 @@ void Nested::set_fine(RCP<VectorT> x, apf::Field* u) {
   apf::synchronize(u);
 }
 
-void Nested::set_coarse(apf::Field* u, apf::Field* u) {
+void Nested::set_coarse(apf::Field* u) {
   int tags[2];
   apf::MeshEntity* vtx;
   apf::MeshIterator* it = mesh->begin(0);

@@ -8,7 +8,7 @@ namespace goal {
 
 class Integrator;
 class Primal;
-class Mechanics;
+class Physics;
 class SolInfo;
 template <typename T> class QoI;
 
@@ -26,7 +26,7 @@ class Functional {
   private:
     ParameterList params;
     Primal* primal;
-    Mechanics* mech;
+    Physics* physics;
     SolInfo* sol_info;
     RCP<QoI<ST>> functional;
     Evaluators evaluators;

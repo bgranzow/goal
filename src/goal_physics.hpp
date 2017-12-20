@@ -24,7 +24,7 @@ class Physics {
     Disc* get_disc() { return disc; }
     apf::Field* get_soln() { return soln; }
     template <typename T>
-    void build_resid(Evaluators& E, bool save_states);
+    void build_resid(Evaluators& E);
     template <typename T>
     void build_functional(ParameterList const& params, Evaluators& E);
     void build_error(Evaluators& E);

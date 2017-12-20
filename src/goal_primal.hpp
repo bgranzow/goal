@@ -6,7 +6,7 @@
 namespace goal {
 
 class Integrator;
-class Mechanics;
+class Physics;
 class SolInfo;
 
 using Teuchos::RCP;
@@ -15,9 +15,9 @@ using Evaluators = std::vector<RCP<Integrator>>;
 
 class Primal {
   public:
-    Primal(ParameterList const& p, Mechanics* m);
+    Primal(ParameterList const& p, Physics* phy);
     ~Primal();
-    Mechanics* get_mech() { return mech; }
+    Physics* get_physics() { return physics; }
     SolInfo* get_sol_info() { return sol_info; }
     void build_data();
     void destroy_data();
@@ -27,13 +27,13 @@ class Primal {
     void compute_resid(double t_now, double t_old);
     void compute_jacob(double t_now, double t_old);
     ParameterList params;
-    Mechanics* mech;
+    Physics* physics;
     SolInfo* sol_info;
     Evaluators residual;
     Evaluators jacobian;
 };
 
-Primal* create_primal(ParameterList const& p, Mechanics* m);
+Primal* create_primal(ParameterList const& p, Physics* phy);
 void destroy_primal(Primal* p);
 
 }

@@ -7,7 +7,7 @@ namespace goal {
 
 class Disc;
 class Integrator;
-class Mechanics;
+class Physics;
 class Nested;
 class Primal;
 class SolInfo;
@@ -34,7 +34,7 @@ class NestedAdjoint {
     Primal* primal;
     Disc* base_disc;
     Nested* nested_disc;
-    Mechanics* mech;
+    Physics* physics;
     SolInfo* sol_info;
     Evaluators adjoint;
     Evaluators error;

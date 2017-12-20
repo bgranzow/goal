@@ -4,7 +4,7 @@
 #include "goal_error.hpp"
 #include "goal_eval_modes.hpp"
 #include "goal_linear_solve.hpp"
-#include "goal_mechanics.hpp"
+#include "goal_physics.hpp"
 #include "goal_nested.hpp"
 #include "goal_nested_adjoint.hpp"
 #include "goal_soln.hpp"
@@ -34,11 +34,10 @@ static void make_soln_err(Disc* d, Evaluators& e) {
   auto m = d->get_apf_mesh();
   auto fp = m->findField("u");
   auto fz = m->findField("u_z_diff");
-  auto fzc = m->findField("u_z_coarse");
   GOAL_DEBUG_ASSERT(fp);
   GOAL_DEBUG_ASSERT(fz);
   auto p = rcp(new Soln<ST>(fp, PRIMAL));
-  auto w = rcp(new PressureAdjoint(fz, "uw"));
+  auto w = rcp(new SolnAdjoint(fz, "uw"));
   e.push_back(p);
   e.push_back(w);
 }
@@ -46,9 +45,9 @@ static void make_soln_err(Disc* d, Evaluators& e) {
 NestedAdjoint::NestedAdjoint(ParameterList const& p, Primal* pr) {
   params = p;
   primal = pr;
-  base_disc = primal->get_mech()->get_disc();
+  base_disc = primal->get_physics()->get_disc();
   nested_disc = 0;
-  mech = 0;
+  physics = 0;
   sol_info = 0;
   zu_coarse = 0;
   zu_fine = 0;
@@ -68,12 +67,12 @@ static int get_mode(std::string const& m) {
 }
 
 void NestedAdjoint::build_data() {
-  auto mech_params = params.sublist("mechanics");
+  auto physics_params = params.sublist("physics");
   auto func_params = params.sublist("functional");
   auto nested_mode = params.get<std::string>("adjoint mode");
   auto mode = get_mode(nested_mode);
   nested_disc = create_nested(base_disc, mode);
-  mech = create_mechanics(mech_params, nested_disc);
+  physics = create_physics(physics_params, nested_disc);
   nested_disc->build_data();
   sol_info = create_sol_info(nested_disc);
   auto nested_mesh = nested_disc->get_apf_mesh();
@@ -82,10 +81,10 @@ void NestedAdjoint::build_data() {
   zu_diff = apf::createFieldOn(nested_mesh, "u_z_diff", apf::SCALAR);
   u_error = apf::createFieldOn(nested_mesh, "u_error", apf::SCALAR);
   make_soln_adj(nested_disc, adjoint);
-  mech->build_resid<FADT>(adjoint, false);
-  mech->build_functional<FADT>(func_params, adjoint);
+  physics->build_resid<FADT>(adjoint);
+  physics->build_functional<FADT>(func_params, adjoint);
   make_soln_err(nested_disc, error);
-  mech->build_error(error);
+  physics->build_error(error);
 }
 
 void NestedAdjoint::destroy_data() {
@@ -94,10 +93,10 @@ void NestedAdjoint::destroy_data() {
   if (zu_fine) apf::destroyField(zu_fine);
   if (zu_coarse) apf::destroyField(zu_coarse);
   if (sol_info) destroy_sol_info(sol_info);
-  if (mech) destroy_mechanics(mech);
+  if (physics) destroy_physics(physics);
   if (nested_disc) destroy_nested(nested_disc);
   nested_disc = 0;
-  mech = 0;
+  physics = 0;
   sol_info = 0;
   zu_coarse = 0;
   zu_fine = 0;
@@ -135,7 +134,7 @@ void NestedAdjoint::subtract() {
   while ((vtx = m->iterate(it))) {
     auto zuf = apf::getScalar(zu_fine, vtx, 0);
     auto zuc = apf::getScalar(zu_coarse, vtx, 0);
-    apf::setScalar(zp_diff, vtx, 0, zuf - zuc);
+    apf::setScalar(zu_diff, vtx, 0, zuf - zuc);
   }
   m->end(it);
 }
@@ -151,7 +150,7 @@ void NestedAdjoint::solve(double t_now, double t_old) {
   goal::solve(lp, dRduT, z, dMdu, nested_disc);
   nested_disc->set_fine(z, zu_fine);
   apf::copyData(zu_coarse, zu_fine);
-  nested_disc->set_coarse(zu_coarse, zp_coarse);
+  nested_disc->set_coarse(zu_coarse);
   subtract();
   auto e = -(R->dot(*z));
   print(" > z.R = %.15e", e);
@@ -167,7 +166,7 @@ void NestedAdjoint::localize(double t_now, double t_old) {
   assemble(error, sol_info);
   sol_info->gather_all();
   set_resid_dbcs(dbc, sol_info, t_now);
-  nested_disc->set_fine(R, u_error, p_error);
+  nested_disc->set_fine(R, u_error);
   auto t1 = time();
   print(" > error localized in %f seconds", t1 - t0);
 }

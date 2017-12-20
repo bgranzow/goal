@@ -52,7 +52,6 @@ void set_resid_dbcs(ParameterList const& p, SolInfo* s, double t) {
       auto n = nodes[node];
       LO row = d->get_lid(n, 0);
       auto sol = apf::getScalar(u, n.entity, n.node);
-      double sol = disp[idx];
       double v = get_val(u, val, n, t);
       R[row] = sol - v;
     }
@@ -78,7 +77,7 @@ void set_jac_dbcs(ParameterList const& p, SolInfo* s, double t) {
     auto nodes = d->get_nodes(set);
     for (size_t node = 0; node < nodes.size(); ++node) {
       auto n = nodes[node];
-      LO row = d->get_lid(n, idx);
+      LO row = d->get_lid(n, 0);
       index[0] = row;
       auto sol = apf::getScalar(u, n.entity, n.node);
       double v = get_val(u, val, n, t);

@@ -1,13 +1,13 @@
-#ifndef goal_pressure_adjoint_hpp
-#define goal_pressure_adjoint_hpp
+#ifndef goal_soln_adjoint_hpp
+#define goal_soln_adjoint_hpp
 
 #include "goal_scalar_weight.hpp"
 
 namespace goal {
 
-class PressureAdjoint : public ScalarWeight {
+class SolnAdjoint : public ScalarWeight {
   public:
-    PressureAdjoint(apf::Field* z, std::string const& n);
+    SolnAdjoint(apf::Field* z, std::string const& n);
     ST const& val(int node) const;
     ST const& grad(int node, int i) const;
     void in_elem(apf::MeshElement* me);

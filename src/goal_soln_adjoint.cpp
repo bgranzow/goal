@@ -2,11 +2,11 @@
 #include <apfShape.h>
 
 #include "goal_control.hpp"
-#include "goal_pressure_adjoint.hpp"
+#include "goal_soln_adjoint.hpp"
 
 namespace goal {
 
-PressureAdjoint::PressureAdjoint(apf::Field* f, std::string const& n) :
+SolnAdjoint::SolnAdjoint(apf::Field* f, std::string const& n) :
     ScalarWeight(f) {
   field = f;
   GOAL_DEBUG_ASSERT(apf::getValueType(field) == apf::SCALAR);
@@ -16,15 +16,15 @@ PressureAdjoint::PressureAdjoint(apf::Field* f, std::string const& n) :
   this->name = n;
 }
 
-ST const& PressureAdjoint::val(int node) const {
+ST const& SolnAdjoint::val(int node) const {
   return values[node];
 }
 
-ST const& PressureAdjoint::grad(int node, int i) const {
+ST const& SolnAdjoint::grad(int node, int i) const {
   return gradients[node][i];
 }
 
-void PressureAdjoint::in_elem(apf::MeshElement* me) {
+void SolnAdjoint::in_elem(apf::MeshElement* me) {
   elem = me;
   z_elem = apf::createElement(field, me);
   auto m = apf::getMesh(field);
@@ -35,7 +35,7 @@ void PressureAdjoint::in_elem(apf::MeshElement* me) {
   gradients.allocate(num_nodes);
 }
 
-void PressureAdjoint::at_point(apf::Vector3 const& p, double, double) {
+void SolnAdjoint::at_point(apf::Vector3 const& p, double, double) {
   apf::Vector3 grad_z;
   apf::getBF(shape, elem, p, BF);
   apf::getGradBF(shape, elem, p, GBF);
@@ -48,7 +48,7 @@ void PressureAdjoint::at_point(apf::Vector3 const& p, double, double) {
   }
 }
 
-void PressureAdjoint::out_elem() {
+void SolnAdjoint::out_elem() {
   elem = 0;
   apf::destroyElement(z_elem);
 }

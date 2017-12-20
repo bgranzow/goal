@@ -24,11 +24,11 @@ static void make_soln(Physics* phy, Evaluators& e) {
 Functional::Functional(ParameterList const& p, Primal* pr) {
   params = p;
   primal = pr;
-  mech = primal->get_mech();
+  physics = primal->get_physics();
   sol_info = 0;
   auto fp = params.sublist("functional");
-  make_soln(mech, evaluators);
-  mech->build_functional<ST>(fp, evaluators);
+  make_soln(physics, evaluators);
+  physics->build_functional<ST>(fp, evaluators);
   auto eval = evaluators.back();
   functional = rcp_static_cast<QoI<ST>>(eval);
 }

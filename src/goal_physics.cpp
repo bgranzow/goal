@@ -6,7 +6,7 @@
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
 #include "goal_physics.hpp"
-#include "goal_presidual.hpp"
+#include "goal_residual.hpp"
 #include "goal_scalar_types.hpp"
 
 namespace goal {
@@ -15,8 +15,7 @@ using Teuchos::rcp;
 
 static ParameterList get_valid_params() {
   ParameterList p;
-  p.set<std::string>("model", "");
-  p.sublist("materials");
+  p.set<std::string>("f", "");
   return p;
 }
 
@@ -42,32 +41,11 @@ void Physics::make_soln() {
 
 template <typename T>
 void Physics::build_resid(Evaluators& E) {
-  (void)E;
-#if 0
-  ParameterList mat = params.sublist("materials");
+  auto f = params.get<std::string>("f");
   auto u = find_evaluator("u", E);
-  auto p = find_evaluator("p", E);
-  auto uw = find_evaluator("uw", E);
-  auto pw = find_evaluator("pw", E);
-  auto kin = rcp(new Kinematics<T>(u));
-  RCP<Model<T>> cm;
-  if (model == "neohookean")
-    cm = rcp(new Neohookean<T>(kin, states, save, mat));
-  else if (model == "J2")
-    cm = rcp(new J2<T>(kin, states, save, mat));
-  else
-    fail("unknown model: %s", model.c_str());
-  auto mixed = rcp(new Mixed<T>(p, cm, states, save));
-  auto mresidual = rcp(new MResidual<T>(u, uw, cm));
-  auto presidual = rcp(new PResidual<T>(p, pw, kin, mat));
-  auto stab = rcp(new Stabilization<T>(p, pw, kin, mat));
-  E.push_back(kin);
-  E.push_back(cm);
-  E.push_back(mixed);
-  E.push_back(mresidual);
-  E.push_back(presidual);
-  E.push_back(stab);
-#endif
+  auto w = find_evaluator("uw", E);
+  auto R = rcp(new Residual<T>(u, w, f));
+  E.push_back(R);
 }
 
 template <typename T>
@@ -137,8 +115,8 @@ void destroy_physics(Physics* m) {
   delete m;
 }
 
-template void Physics::build_resid<ST>(Evaluators&, bool);
-template void Physics::build_resid<FADT>(Evaluators&, bool);
+template void Physics::build_resid<ST>(Evaluators&);
+template void Physics::build_resid<FADT>(Evaluators&);
 template void Physics::build_functional<ST>(ParameterList const&, Evaluators&);
 template void Physics::build_functional<FADT>(ParameterList const&, Evaluators&);
 
