@@ -1,0 +1,20 @@
+poisson:
+  discretization:
+    geom file: '../test/mesh/square/square.dmg'
+    mesh file: '../test/mesh/square/square-serial.smb'
+    assoc file: '../test/mesh/square/square.txt'
+  dirichlet bcs:
+    bc 1: [xmin, 0.0]
+    bc 2: [ymin, 0.0]
+    bc 3: [xmax, 0.0]
+    bc 4: [ymax, 0.0]
+  physics:
+    f: '2.0*9.869604401089358*sin(3.141592653589793*x)*sin(3.141592653589793*y)'
+  primal linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+  output:
+    out file: out_full

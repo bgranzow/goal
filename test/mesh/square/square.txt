@@ -6,5 +6,5 @@ node set xmax 1
 1 6
 node set ymin 1
 1 2
-side set ymax 1
+node set ymax 1
 1 8

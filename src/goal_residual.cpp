@@ -45,6 +45,10 @@ void Residual<T>::at_point(apf::Vector3 const& p, double ipw, double dv) {
       u->resid(n) += u->grad(i) * w->grad(n, i) * ipw * dv;
   for (int n = 0; n < u->get_num_nodes(); ++n)
     u->resid(n) -= fval * w->val(n) * ipw * dv;
+
+
+  for (int n = 0; n < u->get_num_nodes(); ++n)
+    std::cout << u->resid(n) << std::endl;
 }
 
 template <typename T>

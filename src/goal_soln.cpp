@@ -77,7 +77,7 @@ void Soln<ST>::scatter_primal(SolInfo* s) {
   auto ent = apf::getMeshEntity(elem);
   auto R = s->ghost->R->get1dViewNonConst();
   for (int n = 0; n < num_nodes; ++n) {
-    LO row = disc->get_lid(ent, n, num_dims);
+    LO row = disc->get_lid(ent, n, 0);
     R[row] += resid(n);
   }
 }
@@ -135,7 +135,6 @@ void Soln<FADT>::pre_process(SolInfo* s) {
 
 void Soln<FADT>::gather(apf::MeshElement* me) {
   auto ent = apf::getMeshEntity(me);
-  int num_eqs = disc->get_num_eqs();
   num_nodes = disc->get_num_nodes(ent);
   num_dofs = disc->get_num_dofs(ent);
   node_fadt.resize(num_nodes);
@@ -143,8 +142,7 @@ void Soln<FADT>::gather(apf::MeshElement* me) {
   elem = apf::createElement(field, me);
   apf::getScalarNodes(elem, node_st);
   for (int n = 0; n < num_nodes; ++n) {
-    int eq = n*num_eqs + num_dims;
-    nodal(n).diff(eq, num_dofs);
+    nodal(n).diff(n, num_dofs);
     nodal(n).val() = node_st[n];
     resid(n) = 0.0;
   }
@@ -178,7 +176,7 @@ void Soln<FADT>::scatter_primal(SolInfo* s) {
   for (int n = 0; n < num_nodes; ++n) {
     auto v = resid(n);
     auto view = arrayView(&(v.fastAccessDx(0)), num_dofs);
-    LO row = disc->get_lid(ent, n, num_dims);
+    LO row = disc->get_lid(ent, n, 0);
     R[row] += v.val();
     dRdu->sumIntoLocalValues(row, c, view, num_dofs);
   }
@@ -194,7 +192,7 @@ void Soln<FADT>::scatter_adjoint(SolInfo* s) {
   for (int n = 0; n < num_nodes; ++n) {
     auto v = resid(n);
     auto view = arrayView(&(v.fastAccessDx(0)), num_dofs);
-    LO row = disc->get_lid(ent, n, num_dims);
+    LO row = disc->get_lid(ent, n, 0);
     R[row] += v.val();
     for (int dof = 0; dof < num_dofs; ++dof)
       dRduT->sumIntoLocalValues(
