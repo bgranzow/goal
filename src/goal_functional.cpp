@@ -1,33 +1,23 @@
 #include "goal_assembly.hpp"
 #include "goal_control.hpp"
-#include "goal_displacement.hpp"
 #include "goal_eval_modes.hpp"
 #include "goal_functional.hpp"
-#include "goal_mechanics.hpp"
-#include "goal_pressure.hpp"
+#include "goal_physics.hpp"
 #include "goal_primal.hpp"
 #include "goal_scalar_weight.hpp"
 #include "goal_qoi.hpp"
-#include "goal_vector_weight.hpp"
+#include "goal_soln.hpp"
 
 namespace goal {
 
 using Teuchos::rcp;
 using Teuchos::rcp_static_cast;
 
-static void make_displacement(Mechanics* m, Evaluators& e) {
-  auto f = m->get_displacement();
-  auto u = rcp(new Displacement<ST>(f, NONE));
-  auto w = rcp(new VectorWeight(f));
-  e.push_back(u);
-  e.push_back(w);
-}
-
-static void make_pressure(Mechanics* m, Evaluators& e) {
-  auto f = m->get_pressure();
-  auto p = rcp(new Pressure<ST>(f, NONE));
+static void make_soln(Physics* phy, Evaluators& e) {
+  auto f = phy->get_soln();
+  auto u = rcp(new Soln<ST>(f, NONE));
   auto w = rcp(new ScalarWeight(f));
-  e.push_back(p);
+  e.push_back(u);
   e.push_back(w);
 }
 
@@ -37,9 +27,7 @@ Functional::Functional(ParameterList const& p, Primal* pr) {
   mech = primal->get_mech();
   sol_info = 0;
   auto fp = params.sublist("functional");
-  make_displacement(mech, evaluators);
-  make_pressure(mech, evaluators);
-  mech->build_resid<ST>(evaluators, false);
+  make_soln(mech, evaluators);
   mech->build_functional<ST>(fp, evaluators);
   auto eval = evaluators.back();
   functional = rcp_static_cast<QoI<ST>>(eval);

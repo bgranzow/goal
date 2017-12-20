@@ -17,8 +17,8 @@ static void validate_params(ParameterList const& p, SolInfo* s) {
   for (auto it = p.begin(); it != p.end(); ++it) {
     auto entry = p.entry(it);
     auto a = getValue<Array<std::string>>(entry);
-    GOAL_DEBUG_ASSERT(a.size() == 3);
-    auto set = a[1];
+    GOAL_DEBUG_ASSERT(a.size() == 2);
+    auto set = a[0];
     auto nodes = d->get_nodes(set);
   }
 }
@@ -45,14 +45,13 @@ void set_resid_dbcs(ParameterList const& p, SolInfo* s, double t) {
   for (auto it = p.begin(); it != p.end(); ++it) {
     auto entry = p.entry(it);
     auto a = getValue<Array<std::string>>(entry);
-    auto idx = std::stoi(a[0]);
-    auto set = a[1];
-    auto val = a[2];
+    auto set = a[0];
+    auto val = a[1];
     auto nodes = d->get_nodes(set);
     for (size_t node = 0; node < nodes.size(); ++node) {
       auto n = nodes[node];
-      LO row = d->get_lid(n, idx);
-      apf::getVector(u, n.entity, n.node, disp);
+      LO row = d->get_lid(n, 0);
+      auto sol = apf::getScalar(u, n.entity, n.node);
       double sol = disp[idx];
       double v = get_val(u, val, n, t);
       R[row] = sol - v;
@@ -74,16 +73,14 @@ void set_jac_dbcs(ParameterList const& p, SolInfo* s, double t) {
   for (auto it = p.begin(); it != p.end(); ++it) {
     auto pentry = p.entry(it);
     auto a = getValue<Array<std::string>>(pentry);
-    auto idx = std::stoi(a[0]);
-    auto set = a[1];
-    auto val = a[2];
+    auto set = a[0];
+    auto val = a[1];
     auto nodes = d->get_nodes(set);
     for (size_t node = 0; node < nodes.size(); ++node) {
       auto n = nodes[node];
       LO row = d->get_lid(n, idx);
       index[0] = row;
-      apf::getVector(u, n.entity, n.node, disp);
-      double sol = disp[idx];
+      auto sol = apf::getScalar(u, n.entity, n.node);
       double v = get_val(u, val, n, t);
       R[row] = sol - v;
       dMdu[row] = 0.0;

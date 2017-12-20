@@ -3,23 +3,11 @@
 #include <apfShape.h>
 
 #include "goal_assembly.hpp"
-#include "goal_avg_disp.hpp"
-#include "goal_avg_disp_subdomain.hpp"
-#include "goal_avg_vm.hpp"
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
-#include "goal_J2.hpp"
-#include "goal_kinematics.hpp"
-#include "goal_ks_vm.hpp"
-#include "goal_mechanics.hpp"
-#include "goal_mresidual.hpp"
-#include "goal_mixed.hpp"
-#include "goal_neohookean.hpp"
-#include "goal_point_wise.hpp"
+#include "goal_physics.hpp"
 #include "goal_presidual.hpp"
 #include "goal_scalar_types.hpp"
-#include "goal_stabilization.hpp"
-#include "goal_states.hpp"
 
 namespace goal {
 
@@ -32,53 +20,30 @@ static ParameterList get_valid_params() {
   return p;
 }
 
-Mechanics::Mechanics(ParameterList const& p, Disc* d) {
+Physics::Physics(ParameterList const& p, Disc* d) {
   p.validateParameters(get_valid_params(), 0);
   params = p;
   disc = d;
-  displacement = 0;
-  pressure = 0;
-  states = 0;
-  model = params.get<std::string>("model");
-  make_displacement();
-  make_pressure();
-  make_states();
+  soln = 0;
+  make_soln();
 }
 
-Mechanics::~Mechanics() {
-  destroy_states(states);
-  apf::destroyField(pressure);
-  apf::destroyField(displacement);
+Physics::~Physics() {
+  apf::destroyField(soln);
 }
 
-void Mechanics::make_displacement() {
+void Physics::make_soln() {
   auto m = disc->get_apf_mesh();
   auto f = m->findField("u");
-  if (f) displacement = f;
-  else displacement = apf::createFieldOn(m, "u", apf::VECTOR);
-  if (!f) apf::zeroField(displacement);
-}
-
-void Mechanics::make_pressure() {
-  auto m = disc->get_apf_mesh();
-  auto f = m->findField("p");
-  if (f) pressure = f;
-  else pressure = apf::createFieldOn(m, "p", apf::SCALAR);
-  if (!f) apf::zeroField(pressure);
-}
-
-void Mechanics::make_states() {
-  states = create_states(disc);
-  states->add("sigma", apf::MATRIX);
-  if (model == "J2") {
-    states->add("eqps", apf::SCALAR, true);
-    states->add("Fp", apf::MATRIX, true, true);
-  }
-  states->update();
+  if (f) soln = f;
+  else soln = apf::createFieldOn(m, "u", apf::SCALAR);
+  if (!f) apf::zeroField(soln);
 }
 
 template <typename T>
-void Mechanics::build_resid(Evaluators& E, bool save) {
+void Physics::build_resid(Evaluators& E) {
+  (void)E;
+#if 0
   ParameterList mat = params.sublist("materials");
   auto u = find_evaluator("u", E);
   auto p = find_evaluator("p", E);
@@ -102,10 +67,16 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
   E.push_back(mresidual);
   E.push_back(presidual);
   E.push_back(stab);
+#endif
 }
 
 template <typename T>
-void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
+void Physics::build_functional(ParameterList const& params, Evaluators& E) {
+
+  (void)params;
+  (void)E;
+
+#if 0
   auto type = params.get<std::string>("type");
   auto u = find_evaluator("u", E);
   auto model = find_evaluator("model", E);
@@ -123,9 +94,14 @@ void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
   else
     fail("unknown functional type: %s", type.c_str());
   E.push_back(J);
+#endif
 }
 
-void Mechanics::build_error(Evaluators& E) {
+void Physics::build_error(Evaluators& E) {
+
+  (void)E;
+
+#if 0
   ParameterList mat = params.sublist("materials");
   auto u = find_evaluator("u", E);
   auto p = find_evaluator("p", E);
@@ -150,19 +126,20 @@ void Mechanics::build_error(Evaluators& E) {
   E.push_back(mresidual);
   E.push_back(presidual);
   E.push_back(stab);
+#endif
 }
 
-Mechanics* create_mechanics(ParameterList const& p, Disc* d) {
-  return new Mechanics(p, d);
+Physics* create_physics(ParameterList const& p, Disc* d) {
+  return new Physics(p, d);
 }
 
-void destroy_mechanics(Mechanics* m) {
+void destroy_physics(Physics* m) {
   delete m;
 }
 
-template void Mechanics::build_resid<ST>(Evaluators&, bool);
-template void Mechanics::build_resid<FADT>(Evaluators&, bool);
-template void Mechanics::build_functional<ST>(ParameterList const&, Evaluators&);
-template void Mechanics::build_functional<FADT>(ParameterList const&, Evaluators&);
+template void Physics::build_resid<ST>(Evaluators&, bool);
+template void Physics::build_resid<FADT>(Evaluators&, bool);
+template void Physics::build_functional<ST>(ParameterList const&, Evaluators&);
+template void Physics::build_functional<FADT>(ParameterList const&, Evaluators&);
 
 }

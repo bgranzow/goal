@@ -257,7 +257,7 @@ void Disc::destroy_data() {
 
 void Disc::initialize() {
   num_dims = mesh->getDimension();
-  num_eqs = num_dims + 1;
+  num_eqs = 1;
   num_elem_sets = sets->models[num_dims].size();
   num_side_sets = sets->models[num_dims-1].size();
   num_node_sets = sets->models[0].size();

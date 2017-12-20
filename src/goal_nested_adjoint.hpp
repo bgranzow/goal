@@ -42,10 +42,6 @@ class NestedAdjoint {
     apf::Field* zu_fine;
     apf::Field* zu_diff;
     apf::Field* u_error;
-    apf::Field* zp_coarse;
-    apf::Field* zp_fine;
-    apf::Field* zp_diff;
-    apf::Field* p_error;
 };
 
 NestedAdjoint* create_nested_adjoint(ParameterList const& p, Primal* pr);

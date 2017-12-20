@@ -3,12 +3,12 @@
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
 #include "goal_eval_modes.hpp"
-#include "goal_pressure.hpp"
+#include "goal_soln.hpp"
 #include "goal_sol_info.hpp"
 
 namespace goal {
 
-Pressure<ST>::Pressure(apf::Field* base, int mode) {
+Soln<ST>::Soln(apf::Field* base, int mode) {
   disc = 0;
   elem = 0;
   num_dims = 0;
@@ -16,37 +16,37 @@ Pressure<ST>::Pressure(apf::Field* base, int mode) {
   field = base;
   shape = apf::getShape(field);
   num_dims = apf::getMesh(field)->getDimension();
-  if (mode == PRIMAL) op = &Pressure<ST>::scatter_primal;
-  else if (mode == NONE) op = &Pressure<ST>::scatter_none;
-  else fail("displacement: invalid mode: %d", mode);
+  if (mode == PRIMAL) op = &Soln<ST>::scatter_primal;
+  else if (mode == NONE) op = &Soln<ST>::scatter_none;
+  else fail("soln: invalid mode: %d", mode);
   auto fname = (std::string)apf::getName(base);
   this->name = fname.substr(0, 1);
 }
 
-Pressure<ST>::~Pressure() {
+Soln<ST>::~Soln() {
 }
 
-ST& Pressure<ST>::val() {
+ST& Soln<ST>::val() {
   return value;
 }
 
-ST& Pressure<ST>::grad(int i) {
+ST& Soln<ST>::grad(int i) {
   return gradient[i];
 }
 
-ST& Pressure<ST>::nodal(int n) {
+ST& Soln<ST>::nodal(int n) {
   return node[n];
 }
 
-ST& Pressure<ST>::resid(int n) {
+ST& Soln<ST>::resid(int n) {
   return residual[n];
 }
 
-void Pressure<ST>::pre_process(SolInfo* s) {
+void Soln<ST>::pre_process(SolInfo* s) {
   disc = s->get_disc();
 }
 
-void Pressure<ST>::gather(apf::MeshElement* me) {
+void Soln<ST>::gather(apf::MeshElement* me) {
   auto ent = apf::getMeshEntity(me);
   num_nodes = disc->get_num_nodes(ent);
   residual.resize(num_nodes);
@@ -56,7 +56,7 @@ void Pressure<ST>::gather(apf::MeshElement* me) {
     residual[n] = 0.0;
 }
 
-void Pressure<ST>::at_point(apf::Vector3 const& p, double, double) {
+void Soln<ST>::at_point(apf::Vector3 const& p, double, double) {
   auto me = apf::getMeshElement(elem);
   apf::getBF(shape, me, p, BF);
   apf::getGradBF(shape, me, p, GBF);
@@ -70,10 +70,10 @@ void Pressure<ST>::at_point(apf::Vector3 const& p, double, double) {
   }
 }
 
-void Pressure<ST>::scatter_none(SolInfo*) {
+void Soln<ST>::scatter_none(SolInfo*) {
 }
 
-void Pressure<ST>::scatter_primal(SolInfo* s) {
+void Soln<ST>::scatter_primal(SolInfo* s) {
   auto ent = apf::getMeshEntity(elem);
   auto R = s->ghost->R->get1dViewNonConst();
   for (int n = 0; n < num_nodes; ++n) {
@@ -82,17 +82,17 @@ void Pressure<ST>::scatter_primal(SolInfo* s) {
   }
 }
 
-void Pressure<ST>::scatter(SolInfo* s) {
+void Soln<ST>::scatter(SolInfo* s) {
   op(this, s);
   apf::destroyElement(elem);
   elem = 0;
 }
 
-void Pressure<ST>::post_process(SolInfo*) {
+void Soln<ST>::post_process(SolInfo*) {
   disc = 0;
 }
 
-Pressure<FADT>::Pressure(apf::Field* base, int mode) {
+Soln<FADT>::Soln(apf::Field* base, int mode) {
   disc = 0;
   elem = 0;
   num_dims = 0;
@@ -101,39 +101,39 @@ Pressure<FADT>::Pressure(apf::Field* base, int mode) {
   field = base;
   shape = apf::getShape(field);
   num_dims = apf::getMesh(field)->getDimension();
-  if (mode == NONE) op = &Pressure<FADT>::scatter_none;
-  else if (mode == PRIMAL) op = &Pressure<FADT>::scatter_primal;
-  else if (mode == ADJOINT) op = &Pressure<FADT>::scatter_adjoint;
-  else fail("displacement: invalid mode: %d", mode);
+  if (mode == NONE) op = &Soln<FADT>::scatter_none;
+  else if (mode == PRIMAL) op = &Soln<FADT>::scatter_primal;
+  else if (mode == ADJOINT) op = &Soln<FADT>::scatter_adjoint;
+  else fail("soln: invalid mode: %d", mode);
   auto fname = (std::string)apf::getName(base);
   this->name = fname.substr(0, 1);
 }
 
-Pressure<FADT>::~Pressure() {
+Soln<FADT>::~Soln() {
 }
 
-FADT& Pressure<FADT>::val() {
+FADT& Soln<FADT>::val() {
   return value;
 }
 
-FADT& Pressure<FADT>::grad(int i) {
+FADT& Soln<FADT>::grad(int i) {
   return gradient[i];
 }
 
-FADT& Pressure<FADT>::nodal(int n) {
+FADT& Soln<FADT>::nodal(int n) {
   return node_fadt[n];
 }
 
-FADT& Pressure<FADT>::resid(int n) {
+FADT& Soln<FADT>::resid(int n) {
   return residual[n];
 }
 
-void Pressure<FADT>::pre_process(SolInfo* s) {
+void Soln<FADT>::pre_process(SolInfo* s) {
   disc = s->get_disc();
   gradient.resize(num_dims);
 }
 
-void Pressure<FADT>::gather(apf::MeshElement* me) {
+void Soln<FADT>::gather(apf::MeshElement* me) {
   auto ent = apf::getMeshEntity(me);
   int num_eqs = disc->get_num_eqs();
   num_nodes = disc->get_num_nodes(ent);
@@ -150,7 +150,7 @@ void Pressure<FADT>::gather(apf::MeshElement* me) {
   }
 }
 
-void Pressure<FADT>::at_point(apf::Vector3 const& p, double, double) {
+void Soln<FADT>::at_point(apf::Vector3 const& p, double, double) {
   auto me = apf::getMeshElement(elem);
   apf::getBF(shape, me, p, BF);
   apf::getGradBF(shape, me, p, GBF);
@@ -164,10 +164,10 @@ void Pressure<FADT>::at_point(apf::Vector3 const& p, double, double) {
   }
 }
 
-void Pressure<FADT>::scatter_none(SolInfo*) {
+void Soln<FADT>::scatter_none(SolInfo*) {
 }
 
-void Pressure<FADT>::scatter_primal(SolInfo* s) {
+void Soln<FADT>::scatter_primal(SolInfo* s) {
   using Teuchos::arrayView;
   auto ent = apf::getMeshEntity(elem);
   auto R = s->ghost->R->get1dViewNonConst();
@@ -184,7 +184,7 @@ void Pressure<FADT>::scatter_primal(SolInfo* s) {
   }
 }
 
-void Pressure<FADT>::scatter_adjoint(SolInfo* s) {
+void Soln<FADT>::scatter_adjoint(SolInfo* s) {
   using Teuchos::arrayView;
   auto ent = apf::getMeshEntity(elem);
   auto R = s->ghost->R->get1dViewNonConst();
@@ -202,13 +202,13 @@ void Pressure<FADT>::scatter_adjoint(SolInfo* s) {
   }
 }
 
-void Pressure<FADT>::scatter(SolInfo* s) {
+void Soln<FADT>::scatter(SolInfo* s) {
   op(this, s);
   apf::destroyElement(elem);
   elem = 0;
 }
 
-void Pressure<FADT>::post_process(SolInfo*) {
+void Soln<FADT>::post_process(SolInfo*) {
   disc = 0;
 }
 

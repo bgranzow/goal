@@ -344,8 +344,7 @@ void Nested::store_old_verts() {
   mesh->end(it);
 }
 
-void Nested::set_fine(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
-  apf::Vector3 disp(0,0,0);
+void Nested::set_fine(RCP<VectorT> x, apf::Field* u) {
   apf::DynamicArray<apf::Node> nodes;
   apf::getNodes(owned_nmbr, nodes);
   auto data = x->get1dView();
@@ -353,24 +352,15 @@ void Nested::set_fine(RCP<VectorT> x, apf::Field* u, apf::Field* p) {
     auto node = nodes[n];
     auto ent = node.entity;
     auto lnode = node.node;
-    for (int d = 0; d < num_dims; ++d) {
-      LO row = get_lid(node, d);
-      disp[d] = data[row];
-    }
-    LO row = get_lid(node, num_dims);
-    double press = data[row];
-    apf::setVector(u, ent, lnode, disp);
-    apf::setScalar(p, ent, lnode, press);
+    LO row = get_lid(node, 0);
+    auto soln = data[row];
+    apf::setScalar(u, ent, lnode, soln);
   }
   apf::synchronize(u);
-  apf::synchronize(p);
 }
 
-void Nested::set_coarse(apf::Field* u, apf::Field* p) {
+void Nested::set_coarse(apf::Field* u, apf::Field* u) {
   int tags[2];
-  apf::Vector3 u0(0,0,0);
-  apf::Vector3 u1(0,0,0);
-  apf::Vector3 u_avg(0,0,0);
   apf::MeshEntity* vtx;
   apf::MeshIterator* it = mesh->begin(0);
   while ((vtx = mesh->iterate(it))) {
@@ -378,18 +368,13 @@ void Nested::set_coarse(apf::Field* u, apf::Field* p) {
     mesh->getIntTag(vtx, new_vtx_tag, &(tags[0]));
     auto vtx0 = old_vertices[tags[0]];
     auto vtx1 = old_vertices[tags[1]];
-    apf::getVector(u, vtx0, 0, u0);
-    apf::getVector(u, vtx1, 0, u1);
-    u_avg = (u0 + u1)*0.5;
-    auto p0 = apf::getScalar(p, vtx0, 0);
-    auto p1 = apf::getScalar(p, vtx1, 0);
-    auto p_avg = (p0 + p1)*0.5;
-    apf::setVector(u, vtx, 0, u_avg);
-    apf::setScalar(p, vtx, 0, p_avg);
+    auto u0 = apf::getScalar(u, vtx0, 0);
+    auto u1 = apf::getScalar(u, vtx1, 0);
+    auto u_avg = (u0 + u1)*0.5;
+    apf::setScalar(u, vtx, 0, u_avg);
   }
   mesh->end(it);
   apf::synchronize(u);
-  apf::synchronize(p);
 }
 
 apf::Field* Nested::set_error(apf::Field* nested_err) {
