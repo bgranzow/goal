@@ -1,4 +1,5 @@
 poisson:
+  adjoint mode: uniform
   discretization:
     geom file: '../test/mesh/square/square.dmg'
     mesh file: '../test/mesh/square/square-serial.smb'
@@ -19,5 +20,15 @@ poisson:
     tolerance: 1.0e-10
     multigrid:
       verbosity: none
+  adjoint linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+  adaptation:
+    adapt cycles: 1
+    target elems: 1000
+    target growth: 1.0
   output:
-    out file: out_full
+    out file: out

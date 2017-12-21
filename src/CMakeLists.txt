@@ -9,6 +9,7 @@ goal_scalar_weight.cpp
 goal_soln_adjoint.cpp
 goal_residual.cpp
 goal_qoi.cpp
+goal_point_wise.cpp
 goal_assembly.cpp
 goal_dbcs.cpp
 goal_linear_solve.cpp
@@ -35,6 +36,7 @@ goal_scalar_weight.hpp
 goal_soln_adjoint.hpp
 goal_residual.hpp
 goal_qoi.hpp
+goal_point_wise.hpp
 goal_assembly.hpp
 goal_dbcs.hpp
 goal_linear_solve.hpp
@@ -72,5 +74,6 @@ function(add_exe exename exesrc)
 endfunction()
 
 add_exe(GoalPrimal main_primal.cpp)
+add_exe(GoalAdjoint main_nested.cpp)
 
 bob_end_subdir()

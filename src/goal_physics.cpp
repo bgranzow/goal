@@ -6,6 +6,7 @@
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
 #include "goal_physics.hpp"
+#include "goal_point_wise.hpp"
 #include "goal_residual.hpp"
 #include "goal_scalar_types.hpp"
 
@@ -50,61 +51,22 @@ void Physics::build_resid(Evaluators& E) {
 
 template <typename T>
 void Physics::build_functional(ParameterList const& params, Evaluators& E) {
-
-  (void)params;
-  (void)E;
-
-#if 0
   auto type = params.get<std::string>("type");
   auto u = find_evaluator("u", E);
-  auto model = find_evaluator("model", E);
   RCP<QoI<T>> J;
   if (type == "point wise")
     J = rcp(new PointWise<T>(params));
-  else if (type == "avg disp")
-    J = rcp(new AvgDisp<T>(u));
-  else if (type == "avg disp subdomain")
-    J = rcp(new AvgDispSubdomain<T>(params, u));
-  else if (type == "avg vm")
-    J = rcp(new AvgVM<T>(params, model));
-  else if (type == "max vm")
-    J = rcp(new KSVM<T>(params, model));
   else
-    fail("unknown functional type: %s", type.c_str());
+    fail("unkown qoi: %s", type.c_str());
   E.push_back(J);
-#endif
 }
 
 void Physics::build_error(Evaluators& E) {
-
-  (void)E;
-
-#if 0
-  ParameterList mat = params.sublist("materials");
+  auto f = params.get<std::string>("f");
   auto u = find_evaluator("u", E);
-  auto p = find_evaluator("p", E);
-  auto uw = find_evaluator("uw", E);
-  auto pw = find_evaluator("pw", E);
-  auto pwc = find_evaluator("pwc", E);
-  auto kin = rcp(new Kinematics<ST>(u));
-  RCP<Model<ST>> cm;
-  if (model == "neohookean")
-    cm = rcp(new Neohookean<ST>(kin, states, false, mat));
-  else if (model == "J2")
-    cm = rcp(new J2<ST>(kin, states, false, mat));
-  else
-    fail("unknown model: %s", model.c_str());
-  auto mixed = rcp(new Mixed<ST>(p, cm, states, false));
-  auto mresidual = rcp(new MResidual<ST>(u, uw, cm));
-  auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
-  auto stab = rcp(new Stabilization<ST>(p, pwc, kin, mat));
-  E.push_back(kin);
-  E.push_back(cm);
-  E.push_back(mixed);
-  E.push_back(mresidual);
-  E.push_back(presidual);
-  E.push_back(stab);
-#endif
+  auto w = find_evaluator("uw", E);
+  auto R = rcp(new Residual<ST>(u, w, f));
+  E.push_back(R);
 }
 
 Physics* create_physics(ParameterList const& p, Disc* d) {

@@ -34,7 +34,7 @@ class Solver {
     Physics* physics;
     Primal* primal;
     Output* output;
-//    Functional* functional;
+    Functional* functional;
 };
 
 Solver::Solver(const char* in) {
@@ -49,11 +49,11 @@ Solver::Solver(const char* in) {
   physics = create_physics(physics_params, disc);
   primal = create_primal(*params, physics);
   output = create_output(out_params, disc);
-//  functional = create_functional(*params, primal);
+  functional = create_functional(*params, primal);
 }
 
 Solver::~Solver() {
-//  destroy_functional(functional);
+  destroy_functional(functional);
   destroy_output(output);
   destroy_primal(primal);
   destroy_physics(physics);
@@ -64,8 +64,8 @@ void Solver::solve() {
   disc->build_data();
   primal->build_data();
   primal->solve(0, 0);
-//  functional->compute(0, 0);
-//  functional->print_value();
+  functional->compute(0, 0);
+  functional->print_value();
   output->write(0, 0);
 }
 
