@@ -45,5 +45,5 @@ cooks avg disp subdomain:
   output:
     out file: out_cooks_avg_disp_subdomain
   regression:
-    value: 4.142329467049588e+01
+    value: 4.142221037011110e+01
     tolerance: 1.0e-8
