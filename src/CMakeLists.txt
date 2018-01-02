@@ -16,6 +16,7 @@ goal_model.cpp
 goal_neohookean.cpp
 goal_J2.cpp
 goal_mixed.cpp
+goal_temp.cpp
 goal_mresidual.cpp
 goal_presidual.cpp
 goal_stabilization.cpp
@@ -63,6 +64,7 @@ goal_model.hpp
 goal_neohookean.hpp
 goal_J2.hpp
 goal_mixed.hpp
+goal_temp.hpp
 goal_mresidual.hpp
 goal_presidual.hpp
 goal_stabilization.hpp

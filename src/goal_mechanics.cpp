@@ -20,6 +20,7 @@
 #include "goal_scalar_types.hpp"
 #include "goal_stabilization.hpp"
 #include "goal_states.hpp"
+#include "goal_temp.hpp"
 
 namespace goal {
 
@@ -28,6 +29,7 @@ using Teuchos::rcp;
 static ParameterList get_valid_params() {
   ParameterList p;
   p.set<std::string>("model", "");
+  p.sublist("temperature");
   p.sublist("materials");
   return p;
 }
@@ -43,6 +45,11 @@ Mechanics::Mechanics(ParameterList const& p, Disc* d) {
   make_displacement();
   make_pressure();
   make_states();
+  have_temp = false;
+  if (params.isSublist("temperature")) {
+    temp_params = params.sublist("temperature");
+    have_temp = true;
+  }
 }
 
 Mechanics::~Mechanics() {
@@ -79,12 +86,17 @@ void Mechanics::make_states() {
 
 template <typename T>
 void Mechanics::build_resid(Evaluators& E, bool save) {
+
   ParameterList mat = params.sublist("materials");
+
   auto u = find_evaluator("u", E);
   auto p = find_evaluator("p", E);
   auto uw = find_evaluator("uw", E);
   auto pw = find_evaluator("pw", E);
+
   auto kin = rcp(new Kinematics<T>(u));
+  E.push_back(kin);
+
   RCP<Model<T>> cm;
   if (model == "neohookean")
     cm = rcp(new Neohookean<T>(kin, states, save, mat));
@@ -92,15 +104,23 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
     cm = rcp(new J2<T>(kin, states, save, mat));
   else
     fail("unknown model: %s", model.c_str());
-  auto mixed = rcp(new Mixed<T>(p, cm, states, save));
-  auto mresidual = rcp(new MResidual<T>(u, uw, cm));
-  auto presidual = rcp(new PResidual<T>(p, pw, kin, mat));
-  auto stab = rcp(new Stabilization<T>(p, pw, kin, mat));
-  E.push_back(kin);
   E.push_back(cm);
+
+  auto mixed = rcp(new Mixed<T>(p, cm, states, save));
   E.push_back(mixed);
+
+  if (have_temp) {
+    auto temp = rcp(new Temp<T>(temp_params, mat, cm, kin, states, save));
+    E.push_back(temp);
+  }
+
+  auto mresidual = rcp(new MResidual<T>(u, uw, cm));
   E.push_back(mresidual);
+
+  auto presidual = rcp(new PResidual<T>(p, pw, kin, mat));
   E.push_back(presidual);
+
+  auto stab = rcp(new Stabilization<T>(p, pw, kin, mat));
   E.push_back(stab);
 }
 
@@ -126,13 +146,18 @@ void Mechanics::build_functional(ParameterList const& params, Evaluators& E) {
 }
 
 void Mechanics::build_error(Evaluators& E) {
+
   ParameterList mat = params.sublist("materials");
+
   auto u = find_evaluator("u", E);
   auto p = find_evaluator("p", E);
   auto uw = find_evaluator("uw", E);
   auto pw = find_evaluator("pw", E);
   auto pwc = find_evaluator("pwc", E);
+
   auto kin = rcp(new Kinematics<ST>(u));
+  E.push_back(kin);
+
   RCP<Model<ST>> cm;
   if (model == "neohookean")
     cm = rcp(new Neohookean<ST>(kin, states, false, mat));
@@ -140,15 +165,23 @@ void Mechanics::build_error(Evaluators& E) {
     cm = rcp(new J2<ST>(kin, states, false, mat));
   else
     fail("unknown model: %s", model.c_str());
-  auto mixed = rcp(new Mixed<ST>(p, cm, states, false));
-  auto mresidual = rcp(new MResidual<ST>(u, uw, cm));
-  auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
-  auto stab = rcp(new Stabilization<ST>(p, pwc, kin, mat));
-  E.push_back(kin);
   E.push_back(cm);
+
+  auto mixed = rcp(new Mixed<ST>(p, cm, states, false));
   E.push_back(mixed);
+
+  if (have_temp) {
+    auto temp = rcp(new Temp<ST>(temp_params, mat, cm, kin, states, false));
+    E.push_back(temp);
+  }
+
+  auto mresidual = rcp(new MResidual<ST>(u, uw, cm));
   E.push_back(mresidual);
+
+  auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
   E.push_back(presidual);
+
+  auto stab = rcp(new Stabilization<ST>(p, pwc, kin, mat));
   E.push_back(stab);
 }
 
