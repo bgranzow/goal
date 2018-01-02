@@ -15,7 +15,7 @@ static ParameterList get_valid_params(Disc* d) {
     auto es_name = d->get_elem_set_name(es);
     p.sublist(es_name).set<double>("E", 0.0);
     p.sublist(es_name).set<double>("nu", 0.0);
-    p.sublist(es_name).set<double>("c0", 0.0);
+    p.sublist(es_name).set<double>("alpha", 0.0);
   }
   return p;
 }

@@ -34,10 +34,12 @@ class Mechanics {
     void make_displacement();
     void make_states();
     ParameterList params;
+    ParameterList temp_params;
     Disc* disc;
     States* states;
     std::string model;
     apf::Field* displacement;
+    bool have_temp;
 };
 
 Mechanics* create_mechanics(ParameterList const& p, Disc* d);
