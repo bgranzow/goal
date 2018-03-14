@@ -6,6 +6,7 @@
 #include "goal_avg_disp.hpp"
 #include "goal_avg_disp_subdomain.hpp"
 #include "goal_avg_vm.hpp"
+#include "goal_bforce.hpp"
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
 #include "goal_J2.hpp"
