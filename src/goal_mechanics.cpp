@@ -30,6 +30,7 @@ using Teuchos::rcp;
 static ParameterList get_valid_params() {
   ParameterList p;
   p.set<std::string>("model", "");
+  p.set<bool>("body force", "");
   p.sublist("temperature");
   p.sublist("materials");
   return p;
@@ -47,10 +48,13 @@ Mechanics::Mechanics(ParameterList const& p, Disc* d) {
   make_pressure();
   make_states();
   have_temp = false;
+  have_bforce = false;
   if (params.isSublist("temperature")) {
     temp_params = params.sublist("temperature");
     have_temp = true;
   }
+  if (params.isParameter("have body force"))
+    have_bforce = true;
 }
 
 Mechanics::~Mechanics() {
@@ -118,6 +122,11 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
   auto mresidual = rcp(new MResidual<T>(u, uw, cm));
   E.push_back(mresidual);
 
+  if (have_bforce) {
+    auto bforce = rcp(new BForce<T>(u, uw, states, mat));
+    E.push_back(bforce);
+  }
+
   auto presidual = rcp(new PResidual<T>(p, pw, kin, mat));
   E.push_back(presidual);
 
@@ -178,6 +187,11 @@ void Mechanics::build_error(Evaluators& E) {
 
   auto mresidual = rcp(new MResidual<ST>(u, uw, cm));
   E.push_back(mresidual);
+
+  if (have_bforce) {
+    auto bforce = rcp(new BForce<ST>(u, uw, states, mat));
+    E.push_back(bforce);
+  }
 
   auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
   E.push_back(presidual);

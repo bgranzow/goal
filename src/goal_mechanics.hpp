@@ -43,6 +43,7 @@ class Mechanics {
     apf::Field* displacement;
     apf::Field* pressure;
     bool have_temp;
+    bool have_bforce;
 };
 
 Mechanics* create_mechanics(ParameterList const& p, Disc* d);

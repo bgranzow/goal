@@ -43,10 +43,21 @@ void BForce<T>::in_elem(apf::MeshElement* me) {
 }
 
 template <typename T>
+void eval_b(apf::Vector3 const& x, minitensor::Vector<T>& b) {
+  b[0] = 0.0;
+  b[1] = -1.0;
+  (void)x;
+}
+
+template <typename T>
 void BForce<T>::at_point(apf::Vector3 const& xi, double ipw, double dv) {
-  (void)xi;
-  (void)ipw;
-  (void)dv;
+  minitensor::Vector<T> b(num_dims);
+  apf::Vector3 x(0,0,0);
+  apf::mapLocalToGlobal(elem, xi, x);
+  eval_b(x, b);
+  for (int n = 0; n < u->get_num_nodes(); ++n)
+  for (int i = 0; i < num_dims; ++i)
+    u->resid(n, i) -= b[i] * w->val(n, i) * ipw * dv;
 }
 
 template <typename T>
