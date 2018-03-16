@@ -9,6 +9,7 @@
 #include "goal_bforce.hpp"
 #include "goal_control.hpp"
 #include "goal_disc.hpp"
+#include "goal_elastic.hpp"
 #include "goal_J2.hpp"
 #include "goal_kinematics.hpp"
 #include "goal_ks_vm.hpp"
@@ -107,6 +108,8 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
   E.push_back(kin);
 
   RCP<Model<T>> cm;
+  if (model == "elastic")
+    cm = rcp(new Elastic<T>(u, states, save, mat));
   if (model == "neohookean")
     cm = rcp(new Neohookean<T>(kin, states, save, mat));
   else if (model == "J2")
@@ -176,6 +179,8 @@ void Mechanics::build_error(Evaluators& E) {
   E.push_back(kin);
 
   RCP<Model<ST>> cm;
+  if (model == "elastic")
+    cm = rcp(new Elastic<ST>(u, states, false, mat));
   if (model == "neohookean")
     cm = rcp(new Neohookean<ST>(kin, states, false, mat));
   else if (model == "J2")
