@@ -13,6 +13,7 @@ goal_pressure_adjoint.cpp
 goal_displacement_adjoint.cpp
 goal_kinematics.cpp
 goal_model.cpp
+goal_elastic.cpp
 goal_neohookean.cpp
 goal_J2.cpp
 goal_mixed.cpp
@@ -62,6 +63,7 @@ goal_pressure_adjoint.hpp
 goal_displacement_adjoint.hpp
 goal_kinematics.hpp
 goal_model.hpp
+goal_elastic.hpp
 goal_neohookean.hpp
 goal_J2.hpp
 goal_mixed.hpp
