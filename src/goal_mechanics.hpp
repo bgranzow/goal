@@ -42,6 +42,7 @@ class Mechanics {
     std::string model;
     apf::Field* displacement;
     apf::Field* pressure;
+    bool have_stab;
     bool have_temp;
     bool have_bforce;
 };

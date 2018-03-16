@@ -29,8 +29,9 @@ using Teuchos::rcp;
 
 static ParameterList get_valid_params() {
   ParameterList p;
+  p.set<bool>("stabilization", true);
+  p.set<bool>("body force", false);
   p.set<std::string>("model", "");
-  p.set<bool>("body force", "");
   p.sublist("temperature");
   p.sublist("materials");
   return p;
@@ -47,14 +48,17 @@ Mechanics::Mechanics(ParameterList const& p, Disc* d) {
   make_displacement();
   make_pressure();
   make_states();
+  have_stab = true;
   have_temp = false;
   have_bforce = false;
+  if (params.isParameter("stabilization"))
+    have_stab = params.get<bool>("stabilization");
+  if (params.isParameter("have body force"))
+    have_bforce = true;
   if (params.isSublist("temperature")) {
     temp_params = params.sublist("temperature");
     have_temp = true;
   }
-  if (params.isParameter("have body force"))
-    have_bforce = true;
 }
 
 Mechanics::~Mechanics() {
@@ -130,8 +134,11 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
   auto presidual = rcp(new PResidual<T>(p, pw, kin, mat));
   E.push_back(presidual);
 
-  auto stab = rcp(new Stabilization<T>(p, pw, kin, mat));
-  E.push_back(stab);
+  if (have_stab) {
+    auto stab = rcp(new Stabilization<T>(p, pw, kin, mat));
+    E.push_back(stab);
+  }
+
 }
 
 template <typename T>
@@ -196,8 +203,11 @@ void Mechanics::build_error(Evaluators& E) {
   auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
   E.push_back(presidual);
 
-  auto stab = rcp(new Stabilization<ST>(p, pwc, kin, mat));
-  E.push_back(stab);
+  if (have_stab) {
+    auto stab = rcp(new Stabilization<ST>(p, pwc, kin, mat));
+    E.push_back(stab);
+  }
+
 }
 
 Mechanics* create_mechanics(ParameterList const& p, Disc* d) {
