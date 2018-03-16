@@ -134,7 +134,7 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
     E.push_back(bforce);
   }
 
-  auto presidual = rcp(new PResidual<T>(p, pw, kin, mat));
+  auto presidual = rcp(new PResidual<T>(u, p, pw, cm, kin, mat));
   E.push_back(presidual);
 
   if (have_stab) {
@@ -205,7 +205,7 @@ void Mechanics::build_error(Evaluators& E) {
     E.push_back(bforce);
   }
 
-  auto presidual = rcp(new PResidual<ST>(p, pw, kin, mat));
+  auto presidual = rcp(new PResidual<ST>(u, p, pw, cm, kin, mat));
   E.push_back(presidual);
 
   if (have_stab) {
