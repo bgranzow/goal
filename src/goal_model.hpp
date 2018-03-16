@@ -20,6 +20,7 @@ class Model : public Integrator {
     virtual int get_num_dims() = 0;
     virtual Tensor& get_cauchy() = 0;
     virtual Tensor& get_first_pk() = 0;
+    virtual bool small_strain() = 0;
 };
 
 }

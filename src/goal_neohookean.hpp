@@ -25,6 +25,7 @@ class Neohookean : public Model<T> {
     void in_elem(apf::MeshElement* me);
     void at_point(apf::Vector3 const&, double, double);
     void out_elem();
+    bool small_strain() { return false; }
     int get_num_dims() { return num_dims; }
     Tensor& get_cauchy() { return sigma; }
     Tensor& get_first_pk();
