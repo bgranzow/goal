@@ -110,7 +110,7 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
   RCP<Model<T>> cm;
   if (model == "elastic")
     cm = rcp(new Elastic<T>(u, states, save, mat));
-  if (model == "neohookean")
+  else if (model == "neohookean")
     cm = rcp(new Neohookean<T>(kin, states, save, mat));
   else if (model == "J2")
     cm = rcp(new J2<T>(kin, states, save, mat));
@@ -181,7 +181,7 @@ void Mechanics::build_error(Evaluators& E) {
   RCP<Model<ST>> cm;
   if (model == "elastic")
     cm = rcp(new Elastic<ST>(u, states, false, mat));
-  if (model == "neohookean")
+  else if (model == "neohookean")
     cm = rcp(new Neohookean<ST>(kin, states, false, mat));
   else if (model == "J2")
     cm = rcp(new J2<ST>(kin, states, false, mat));
