@@ -1,0 +1,41 @@
+elastic primal 2D:
+  num steps: 1
+  step size: 1.0
+  initial time: 0.0 
+  discretization:
+    geom file: '../../test/mesh/square/square.dmg'
+    mesh file: '../../test/mesh/square/square-serial.smb'
+    assoc file: '../../test/mesh/square/square.txt'
+  dirichlet bcs:
+    bc 1: [0, xmin, 'x*x']
+    bc 2: [0, xmax, 'x*x']
+    bc 3: [0, ymin, 'x*x']
+    bc 4: [0, ymax, 'x*x']
+    bc 5: [1, xmin, 'y*y']
+    bc 6: [1, xmax, 'y*y']
+    bc 7: [1, ymin, 'y*y']
+    bc 8: [1, ymax, 'y*y']
+  mechanics:
+    model: elastic
+    stabilization: false
+    body force: elastic squared
+    materials:
+      square:
+        E: 1.0
+        nu: 0.25
+  primal linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+      number of equations: 3
+    nonlinear tolerance: 1.0e-8
+    nonlinear max iters: 5
+  functional:
+    type: avg disp
+  output:
+    out file: out_elastic_primal_2D
+  regression:
+    value: 3.371040858725907e-01
+    tolerance: 1.0e-8
