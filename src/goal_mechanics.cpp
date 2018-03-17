@@ -31,7 +31,7 @@ using Teuchos::rcp;
 static ParameterList get_valid_params() {
   ParameterList p;
   p.set<bool>("stabilization", true);
-  p.set<bool>("body force", false);
+  p.set<std::string>("body force", "");
   p.set<std::string>("model", "");
   p.sublist("temperature");
   p.sublist("materials");
@@ -54,7 +54,7 @@ Mechanics::Mechanics(ParameterList const& p, Disc* d) {
   have_bforce = false;
   if (params.isParameter("stabilization"))
     have_stab = params.get<bool>("stabilization");
-  if (params.isParameter("have body force"))
+  if (params.isParameter("body force"))
     have_bforce = true;
   if (params.isSublist("temperature")) {
     temp_params = params.sublist("temperature");
@@ -130,7 +130,8 @@ void Mechanics::build_resid(Evaluators& E, bool save) {
   E.push_back(mresidual);
 
   if (have_bforce) {
-    auto bforce = rcp(new BForce<T>(u, uw, states, mat));
+    auto ft = params.get<std::string>("body force");
+    auto bforce = rcp(new BForce<T>(u, uw, ft, states, mat));
     E.push_back(bforce);
   }
 
@@ -201,7 +202,8 @@ void Mechanics::build_error(Evaluators& E) {
   E.push_back(mresidual);
 
   if (have_bforce) {
-    auto bforce = rcp(new BForce<ST>(u, uw, states, mat));
+    auto ft = params.get<std::string>("body force");
+    auto bforce = rcp(new BForce<ST>(u, uw, ft, states, mat));
     E.push_back(bforce);
   }
 

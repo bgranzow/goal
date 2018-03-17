@@ -14,15 +14,21 @@ template <typename T>
 BForce<T>::BForce(
   RCP<Integrator> u_,
   RCP<Integrator> w_,
+  std::string const& f_,
   States* s_,
   ParameterList const& p_) :
     u(rcp_static_cast<Displacement<T>>(u_)),
     w(rcp_static_cast<VectorWeight>(w_)),
+    ftype(f_),
     states(s_),
     params(p_),
     num_dims(u->get_num_dims()) {
   GOAL_DEBUG_ASSERT(Teuchos::nonnull(u));
   GOAL_DEBUG_ASSERT(Teuchos::nonnull(w));
+  if (ftype == "elastic squared")
+    op = &BForce<T>::eval_elastic_squared;
+  else
+    fail("unkown body force: %s", ftype.c_str());
   this->name = "bforce";
 }
 
@@ -35,6 +41,7 @@ void BForce<T>::set_elem_set(int es_idx) {
   double nu = mat.get<double>("nu");
   k = E / (3.0 * (1.0 - 2.0 * nu));
   mu = E / (2.0 * (1.0 + nu));
+  lambda = E * nu / ((1.0 + nu) * (1.0 - 2.0 * nu));
 }
 
 template <typename T>
@@ -43,18 +50,18 @@ void BForce<T>::in_elem(apf::MeshElement* me) {
 }
 
 template <typename T>
-void eval_b(apf::Vector3 const& x, minitensor::Vector<T>& b) {
-  b[0] = 0.0;
-  b[1] = -1.0;
-  (void)x;
+void BForce<T>::eval_elastic_squared(
+    apf::Vector3 const&, apf::Vector3& b) {
+  b[0] = -4.0*mu - 2.0*lambda;
+  b[1] = -4.0*mu - 2.0*lambda;
 }
 
 template <typename T>
 void BForce<T>::at_point(apf::Vector3 const& xi, double ipw, double dv) {
-  minitensor::Vector<T> b(num_dims);
+  apf::Vector3 b(0,0,0);
   apf::Vector3 x(0,0,0);
   apf::mapLocalToGlobal(elem, xi, x);
-  eval_b(x, b);
+  op(this, x, b);
   for (int n = 0; n < u->get_num_nodes(); ++n)
   for (int i = 0; i < num_dims; ++i)
     u->resid(n, i) -= b[i] * w->val(n, i) * ipw * dv;
