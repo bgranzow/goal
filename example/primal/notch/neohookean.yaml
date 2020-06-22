@@ -1,0 +1,34 @@
+neohookean:
+  num steps: 1
+  step size: 1.0
+  initial time: 0.0
+  discretization:
+    geom file: './notch.dmg'
+    mesh file: './notch.smb'
+    assoc file: './notch.txt'
+  dirichlet bcs:
+    bc 1: [0, xmin, 0.0]
+    bc 2: [1, ymin, 0.0]
+    bc 3: [2, zmin, 0.0]
+  traction bcs:
+    bc 1: [ymax, 0., 1.0 * t, 0.]
+  mechanics:
+    model: neohookean
+    materials:
+      body:
+        E: 1000.0
+        nu: 0.25
+        c0: 1.0
+  primal linear algebra:
+    krylov size: 100
+    max iters: 100
+    tolerance: 1.0e-10
+    multigrid:
+      verbosity: none
+      number of equations: 4
+    nonlinear tolerance: 1.0e-8
+    nonlinear max iters: 5
+  functional:
+    type: avg disp
+  output:
+    out file: out_neohookean
