@@ -1,6 +1,7 @@
 #ifndef goal_assembly_hpp
 #define goal_assembly_hpp
 
+#include <vector>
 #include <Teuchos_RCP.hpp>
 
 namespace goal {

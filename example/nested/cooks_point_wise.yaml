@@ -47,4 +47,4 @@ cooks point wise:
     out file: out_cooks_point_wise
   regression:
     value: 2.527253897024802e-01
-    tolerance: 1.0e-8
+    tolerance: 1.0e-5

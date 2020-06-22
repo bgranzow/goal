@@ -261,7 +261,7 @@ void Disc::initialize() {
   num_elem_sets = sets->models[num_dims].size();
   num_side_sets = sets->models[num_dims-1].size();
   num_node_sets = sets->models[0].size();
-  comm = Tpetra::DefaultPlatform::getDefaultPlatform().getComm();
+  comm = Tpetra::getDefaultComm();
   owned_nmbr = 0;
   ghost_nmbr = 0;
   global_nmbr = 0;

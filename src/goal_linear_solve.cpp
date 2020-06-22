@@ -60,7 +60,9 @@ static RCP<Solver> build_solver(
   auto belos_params = get_belos_params(in);
   auto AA = (RCP<OP>)A;
   auto coords = d->get_coords();
-  auto P = MueLu::CreateTpetraPreconditioner(AA, mg_params, coords);
+  auto& user_data = mg_params.sublist("user data");
+  user_data.set<RCP<MultiVectorT>>("Coordinates", coords);
+  auto P = MueLu::CreateTpetraPreconditioner(AA, mg_params);
   auto problem = rcp(new LinearProblem(A, x, b));
   problem->setLeftPrec(P);
   problem->setProblem();

@@ -5,7 +5,7 @@
 #include <Phalanx_KokkosDeviceTypes.hpp>
 #include <Teuchos_DefaultComm.hpp>
 #include <Tpetra_CrsMatrix.hpp>
-#include <Tpetra_DefaultPlatform.hpp>
+#include <Tpetra_Core.hpp>
 
 #include "goal_scalar_types.hpp"
 
