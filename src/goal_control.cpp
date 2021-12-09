@@ -1,6 +1,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <Kokkos_Core.hpp>
+#include <lionPrint.h>
 #include <PCU.h>
 #include <RTC_FunctionRTC.hh>
 
@@ -43,6 +44,7 @@ void initialize(bool init_mpi, bool init_kokkos, bool init_pcu) {
   if (init_mpi) call_mpi_init();
   if (init_kokkos) call_kokkos_init();
   if (init_pcu) call_pcu_init();
+  lion_set_verbosity(1);
   call_expr_init();
   is_goal_initd = true;
 }

@@ -11,13 +11,13 @@
 
 namespace goal {
 
-typedef Tpetra::MultiVector<ST, LO, GO, KNode> MV;
-typedef Tpetra::Operator<ST, LO, GO, KNode> OP;
-typedef Tpetra::RowMatrix<ST, LO, GO, KNode> RM;
+typedef Tpetra::MultiVector<ST, LO, GO> MV;
+typedef Tpetra::Operator<ST, LO, GO> OP;
+typedef Tpetra::RowMatrix<ST, LO, GO> RM;
 typedef Belos::LinearProblem<ST, MV, OP> LinearProblem;
 typedef Belos::SolverManager<ST, MV, OP> Solver;
 typedef Belos::BlockGmresSolMgr<ST, MV, OP> GmresSolver;
-typedef Tpetra::Operator<ST, LO, GO, KNode> Prec;
+typedef Tpetra::Operator<ST, LO, GO> Prec;
 
 static ParameterList get_valid_params() {
   ParameterList p;

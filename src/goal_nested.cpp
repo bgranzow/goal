@@ -146,7 +146,7 @@ void Nested::refine_uniform() {
   ma::AutoSolutionTransfer transfers(mesh);
   auto mytransfer = new Transfer(mesh, old_vtx_tag, new_vtx_tag);
   transfers.add(mytransfer);
-  auto in = ma::configureUniformRefine(mesh, 1, &transfers);
+  auto in = ma::makeAdvanced(ma::configureUniformRefine(mesh, 1, &transfers));
   in->shouldFixShape = false;
   in->shouldSnap = false;
   ma::adapt(in);
@@ -224,7 +224,7 @@ void Nested::refine_long() {
   auto mytransfer = new Transfer(mesh, old_vtx_tag, new_vtx_tag);
   transfers.add(mytransfer);
   auto size = new Long(mesh);
-  auto in = ma::configureIdentity(mesh, size, &transfers);
+  auto in = ma::makeAdvanced(ma::configureIdentity(mesh, size, &transfers));
   in->shouldFixShape = false;
   in->shouldSnap = false;
   in->maximumIterations = 1;
@@ -315,7 +315,7 @@ void Nested::refine_single() {
   auto mytransfer = new Transfer(mesh, old_vtx_tag, new_vtx_tag);
   transfers.add(mytransfer);
   auto size = new Single(mesh);
-  auto in = ma::configureIdentity(mesh, size, &transfers);
+  auto in = ma::makeAdvanced(ma::configureIdentity(mesh, size, &transfers));
   in->shouldFixShape = false;
   in->shouldSnap = false;
   in->maximumIterations = 1;

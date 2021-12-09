@@ -43,7 +43,7 @@ static ParameterList get_valid_adapt_params() {
   p.set<int>("adapt cycles", 1);
   p.set<int>("adapt iters", 1);
   p.set<bool>("fix shape", true);
-  p.set<bool>("shoud coarsen", true);
+  p.set<bool>("should coarsen", true);
   p.set<double>("good quality", 0.3);
   p.set<int>("target elems", 1);
   p.set<double>("target growth", 2.0);
@@ -119,7 +119,7 @@ void Solver::adapt(int step, int cycle, double t_now, double t_old) {
   auto scale = adapt_params.get<double>("target growth", 1.0);
   target = target * std::pow(scale, (cycle - 1.0));
   auto size = get_iso_target_size(e, target);
-  auto in = ma::configure(mesh, size);
+  auto in = ma::makeAdvanced(ma::configure(mesh, size));
   configure_ma(in, adapt_params);
   ma::adapt(in);
   apf::destroyField(size);

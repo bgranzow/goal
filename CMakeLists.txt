@@ -8,6 +8,8 @@ bob_begin_cxx_flags()
 bob_cxx11_flags()
 bob_end_cxx_flags()
 
+find_package(MPI REQUIRED)
+
 set(GOAL_FAD_SIZE "16" CACHE STRING "Maximum Sacado derivative array size")
 option(GOAL_ENABLE_SNAPPING "Enable snapping via Simmetrix" OFF)
 option(GOAL_ENABLE_MECH "Enable mechanics research code" OFF)

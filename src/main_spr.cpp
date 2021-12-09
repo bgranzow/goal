@@ -47,7 +47,7 @@ static ParameterList get_valid_adapt_params() {
   p.set<int>("adapt cycles", 1);
   p.set<int>("adapt iters", 1);
   p.set<bool>("fix shape", true);
-  p.set<bool>("shoud coarsen", true);
+  p.set<bool>("should coarsen", true);
   p.set<double>("good quality", 0.3);
   p.set<int>("target elems", 1);
   p.set<double>("target growth", 1.0);
@@ -151,7 +151,7 @@ struct SPRCallback : public GroupCode {
       else ip_field = spr::getGradIPField(field, "spr_grad", 1);
       auto size = spr::getTargetSPRSizeField(ip_field, target);
       if (! is_ip) apf::destroyField(ip_field);
-      auto in = ma::configure(mesh, size);
+      auto in = ma::makeAdvanced(ma::configure(mesh, size));
       configure_ma(in, params);
       ma::adapt(in);
       apf::destroyField(size);
